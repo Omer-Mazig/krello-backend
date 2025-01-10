@@ -7,6 +7,7 @@ import {
 import { ActivityMessageConstructor } from '../strategies/activity-message-constructor/interfaces/activity-message-constructor.interface';
 import { ActivityPage } from '../types/activity-page.type';
 
+// TODO: figure out a way to strict new [somestrategy]
 export class ActivityMessageConstructorFactory {
   static getConstructor(
     type: `${ActivityEvent}`,
