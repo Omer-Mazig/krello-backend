@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './entities/activity.entity';
-import { ActivityPayload } from './types/activity-payload.type';
 import { ActivityMessageConstructorFactory } from './factories/activity-message-constructor.factory';
 
 @Injectable()
@@ -13,15 +12,12 @@ export class ActivitiesService {
   ) {}
 
   //TODO: extract to 'ActivityCreatorProvider'
-  async createActivity(payload: ActivityPayload): Promise<Activity> {
-    const activity = this.activityRepository.create({
-      type: payload.type,
-      user: { id: payload.userId }, // Ensure this is a valid DeepPartial<User>
-      board: { id: payload.boardId }, // Ensure this is a valid DeepPartial<Board>
-      card: payload.cardId ? { id: payload.cardId } : undefined, // Valid DeepPartial<Card>
-      listName: payload.listName || null,
-      extraData: payload.extraData || null,
-    } as DeepPartial<Activity>); // Explicitly cast to DeepPartial<Activity>
+  async createActivity<TActivityPayload>(
+    payload: TActivityPayload,
+  ): Promise<Activity> {
+    const activity = this.activityRepository.create(
+      payload as DeepPartial<Activity>,
+    ); // Explicitly cast to DeepPartial<Activity>
 
     return this.activityRepository.save(activity);
   }

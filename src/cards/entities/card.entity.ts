@@ -1,5 +1,6 @@
 import { Board } from 'src/boards/entities/board.entity';
 import { List } from 'src/lists/entities/list.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,6 +8,8 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -18,10 +21,10 @@ export class Card {
   title: string;
 
   @Column({ nullable: true })
-  description: string;
+  description?: string;
 
-  @Column({ nullable: true })
-  labels: string; // Comma-separated values or an array (use JSON if required)
+  @Column({ default: [] })
+  labels: string[];
 
   @Column({ type: 'timestamptz', nullable: true })
   dueDate: Date;
@@ -34,6 +37,10 @@ export class Card {
 
   @ManyToOne(() => Board, (board) => board.cards, { onDelete: 'CASCADE' })
   board: Board;
+
+  @ManyToMany(() => User, (user) => user.cards)
+  @JoinTable()
+  members: User[];
 
   @CreateDateColumn()
   createdAt: Date;

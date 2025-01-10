@@ -5,11 +5,14 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
+  ManyToOne,
 } from 'typeorm';
+import { BoardMember } from './board-member.entity';
 
 @Entity()
 export class Board {
@@ -19,13 +22,18 @@ export class Board {
   @Column()
   name: string;
 
-  @Column({ default: 'private' }) // Visibility can be 'private' or 'public'
+  @Column({ default: 'private' })
   visibility: string;
 
-  @ManyToOne(() => User, (user) => user.boards, { eager: true })
-  createdBy: User;
+  @OneToMany(() => BoardMember, (boardMember) => boardMember.board, {
+    cascade: true,
+  })
+  members: BoardMember[];
 
-  @OneToMany(() => Card, (cards) => cards.board, { cascade: true })
+  @ManyToOne(() => User, { nullable: false })
+  createdBy: User; // Super Admin (board creator)
+
+  @OneToMany(() => Card, (card) => card.board, { cascade: true })
   cards: Card[];
 
   @OneToMany(() => List, (list) => list.board, { cascade: true })

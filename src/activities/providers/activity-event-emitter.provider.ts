@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ActivityPayload } from '../types/activity-payload.type';
+import { ActivityEvent } from '../enums/activity-event.enum';
 
 @Injectable()
 export class ActivityEventEmitter {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  emitActivity(eventName: string, payload: ActivityPayload) {
+  emitActivity<TActivityPayload>(
+    eventName: ActivityEvent,
+    payload: TActivityPayload,
+  ) {
     this.eventEmitter.emit(eventName, payload);
   }
 }

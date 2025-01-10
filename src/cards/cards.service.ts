@@ -2,38 +2,40 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Card } from './entities/card.entity';
-import { ActivityService } from 'src/activities/activities.service';
-import { CreateCardDto } from './dto/create-card.dto';
+import { ActivityEventEmitter } from 'src/activities/providers/activity-event-emitter.provider';
+import { ActivityEvent } from 'src/activities/enums/activity-event.enum';
+import { AddCardActivityPayload } from 'src/activities/types/activity-payload.type';
 
 @Injectable()
-export class CardsService {
+export class CardService {
   constructor(
     @InjectRepository(Card)
     private readonly cardRepository: Repository<Card>,
-    private readonly activityService: ActivityService,
+    private readonly activityEventEmitter: ActivityEventEmitter,
   ) {}
 
-  async create(createCardDto: CreateCardDto, userId: string): Promise<Card> {
-    const card = this.cardRepository.create({
-      title: createCardDto.title,
-      position: createCardDto.position,
-      list: { id: createCardDto.listId }, // Assign the List ID
-      board: { id: createCardDto.boardId }, // Assign the Board ID
+  async addCard(
+    title: string,
+    listId: string,
+    boardId: string,
+    userId: string,
+  ): Promise<Card> {
+    const newCard = this.cardRepository.create({
+      title,
+      list: { id: listId },
+      board: { id: boardId },
     });
+    const savedCard = await this.cardRepository.save(newCard);
 
-    const savedCard = await this.cardRepository.save(card);
-
-    await this.activityService.logActivity(
-      'ADD_CARD',
+    // Trigger ADDING_CARD event
+    this.activityEventEmitter.emitActivity<AddCardActivityPayload>(
+      ActivityEvent.ADDING_CARD,
       {
-        user: { id: userId, name: `User ${userId}` },
-        card: { id: savedCard.id, name: savedCard.title },
-      },
-      {
-        user: userId,
-        card: savedCard.id,
-        list: createCardDto.listId,
-        board: createCardDto.boardId,
+        type: ActivityEvent.ADDING_CARD,
+        userId,
+        boardId: savedCard.board.id,
+        cardId: savedCard.id,
+        listName: savedCard.list.name,
       },
     );
 
