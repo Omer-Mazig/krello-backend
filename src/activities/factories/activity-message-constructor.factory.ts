@@ -5,6 +5,7 @@ import {
   AddingCardProfileMessage,
 } from '../strategies/activity-message-constructor/concrete-implementations/add-card.startegies';
 import { ActivityMessageConstructor } from '../strategies/activity-message-constructor/interfaces/activity-message-constructor.interface';
+import { ActivityPage } from '../types/activity-page.type';
 
 export class ActivityMessageConstructorFactory {
   static getConstructor(

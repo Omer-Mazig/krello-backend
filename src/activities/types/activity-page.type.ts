@@ -1,1 +1,1 @@
-type ActivityPage = 'profile' | 'board' | 'card';
+export type ActivityPage = 'profile' | 'board' | 'card';
