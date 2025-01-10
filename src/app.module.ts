@@ -19,11 +19,13 @@ import { AccessTokenGuard } from './auth/guards/access-token/access-token.guard'
 import { BoardsModule } from './boards/boards.module';
 import { ListsModule } from './lists/lists.module';
 import { CardsModule } from './cards/cards.module';
-import { ActivitiesModule } from './activities/activities.module';
 import { Board } from './boards/entities/board.entity';
 import { List } from './lists/entities/list.entity';
 import { Card } from './cards/entities/card.entity';
 import { ActivitiesModule } from './activities/activities.module';
+import { BoardMember } from './boards/entities/board-member.entity';
+import { LabelsModule } from './labels/labels.module';
+import { Label } from './labels/entities/label.entity';
 
 const ENV = process.env.NODE_ENV;
 console.log(process.env.NODE_ENV);
@@ -59,7 +61,15 @@ console.log(process.env.NODE_ENV);
       }),
     }),
 
-    TypeOrmModule.forFeature([User, AuthModule, Board, List, Card]),
+    TypeOrmModule.forFeature([
+      User,
+      AuthModule,
+      Board,
+      List,
+      Card,
+      Label,
+      BoardMember,
+    ]),
 
     // Register the JWT configuration, making it available via the ConfigService
     ConfigModule.forFeature(jwtConfig),
@@ -68,6 +78,8 @@ console.log(process.env.NODE_ENV);
     // by the jwtConfig. This allows us to configure JWT options like secret
     // and expiration based on environment variables.
     JwtModule.registerAsync(jwtConfig.asProvider()),
+
+    LabelsModule,
   ],
   controllers: [],
   providers: [

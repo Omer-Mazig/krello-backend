@@ -27,7 +27,7 @@ export class ActivityMessageConstructorFactory {
             throw new Error(`Unsupported page type: ${page}`);
         }
       default:
-        const _unreachable: never = type;
+        const _unreachable = type;
         throw new Error(`Unsupported activity type: ${type}`);
     }
   }

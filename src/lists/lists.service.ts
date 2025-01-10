@@ -8,7 +8,7 @@ import { List } from './entities/list.entity';
 import { CreateListDto } from './dto/create-list.dto';
 
 @Injectable()
-export class CardsService {
+export class ListsService {
   constructor(
     @InjectRepository(List)
     private readonly listRepository: Repository<List>,

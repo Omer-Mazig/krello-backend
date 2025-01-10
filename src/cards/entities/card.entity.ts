@@ -1,4 +1,5 @@
 import { Board } from 'src/boards/entities/board.entity';
+import { Label } from 'src/labels/entities/label.entity';
 import { List } from 'src/lists/entities/list.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -23,8 +24,9 @@ export class Card {
   @Column({ nullable: true })
   description?: string;
 
-  @Column({ default: [] })
-  labels: string[];
+  @ManyToMany(() => Label, (label) => label.cards, { cascade: true })
+  @JoinTable()
+  labels: Label[];
 
   @Column({ type: 'timestamptz', nullable: true })
   dueDate: Date;
