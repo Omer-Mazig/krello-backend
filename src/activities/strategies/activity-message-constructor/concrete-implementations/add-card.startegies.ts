@@ -1,22 +1,17 @@
 import { Activity } from 'src/activities/entities/activity.entity';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
+import { createPart } from 'src/activities/utils/create-parts.util';
 
 export class AddingCardProfileMessage implements ActivityMessageConstructor {
   construct(activity: Activity) {
     return {
-      message: `User ${activity.user.name} added a card`,
-      references: {
-        card: {
-          id: activity.card.id,
-          label: activity.card.title,
-          isClickable: true,
-        },
-        list: {
-          id: activity.listName,
-          label: activity.listName,
-          isClickable: false,
-        },
-      },
+      parts: [
+        createPart('link', `${activity.user.name}`, activity.user.id),
+        createPart('text', `added`),
+        createPart('link', activity.card.title, activity.card.id),
+        createPart('text', `to`),
+        createPart('text', `${activity.listName}`), // Non-clickable
+      ],
     };
   }
 }
@@ -24,19 +19,13 @@ export class AddingCardProfileMessage implements ActivityMessageConstructor {
 export class AddingCardBoardMessage implements ActivityMessageConstructor {
   construct(activity: Activity) {
     return {
-      message: `User ${activity.user.name} added a card`,
-      references: {
-        card: {
-          id: activity.card.id,
-          label: activity.card.title,
-          isClickable: true,
-        },
-        list: {
-          id: activity.listName,
-          label: activity.listName,
-          isClickable: false,
-        },
-      },
+      parts: [
+        createPart('link', `${activity.user.name}`, activity.user.id),
+        createPart('text', `added`),
+        createPart('link', activity.card.title, activity.card.id),
+        createPart('text', `to`),
+        createPart('text', `${activity.listName}`), // Non-clickable
+      ],
     };
   }
 }
@@ -44,14 +33,10 @@ export class AddingCardBoardMessage implements ActivityMessageConstructor {
 export class AddingCardCardMessage implements ActivityMessageConstructor {
   construct(activity: Activity) {
     return {
-      message: `User ${activity.user.name} added this card`,
-      references: {
-        list: {
-          id: activity.listName,
-          label: activity.listName,
-          isClickable: false,
-        },
-      },
+      parts: [
+        createPart('link', `${activity.user.name}`, activity.user.id),
+        createPart('text', `added this card`),
+      ],
     };
   }
 }
