@@ -1,17 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ActivityEvent } from '../enums/activity-event.enum';
+import {
+  AddCardActivityPayload,
+  AddListActivityPayload,
+} from '../types/activity-payload.type';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
-/**
- * this provider will be useful when we have more than one actions base on the same event
- */
+type ActivityPayloadMap = {
+  [ActivityEvent.CARD_ADDED]: AddCardActivityPayload;
+  [ActivityEvent.LIST_ADDED]: AddListActivityPayload;
+  // Add other mappings as needed
+};
+
 @Injectable()
 export class ActivityEventEmitter {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  emitActivity<TActivityPayload>(
-    eventName: ActivityEvent,
-    payload: TActivityPayload,
+  emitActivity<K extends keyof ActivityPayloadMap>(
+    eventName: K,
+    payload: ActivityPayloadMap[K],
   ) {
     this.eventEmitter.emit(eventName, payload);
   }

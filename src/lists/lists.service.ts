@@ -27,14 +27,11 @@ export class ListsService {
     const savedList = await this.listRepository.save(newList);
 
     // Trigger ADDING_CARD event
-    this.activityEventEmitter.emitActivity<AddListActivityPayload>(
-      ActivityEvent.LIST_ADDED,
-      {
-        type: ActivityEvent.LIST_ADDED,
-        userId,
-        sourceBoardId: savedList.board.id,
-      },
-    );
+    this.activityEventEmitter.emitActivity(ActivityEvent.LIST_ADDED, {
+      type: ActivityEvent.LIST_ADDED,
+      userId,
+      sourceBoardId: savedList.board.id,
+    });
 
     return savedList;
   }

@@ -28,16 +28,13 @@ export class CardsService {
     const savedCard = await this.cardRepository.save(newCard);
 
     // Trigger ADDING_CARD event
-    this.activityEventEmitter.emitActivity<AddCardActivityPayload>(
-      ActivityEvent.CARD_ADDED,
-      {
-        type: ActivityEvent.CARD_ADDED,
-        userId,
-        sourceBoardId: savedCard.board.id,
-        cardId: savedCard.id,
-        sourceListTitle: savedCard.list.title,
-      },
-    );
+    this.activityEventEmitter.emitActivity(ActivityEvent.CARD_ADDED, {
+      type: ActivityEvent.CARD_ADDED,
+      userId,
+      sourceBoardId: savedCard.board.id,
+      cardId: savedCard.id,
+      sourceListTitle: savedCard.list.title,
+    });
 
     return savedCard;
   }
