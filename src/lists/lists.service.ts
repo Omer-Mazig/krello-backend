@@ -32,7 +32,7 @@ export class CardsService {
       {
         type: ActivityEvent.ADDING_LIST,
         userId,
-        boardId: savedList.board.id,
+        sourceBoardId: savedList.board.id,
       },
     );
 

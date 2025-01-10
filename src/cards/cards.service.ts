@@ -33,9 +33,9 @@ export class CardsService {
       {
         type: ActivityEvent.ADDING_CARD,
         userId,
-        boardId: savedCard.board.id,
+        sourceBoardId: savedCard.board.id,
         cardId: savedCard.id,
-        listTitle: savedCard.list.title,
+        sourceListTitle: savedCard.list.title,
       },
     );
 

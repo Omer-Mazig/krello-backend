@@ -38,7 +38,7 @@ export class ActivitiesService {
 
   async queryBoardActivities(boardId: string) {
     const activities = await this.activityRepository.find({
-      where: { board: { id: boardId } },
+      where: { sourceBoard: { id: boardId } },
       relations: ['user', 'board', 'card'],
     });
 

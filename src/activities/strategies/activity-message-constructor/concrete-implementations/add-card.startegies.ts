@@ -10,7 +10,7 @@ export class AddingCardProfileMessage implements ActivityMessageConstructor {
         createPart('text', `added`),
         createPart('link', activity.card.title, activity.card.id),
         createPart('text', `to`),
-        createPart('text', `${activity.listName}`), // Non-clickable
+        createPart('text', `${activity.sourceListTitle}`), // Non-clickable
       ],
     };
   }
@@ -24,7 +24,7 @@ export class AddingCardBoardMessage implements ActivityMessageConstructor {
         createPart('text', `added`),
         createPart('link', activity.card.title, activity.card.id),
         createPart('text', `to`),
-        createPart('text', `${activity.listName}`), // Non-clickable
+        createPart('text', `${activity.sourceListTitle}`), // Non-clickable
       ],
     };
   }

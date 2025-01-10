@@ -27,18 +27,22 @@ export class Activity {
   user: User;
 
   @ManyToOne(() => Board, { eager: true }) // Add `eager` if board is always required
-  @JoinColumn({ name: 'board_id' })
-  board: Board;
+  @JoinColumn({ name: 'source_board_id' })
+  sourceBoard: Board;
+
+  @ManyToOne(() => Board)
+  @JoinColumn({ name: 'dest_board_id' })
+  destBoard?: Board;
 
   @ManyToOne(() => Card, { nullable: true })
   @JoinColumn({ name: 'card_id' })
-  card: Card;
+  card?: Card;
 
   @Column({ nullable: true })
-  listName: string; // Lists don't have a dedicated page
+  sourceListTitle?: string; // Lists don't have a dedicated page
 
-  @Column('jsonb', { nullable: true })
-  extraData: Record<string, any>; // Additional data for rendering activities
+  @Column({ nullable: true })
+  destListTitle?: string; // Lists don't have a dedicated page
 
   @CreateDateColumn()
   createdAt: Date;
