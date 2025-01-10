@@ -13,7 +13,7 @@ export class ActivityMessageConstructorFactory {
     page: ActivityPage,
   ): ActivityMessageConstructor {
     switch (type) {
-      case 'ADDING_CARD':
+      case 'CARD_ADDED':
         switch (page) {
           case 'profile':
             return new AddingCardProfileMessage();

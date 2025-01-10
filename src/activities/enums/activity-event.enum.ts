@@ -1,6 +1,4 @@
 export enum ActivityEvent {
-  ADDING_CARD = 'ADDING_CARD',
-  ADDING_LIST = 'ADDING_LIST',
-  // ARCHIVE_CARD = 'ARCHIVE_CARD',
-  // MOVE_CARD = 'MOVE_CARD',
+  CARD_ADDED = 'CARD_ADDED',
+  LIST_ADDED = 'LIST_ADDED',
 }

@@ -1,42 +1,39 @@
 import { Activity } from 'src/activities/entities/activity.entity';
+import { ActivityMessageBuilder } from '../builders/activity-message-builder';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
-import { createPart } from 'src/activities/utils/create-parts.util';
 
 export class AddingCardProfileMessage implements ActivityMessageConstructor {
   construct(activity: Activity) {
-    return {
-      parts: [
-        createPart('link', `${activity.user.name}`, activity.user.id),
-        createPart('text', `added`),
-        createPart('link', activity.card.title, activity.card.id),
-        createPart('text', `to`),
-        createPart('text', `${activity.sourceListTitle}`), // Non-clickable
-      ],
-    };
+    const builder = new ActivityMessageBuilder();
+    return builder
+      .addLink(activity.user.name, activity.user.id)
+      .addText('added')
+      .addLink(activity.card.title, activity.card.id)
+      .addText('to')
+      .addStyledText(activity.sourceListTitle) // Non-clickable
+      .build();
   }
 }
 
 export class AddingCardBoardMessage implements ActivityMessageConstructor {
   construct(activity: Activity) {
-    return {
-      parts: [
-        createPart('link', `${activity.user.name}`, activity.user.id),
-        createPart('text', `added`),
-        createPart('link', activity.card.title, activity.card.id),
-        createPart('text', `to`),
-        createPart('text', `${activity.sourceListTitle}`), // Non-clickable
-      ],
-    };
+    const builder = new ActivityMessageBuilder();
+    return builder
+      .addLink(activity.user.name, activity.user.id)
+      .addText('added')
+      .addLink(activity.card.title, activity.card.id)
+      .addText('to')
+      .addStyledText(activity.sourceListTitle) // Non-clickable
+      .build();
   }
 }
 
 export class AddingCardCardMessage implements ActivityMessageConstructor {
   construct(activity: Activity) {
-    return {
-      parts: [
-        createPart('link', `${activity.user.name}`, activity.user.id),
-        createPart('text', `added this card`),
-      ],
-    };
+    const builder = new ActivityMessageBuilder();
+    return builder
+      .addLink(activity.user.name, activity.user.id)
+      .addText('added this card')
+      .build();
   }
 }

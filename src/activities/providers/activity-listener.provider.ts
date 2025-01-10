@@ -9,7 +9,7 @@ import { AddCardActivityPayload } from '../types/activity-payload.type';
 export class ActivityListener {
   constructor(private readonly activityService: ActivitiesService) {}
 
-  @OnEvent(ActivityEvent.ADDING_CARD)
+  @OnEvent(ActivityEvent.CARD_ADDED)
   async handleAddingCardEvent(payload: AddCardActivityPayload) {
     await this.activityService.createActivity<AddCardActivityPayload>(payload);
   }

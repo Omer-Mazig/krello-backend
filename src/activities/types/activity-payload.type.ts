@@ -1,7 +1,7 @@
 import { ActivityEvent } from '../enums/activity-event.enum';
 
 export type AddCardActivityPayload = {
-  type: ActivityEvent.ADDING_CARD;
+  type: ActivityEvent.CARD_ADDED;
   userId: string;
   sourceBoardId: string;
   cardId: string;
@@ -9,7 +9,7 @@ export type AddCardActivityPayload = {
 };
 
 export type AddListActivityPayload = {
-  type: ActivityEvent.ADDING_LIST;
+  type: ActivityEvent.LIST_ADDED;
   userId: string;
   sourceBoardId: string;
 };

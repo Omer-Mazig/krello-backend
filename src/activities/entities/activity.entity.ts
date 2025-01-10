@@ -20,7 +20,7 @@ export class Activity {
     type: 'enum',
     enum: ActivityEvent,
   })
-  type: ActivityEvent; // E.g., ADDING_CARD, ARCHIVE_CARD
+  type: ActivityEvent;
 
   @ManyToOne(() => User, { eager: true }) // Add `eager` if user is always required
   @JoinColumn({ name: 'user_id' })

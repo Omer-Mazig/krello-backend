@@ -29,9 +29,9 @@ export class CardsService {
 
     // Trigger ADDING_CARD event
     this.activityEventEmitter.emitActivity<AddCardActivityPayload>(
-      ActivityEvent.ADDING_CARD,
+      ActivityEvent.CARD_ADDED,
       {
-        type: ActivityEvent.ADDING_CARD,
+        type: ActivityEvent.CARD_ADDED,
         userId,
         sourceBoardId: savedCard.board.id,
         cardId: savedCard.id,
