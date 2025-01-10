@@ -1,8 +1,8 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
-import { CardsService } from './cards.service';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { CardsService } from './cards.service';
 
 @Controller('cards')
 export class CardsController {

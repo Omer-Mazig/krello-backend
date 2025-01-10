@@ -1,26 +1,41 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ActivityEventEmitter } from 'src/activities/providers/activity-event-emitter.provider';
+import { ActivityEvent } from 'src/activities/enums/activity-event.enum';
+import { AddListActivityPayload } from 'src/activities/types/activity-payload.type';
+import { List } from './entities/list.entity';
 import { CreateListDto } from './dto/create-list.dto';
-import { UpdateListDto } from './dto/update-list.dto';
 
 @Injectable()
-export class ListsService {
-  create(createListDto: CreateListDto) {
-    return 'This action adds a new list';
-  }
+export class CardsService {
+  constructor(
+    @InjectRepository(List)
+    private readonly listRepository: Repository<List>,
+    private readonly activityEventEmitter: ActivityEventEmitter,
+  ) {}
 
-  findAll() {
-    return `This action returns all lists`;
-  }
+  async create(
+    { title, boardId, position }: CreateListDto,
+    userId: string,
+  ): Promise<List> {
+    const newList = this.listRepository.create({
+      title,
+      board: { id: boardId },
+      position,
+    });
+    const savedList = await this.listRepository.save(newList);
 
-  findOne(id: number) {
-    return `This action returns a #${id} list`;
-  }
+    // Trigger ADDING_CARD event
+    this.activityEventEmitter.emitActivity<AddListActivityPayload>(
+      ActivityEvent.ADDING_CARD,
+      {
+        type: ActivityEvent.ADDING_LIST,
+        userId,
+        boardId: savedList.board.id,
+      },
+    );
 
-  update(id: number, updateListDto: UpdateListDto) {
-    return `This action updates a #${id} list`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} list`;
+    return savedList;
   }
 }

@@ -5,25 +5,25 @@ import { Card } from './entities/card.entity';
 import { ActivityEventEmitter } from 'src/activities/providers/activity-event-emitter.provider';
 import { ActivityEvent } from 'src/activities/enums/activity-event.enum';
 import { AddCardActivityPayload } from 'src/activities/types/activity-payload.type';
+import { CreateCardDto } from './dto/create-card.dto';
 
 @Injectable()
-export class CardService {
+export class CardsService {
   constructor(
     @InjectRepository(Card)
     private readonly cardRepository: Repository<Card>,
     private readonly activityEventEmitter: ActivityEventEmitter,
   ) {}
 
-  async addCard(
-    title: string,
-    listId: string,
-    boardId: string,
+  async create(
+    { title, listId, boardId, position }: CreateCardDto,
     userId: string,
   ): Promise<Card> {
     const newCard = this.cardRepository.create({
       title,
       list: { id: listId },
       board: { id: boardId },
+      position,
     });
     const savedCard = await this.cardRepository.save(newCard);
 
@@ -35,7 +35,7 @@ export class CardService {
         userId,
         boardId: savedCard.board.id,
         cardId: savedCard.id,
-        listName: savedCard.list.name,
+        listTitle: savedCard.list.title,
       },
     );
 

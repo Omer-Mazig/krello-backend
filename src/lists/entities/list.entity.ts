@@ -16,7 +16,7 @@ export class List {
   id: string;
 
   @Column()
-  name: string;
+  title: string;
 
   @Column()
   position: number; // Position to manage ordering
