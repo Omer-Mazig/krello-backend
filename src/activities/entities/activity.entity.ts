@@ -1,6 +1,5 @@
 import { Board } from 'src/boards/entities/board.entity';
 import { Card } from 'src/cards/entities/card.entity';
-import { List } from 'src/lists/entities/list.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
@@ -8,41 +7,39 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
-import { ActivityType, TextTemplateStrings } from './types/activity.types';
+import { ActivityEvent } from '../enums/activity-event.enum';
 
 @Entity('activities')
 export class Activity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
-  type: ActivityType; // e.g., 'ADD_CARD', 'MOVE_CARD', 'TRANSFER_LIST'
+  @Column({
+    type: 'enum',
+    enum: ActivityEvent,
+  })
+  type: ActivityEvent; // E.g., ADDING_CARD, ARCHIVE_CARD
 
-  @Column()
-  textTemplate: TextTemplateStrings; // e.g., "User {user} moved card {card} from {sourceList} to {destinationList}"
+  @ManyToOne(() => User, { eager: true }) // Add `eager` if user is always required
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
-  @Column('jsonb')
-  placeholders: Record<string, { id: string; name: string }>;
-
-  @ManyToOne(() => User, { nullable: true })
-  user: User; // The user who performed the activity
+  @ManyToOne(() => Board, { eager: true }) // Add `eager` if board is always required
+  @JoinColumn({ name: 'board_id' })
+  board: Board;
 
   @ManyToOne(() => Card, { nullable: true })
-  card: Card; // The card related to the activity (if any)
+  @JoinColumn({ name: 'card_id' })
+  card: Card;
 
-  @ManyToOne(() => List, { nullable: true })
-  sourceList: List; // The source list related to the activity
+  @Column({ nullable: true })
+  listName: string; // Lists don't have a dedicated page
 
-  @ManyToOne(() => List, { nullable: true })
-  destinationList: List; // The destination list related to the activity
-
-  @ManyToOne(() => Board, { nullable: true })
-  sourceBoard: Board; // The source board related to the activity
-
-  @ManyToOne(() => Board, { nullable: true })
-  destinationBoard: Board; // The destination board related to the activity
+  @Column('jsonb', { nullable: true })
+  extraData: Record<string, any>; // Additional data for rendering activities
 
   @CreateDateColumn()
-  timestamp: Date;
+  createdAt: Date;
 }

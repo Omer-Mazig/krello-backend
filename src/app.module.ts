@@ -23,6 +23,7 @@ import { ActivitiesModule } from './activities/activities.module';
 import { Board } from './boards/entities/board.entity';
 import { List } from './lists/entities/list.entity';
 import { Card } from './cards/entities/card.entity';
+import { ActivitiesModule } from './activities/activities.module';
 
 const ENV = process.env.NODE_ENV;
 console.log(process.env.NODE_ENV);
