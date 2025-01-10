@@ -6,12 +6,13 @@ import { ActivityPayload } from './types/activity-payload.type';
 import { ActivityMessageConstructorFactory } from './factories/activity-message-constructor.factory';
 
 @Injectable()
-export class ActivityService {
+export class ActivitiesService {
   constructor(
     @InjectRepository(Activity)
     private readonly activityRepository: Repository<Activity>,
   ) {}
 
+  //TODO: extract to 'ActivityCreatorProvider'
   async createActivity(payload: ActivityPayload): Promise<Activity> {
     const activity = this.activityRepository.create({
       type: payload.type,

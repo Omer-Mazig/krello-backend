@@ -1,9 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ActivityService } from './activities.service';
+import { ActivitiesService } from './activities.service';
 
 @Controller('activities')
-export class ActivityController {
-  constructor(private readonly activityService: ActivityService) {}
+export class ActivitiesController {
+  constructor(private readonly activityService: ActivitiesService) {}
 
   @Get('/profile/:userId')
   async getProfileActivities(@Param('userId') userId: string) {
