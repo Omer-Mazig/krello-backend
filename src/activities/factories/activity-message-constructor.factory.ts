@@ -9,7 +9,7 @@ import { ActivityPage } from '../types/activity-page.type';
 import {
   UnsupportedActivityTypeError,
   UnsupportedPageTypeError,
-} from '../utils/errors';
+} from '../errors/errors';
 
 type ConstructorMap = {
   [key in ActivityEvent]: Partial<
@@ -31,12 +31,12 @@ export class ActivityMessageConstructorFactory {
    */
   private static constructorMap: ConstructorMap = {
     BOARD_ADDED: {
-      profile: CardAddedProfileActivityMessage,
-      board: CardAddedBoardActivityMessage,
+      profile: CardAddedProfileActivityMessage, // placeholder for now
+      board: CardAddedBoardActivityMessage, // placeholder for now
     },
     LIST_ADDED: {
-      profile: CardAddedProfileActivityMessage,
-      board: CardAddedBoardActivityMessage,
+      profile: CardAddedProfileActivityMessage, // placeholder for now
+      board: CardAddedBoardActivityMessage, // placeholder for now
     },
     CARD_ADDED: {
       profile: CardAddedProfileActivityMessage,

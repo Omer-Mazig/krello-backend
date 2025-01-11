@@ -14,27 +14,6 @@ import { ActivityPayloadMap } from '../types/activity-payload.type';
 export class ActivityListener {
   constructor(private readonly activityService: ActivitiesService) {}
 
-  /**
-   * Handles the `CARD_ADDED` activity event.
-   *
-   * This method is triggered whenever a `CARD_ADDED` event is emitted.
-   * It delegates the creation of the corresponding activity to the `ActivitiesService`.
-   *
-   * @param {ActivityPayloadMap[ActivityEvent.CARD_ADDED]} payload -
-   *   The payload for the `CARD_ADDED` event. Its type is inferred from the
-   *   `ActivityPayloadMap` based on the event name.
-   *
-   * ### Example Payload
-   * ```typescript
-   * {
-   *   type: ActivityEvent.CARD_ADDED,
-   *   userId: 'user123',
-   *   sourceBoardId: 'board456',
-   *   cardId: 'card789',
-   *   sourceListTitle: 'To Do'
-   * }
-   * ```
-   */
   @OnEvent(ActivityEvent.CARD_ADDED)
   async handleAddingCardEvent(
     payload: ActivityPayloadMap[ActivityEvent.CARD_ADDED],
