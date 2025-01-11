@@ -6,55 +6,70 @@ import {
 } from '../strategies/activity-message-constructor/concrete-implementations/add-card.startegies';
 import { ActivityMessageConstructor } from '../strategies/activity-message-constructor/interfaces/activity-message-constructor.interface';
 import { ActivityPage } from '../types/activity-page.type';
+import {
+  UnsupportedActivityTypeError,
+  UnsupportedPageTypeError,
+} from '../utils/errors';
 
-// TODO: 1. consider creating an interface for each type
-// TODO: 2. figure out a way to strict new [somestrategy] (new AddingCardProfileMessage(); in bard added for example...) maybe 1 will solve it
+type ConstructorMap = {
+  [key in ActivityEvent]: Partial<
+    Record<ActivityPage, new () => ActivityMessageConstructor>
+  >;
+};
+
+/**
+ * Factory class to retrieve the appropriate `ActivityMessageConstructor` implementation
+ * based on the `ActivityEvent` type and the `ActivityPage`.
+ */
 export class ActivityMessageConstructorFactory {
+  /**
+   * Mapping configuration for `ActivityEvent` types and their corresponding constructors
+   * based on the `ActivityPage`.
+   *
+   * This acts as the source of truth for determining which constructor to use for
+   * each combination of activity event and page type.
+   */
+  private static constructorMap: ConstructorMap = {
+    BOARD_ADDED: {
+      profile: CardAddedProfileActivityMessage,
+      board: CardAddedBoardActivityMessage,
+    },
+    LIST_ADDED: {
+      profile: CardAddedProfileActivityMessage,
+      board: CardAddedBoardActivityMessage,
+    },
+    CARD_ADDED: {
+      profile: CardAddedProfileActivityMessage,
+      board: CardAddedBoardActivityMessage,
+      card: CardAddedCardActivityMessage,
+    },
+  };
+
+  /**
+   * Retrieves the appropriate `ActivityMessageConstructor` based on the provided
+   * activity event type and page type.
+   *
+   * @param {`${ActivityEvent}`} type - The type of the activity event (e.g., `CARD_ADDED`, `BOARD_ADDED`).
+   * @param {ActivityPage} page - The type of the activity page (e.g., `profile`, `board`, `card`).
+   * @returns {ActivityMessageConstructor} The constructor for the specified activity event and page.
+   * @throws {UnsupportedActivityTypeError} If the provided `type` is not supported.
+   * @throws {UnsupportedPageTypeError} If the provided `page` is not supported for the given `type`.
+   *
+   */
   static getConstructor(
     type: `${ActivityEvent}`,
     page: ActivityPage,
   ): ActivityMessageConstructor {
-    switch (type) {
-      case 'BOARD_ADDED':
-        switch (page) {
-          case 'profile':
-            return new CardAddedProfileActivityMessage(); // not real... just placeholder for typescript for now. implment later
-          case 'board':
-            return new CardAddedBoardActivityMessage(); // not real... just placeholder for typescript for now. implment later
-          case 'card':
-            return new CardAddedCardActivityMessage(); // not real... just placeholder for typescript for now. implment later
-          default:
-            const _unreachable: never = page;
-            throw new Error(`Unsupported page type: ${page}`);
-        }
-      case 'LIST_ADDED':
-        switch (page) {
-          case 'profile':
-            return new CardAddedProfileActivityMessage(); // not real... just placeholder for typescript for now. implment later
-          case 'board':
-            return new CardAddedBoardActivityMessage(); // not real... just placeholder for typescript for now. implment later
-          case 'card':
-            return new CardAddedCardActivityMessage(); // not real... just placeholder for typescript for now. implment later
-          default:
-            const _unreachable: never = page;
-            throw new Error(`Unsupported page type: ${page}`);
-        }
-
-      case 'CARD_ADDED':
-        switch (page) {
-          case 'profile':
-            return new CardAddedProfileActivityMessage();
-          case 'board':
-            return new CardAddedBoardActivityMessage();
-          case 'card':
-            return new CardAddedCardActivityMessage();
-          default:
-            const _unreachable: never = page;
-            throw new Error(`Unsupported page type: ${page}`);
-        }
-      default:
-        const _unreachable: never = type;
-        throw new Error(`Unsupported activity type: ${type}`);
+    const pageConstructors = this.constructorMap[type];
+    if (!pageConstructors) {
+      throw new UnsupportedActivityTypeError(type, this.name);
     }
+
+    const Constructor = pageConstructors[page];
+    if (!Constructor) {
+      throw new UnsupportedPageTypeError(page, this.name);
+    }
+
+    return new Constructor();
   }
 }
