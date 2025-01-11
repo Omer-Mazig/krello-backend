@@ -14,7 +14,7 @@ import databaseConfig from './config/database.config';
 import evniromentValidation from './config/evniroment.validation';
 
 import jwtConfig from './auth/config/jwt.config';
-import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
+import { AuthGuard } from './auth/guards/authentication/auth.guard';
 import { AccessTokenGuard } from './auth/guards/access-token/access-token.guard';
 import { BoardsModule } from './boards/boards.module';
 import { ListsModule } from './lists/lists.module';
@@ -86,7 +86,7 @@ console.log(process.env.NODE_ENV);
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AuthenticationGuard,
+      useClass: AuthGuard,
     },
     AccessTokenGuard,
     BoardSuperAdminGuard,
