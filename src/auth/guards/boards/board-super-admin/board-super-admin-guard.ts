@@ -26,11 +26,11 @@ export class BoardSuperAdminGuard implements CanActivate {
       throw new NotFoundException(`Board with ID ${boardId} not found.`);
     }
 
-    const isAdmin = board.members.some(
-      (member) => member.user.id === user.sub && member.role === 'admin',
+    const isSuperAdmin = board.members.some(
+      (member) => member.user.id === user.sub && member.role === 'super_admin',
     );
 
-    if (!isAdmin) {
+    if (!isSuperAdmin) {
       throw new ForbiddenException(
         'You are not authorized to perform this action.',
       );
