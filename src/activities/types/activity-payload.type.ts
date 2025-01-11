@@ -21,19 +21,19 @@ type EnsureExactMatch = NoExtraKeys<ActivityPayloadMap, ActivityEvent>;
 const _ensureExactMatch: EnsureExactMatch = true;
 
 // Payload Definitions
-export type BoardAddedActivityPayload = {
+type BoardAddedActivityPayload = {
   type: ActivityEvent.BOARD_ADDED;
   userId: string;
   sourceBoardId: string;
 };
 
-export type ListAddedActivityPayload = {
+type ListAddedActivityPayload = {
   type: ActivityEvent.LIST_ADDED;
   userId: string;
   sourceBoardId: string;
 };
 
-export type CardAddedActivityPayload = {
+type CardAddedActivityPayload = {
   type: ActivityEvent.CARD_ADDED;
   userId: string;
   sourceBoardId: string;
