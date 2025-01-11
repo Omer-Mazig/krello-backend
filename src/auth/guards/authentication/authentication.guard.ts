@@ -41,24 +41,28 @@ export class AuthenticationGuard implements CanActivate {
 
     const guards = authTypes.map((type) => this.authTypeGuardMap[type]).flat();
 
-    // Declare the default error
-    let error = new UnauthorizedException();
+    let lastError: Error | null = null;
 
     for (const instance of guards) {
-      const canActivate = await Promise.resolve(
-        // Here the AccessToken Guard Will be fired and check if user has permissions to acces
-        // Later Multiple AuthTypes can be used even if one of them returns true
-        // The user is Authorised to access the resource
-        instance.canActivate(context),
-      ).catch((err) => {
-        error = err;
-      });
-
-      if (canActivate) {
-        return true;
+      try {
+        const canActivate = await Promise.resolve(
+          instance.canActivate(context),
+        );
+        if (!canActivate) {
+          throw new UnauthorizedException(
+            'One of the guards failed to authorize the request.',
+          );
+        }
+      } catch (err) {
+        lastError = err;
+        break;
       }
     }
 
-    throw error;
+    if (lastError) {
+      throw lastError;
+    }
+
+    return true;
   }
 }

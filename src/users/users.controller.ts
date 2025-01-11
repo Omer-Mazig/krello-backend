@@ -18,6 +18,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('')
+  @Auth(AuthType.None) // JUST FOR TESTING!!!
   public async findAll() {
     return this.usersService.findAll();
   }
