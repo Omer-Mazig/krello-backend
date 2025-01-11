@@ -21,9 +21,43 @@ export class BoardsService {
   ) {}
 
   private readonly RELATION_MAP = {
+    // Fetch board members and their associated users
     members: ['members', 'members.user'],
-    lists: ['lists', 'lists.cards'],
-    all: ['members', 'members.user', 'lists', 'lists.cards', 'labels'],
+
+    // Fetch lists only (not their cards)
+    lists: ['lists'],
+
+    // Fetch lists with their nested cards
+    listsWithCards: ['lists', 'lists.cards'],
+
+    // Fetch cards directly linked to the board (ungrouped)
+    cards: ['cards'],
+
+    // Fetch labels associated with the board
+    labels: ['labels'],
+
+    // Fetch everything related to cards (including members and labels)
+    cardsWithDetails: ['cards', 'cards.members', 'cards.labels'],
+
+    // Fetch everything related to lists, including nested cards and their details
+    listsWithCardsAndDetails: [
+      'lists',
+      'lists.cards',
+      'lists.cards.members',
+      'lists.cards.labels',
+    ],
+
+    // Fetch everything related to the board
+    all: [
+      'members',
+      'members.user',
+      'lists',
+      'lists.cards',
+      'lists.cards.members',
+      'lists.cards.labels',
+      'cards',
+      'labels',
+    ],
   };
 
   async create({ name }: CreateBoardDto, userId: string) {
