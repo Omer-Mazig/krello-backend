@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { DataSource, Repository } from 'typeorm';
 import { BoardMember } from './entities/board-member.entity';
+import { ActivityEventEmitter } from 'src/activities/providers/activity-event-emitter.provider';
+import { ActivityEvent } from 'src/activities/enums/activity-event.enum';
 
 @Injectable()
 export class BoardsService {
@@ -15,6 +17,7 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
     private readonly dataSource: DataSource,
+    private readonly activityEventEmitter: ActivityEventEmitter,
   ) {}
 
   private readonly RELATION_MAP = {
@@ -85,10 +88,19 @@ export class BoardsService {
       await queryRunner.commitTransaction();
 
       // Step 3: Fetch and return the board with its members
-      return this.boardRepository.findOne({
+      const boardToReturn = this.boardRepository.findOne({
         where: { id: newBoard.id },
         relations: ['members'],
       });
+
+      // Trigger BOARD_ADDED event
+      this.activityEventEmitter.emitActivity(ActivityEvent.BOARD_ADDED, {
+        type: ActivityEvent.BOARD_ADDED,
+        userId,
+        sourceBoardId: newBoard.id,
+      });
+
+      return boardToReturn;
     } catch (error) {
       // Rollback the transaction in case of error
       await queryRunner.rollbackTransaction();
