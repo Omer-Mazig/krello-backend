@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ActivityEventEmitter } from 'src/activities/providers/activity-event-emitter.provider';
 import { ActivityEvent } from 'src/activities/enums/activity-event.enum';
-import { AddListActivityPayload } from 'src/activities/types/activity-payload.type';
 import { List } from './entities/list.entity';
 import { CreateListDto } from './dto/create-list.dto';
 

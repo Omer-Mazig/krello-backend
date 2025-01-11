@@ -7,13 +7,39 @@ import {
 import { ActivityMessageConstructor } from '../strategies/activity-message-constructor/interfaces/activity-message-constructor.interface';
 import { ActivityPage } from '../types/activity-page.type';
 
-// TODO: figure out a way to strict new [somestrategy]
+// TODO: 1. consider creating an interface for each type
+// TODO: 2. figure out a way to strict new [somestrategy] (new AddingCardProfileMessage(); in bard added for example...) maybe 1 will solve it
 export class ActivityMessageConstructorFactory {
   static getConstructor(
     type: `${ActivityEvent}`,
     page: ActivityPage,
   ): ActivityMessageConstructor {
     switch (type) {
+      case 'BOARD_ADDED':
+        switch (page) {
+          case 'profile':
+            return new AddingCardProfileMessage(); // note real
+          case 'board':
+            return new AddingCardBoardMessage(); // note real
+          case 'card':
+            return new AddingCardCardMessage(); // note real
+          default:
+            const _unreachable: never = page;
+            throw new Error(`Unsupported page type: ${page}`);
+        }
+      case 'LIST_ADDED':
+        switch (page) {
+          case 'profile':
+            return new AddingCardProfileMessage(); // note real
+          case 'board':
+            return new AddingCardBoardMessage(); // note real
+          case 'card':
+            return new AddingCardCardMessage(); // note real
+          default:
+            const _unreachable: never = page;
+            throw new Error(`Unsupported page type: ${page}`);
+        }
+
       case 'CARD_ADDED':
         switch (page) {
           case 'profile':
@@ -27,7 +53,7 @@ export class ActivityMessageConstructorFactory {
             throw new Error(`Unsupported page type: ${page}`);
         }
       default:
-        const _unreachable = type;
+        const _unreachable: never = type;
         throw new Error(`Unsupported activity type: ${type}`);
     }
   }

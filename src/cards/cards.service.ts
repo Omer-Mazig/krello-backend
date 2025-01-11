@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Card } from './entities/card.entity';
 import { ActivityEventEmitter } from 'src/activities/providers/activity-event-emitter.provider';
 import { ActivityEvent } from 'src/activities/enums/activity-event.enum';
-import { AddCardActivityPayload } from 'src/activities/types/activity-payload.type';
 import { CreateCardDto } from './dto/create-card.dto';
 
 @Injectable()
