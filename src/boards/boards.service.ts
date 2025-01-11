@@ -59,28 +59,47 @@ export class BoardsService {
   };
 
   async create({ name }: CreateBoardDto, userId: string) {
-    try {
-      return await this.dataSource.transaction(async (manager) => {
-        const newBoard = manager.getRepository(Board).create({ name });
-        await manager.getRepository(Board).save(newBoard);
+    const queryRunner = this.dataSource.createQueryRunner();
 
-        const boardMember = manager.getRepository(BoardMember).create({
+    // Connect the query runner to a transaction
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Step 1: Create the board
+      const newBoard = queryRunner.manager
+        .getRepository(Board)
+        .create({ name });
+      await queryRunner.manager.getRepository(Board).save(newBoard);
+
+      // Step 2: Create the board member
+      const boardMember = queryRunner.manager
+        .getRepository(BoardMember)
+        .create({
           board: newBoard,
           user: { id: userId },
           role: 'super_admin',
         });
-        await manager.getRepository(BoardMember).save(boardMember);
+      await queryRunner.manager.getRepository(BoardMember).save(boardMember);
 
-        return manager.getRepository(Board).findOne({
-          where: { id: newBoard.id },
-          relations: ['members'],
-        });
+      // Commit the transaction
+      await queryRunner.commitTransaction();
+
+      // Step 3: Fetch and return the board with its members
+      return this.boardRepository.findOne({
+        where: { id: newBoard.id },
+        relations: ['members'],
       });
     } catch (error) {
+      // Rollback the transaction in case of error
+      await queryRunner.rollbackTransaction();
       console.error('Error creating board:', error);
       throw new InternalServerErrorException(
         'Failed to create board. Please try again later.',
       );
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
     }
   }
 
