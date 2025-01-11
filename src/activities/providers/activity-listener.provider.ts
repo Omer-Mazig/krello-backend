@@ -14,6 +14,17 @@ import { ActivityPayloadMap } from '../types/activity-payload.type';
 export class ActivityListener {
   constructor(private readonly activityService: ActivitiesService) {}
 
+  @OnEvent(ActivityEvent.BOARD_ADDED)
+  async handleAddingBoardEvent(
+    payload: ActivityPayloadMap[ActivityEvent.BOARD_ADDED],
+  ) {
+    console.log('baba');
+
+    await this.activityService.createActivity<
+      ActivityPayloadMap[ActivityEvent.BOARD_ADDED]
+    >(payload);
+  }
+
   @OnEvent(ActivityEvent.CARD_ADDED)
   async handleAddingCardEvent(
     payload: ActivityPayloadMap[ActivityEvent.CARD_ADDED],

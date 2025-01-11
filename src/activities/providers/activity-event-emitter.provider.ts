@@ -38,6 +38,8 @@ export class ActivityEventEmitter {
     eventName: K,
     payload: ActivityPayloadMap[K],
   ) {
+    console.log(eventName, payload);
+
     this.eventEmitter.emit(eventName, payload);
   }
 }

@@ -10,6 +10,10 @@ import {
   UnsupportedActivityTypeError,
   UnsupportedPageTypeError,
 } from '../errors/errors';
+import {
+  BoardAddedBoardActivityMessage,
+  BoardAddedProfileActivityMessage,
+} from '../strategies/activity-message-constructor/concrete-implementations/add-board.startegies';
 
 type ConstructorMap = {
   [key in ActivityEvent]: Partial<
@@ -31,8 +35,8 @@ export class ActivityMessageConstructorFactory {
    */
   private static constructorMap: ConstructorMap = {
     BOARD_ADDED: {
-      profile: CardAddedProfileActivityMessage, // placeholder for now
-      board: CardAddedBoardActivityMessage, // placeholder for now
+      profile: BoardAddedProfileActivityMessage, // placeholder for now
+      board: BoardAddedBoardActivityMessage, // placeholder for now
     },
     LIST_ADDED: {
       profile: CardAddedProfileActivityMessage, // placeholder for now

@@ -19,13 +19,15 @@ export class ActivitiesService {
       payload as DeepPartial<Activity>,
     ); // Explicitly cast to DeepPartial<Activity>
 
+    console.log('ActivitiesService:', activity);
+
     return this.activityRepository.save(activity);
   }
 
   async queryProfileActivities(userId: string) {
     const activities = await this.activityRepository.find({
       where: { user: { id: userId } },
-      relations: ['user', 'board', 'card'],
+      relations: ['user', 'sourceBoard', 'card'],
     });
 
     return activities.map((activity) =>
