@@ -14,7 +14,6 @@ export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
-    @InjectRepository(BoardMember)
     private readonly dataSource: DataSource,
   ) {}
 

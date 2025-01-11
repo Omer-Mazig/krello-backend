@@ -13,6 +13,7 @@ export class BoardSuperAdminGuard implements CanActivate {
   constructor(private readonly boardsService: BoardsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('BoardSuperAdminGuard executed');
     const request = context.switchToHttp().getRequest();
     const user = request[REQUEST_USER_KEY];
     const boardId = request.params.id;

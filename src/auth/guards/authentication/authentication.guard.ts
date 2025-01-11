@@ -21,7 +21,10 @@ export class AuthenticationGuard implements CanActivate {
   > = {
     [AuthType.Bearer]: this.accessTokenGuard,
     [AuthType.None]: { canActivate: () => true },
-    [AuthType.BoardSuperAdmin]: this.boardSuperAdminGuard,
+    [AuthType.BoardSuperAdmin]: [
+      this.accessTokenGuard,
+      this.boardSuperAdminGuard,
+    ],
   };
 
   constructor(
