@@ -18,11 +18,11 @@ export class ActivityMessageConstructorFactory {
       case 'BOARD_ADDED':
         switch (page) {
           case 'profile':
-            return new AddingCardProfileMessage(); // note real
+            return new AddingCardProfileMessage(); // not real... just placeholder for typescript for now. implment later
           case 'board':
-            return new AddingCardBoardMessage(); // note real
+            return new AddingCardBoardMessage(); // not real... just placeholder for typescript for now. implment later
           case 'card':
-            return new AddingCardCardMessage(); // note real
+            return new AddingCardCardMessage(); // not real... just placeholder for typescript for now. implment later
           default:
             const _unreachable: never = page;
             throw new Error(`Unsupported page type: ${page}`);
@@ -30,11 +30,11 @@ export class ActivityMessageConstructorFactory {
       case 'LIST_ADDED':
         switch (page) {
           case 'profile':
-            return new AddingCardProfileMessage(); // note real
+            return new AddingCardProfileMessage(); // not real... just placeholder for typescript for now. implment later
           case 'board':
-            return new AddingCardBoardMessage(); // note real
+            return new AddingCardBoardMessage(); // not real... just placeholder for typescript for now. implment later
           case 'card':
-            return new AddingCardCardMessage(); // note real
+            return new AddingCardCardMessage(); // not real... just placeholder for typescript for now. implment later
           default:
             const _unreachable: never = page;
             throw new Error(`Unsupported page type: ${page}`);
