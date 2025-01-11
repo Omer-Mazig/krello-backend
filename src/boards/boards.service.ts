@@ -12,15 +12,15 @@ export class BoardsService {
     return `This action returns all boards`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} board`;
   }
 
-  update(id: number, updateBoardDto: UpdateBoardDto) {
+  update(id: string, updateBoardDto: UpdateBoardDto) {
     return `This action updates a #${id} board`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} board`;
   }
 }

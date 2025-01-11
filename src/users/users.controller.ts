@@ -19,7 +19,7 @@ export class UsersController {
 
   @Get('active')
   @UseInterceptors(ClassSerializerInterceptor)
-  public async getActiveUser(@ActiveUser() activeUser: ActiveUserData) {
+  public async findActiveUser(@ActiveUser() activeUser: ActiveUserData) {
     return this.usersService.findOneById(activeUser.sub);
   }
 
