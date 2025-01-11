@@ -3,7 +3,9 @@ import { ActivityMessageBuilder } from '../builders/activity-message-builder';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
 import { BadRequestException } from '@nestjs/common';
 
-export class AddingCardProfileMessage implements ActivityMessageConstructor {
+export class CardAddedProfileActivityMessage
+  implements ActivityMessageConstructor
+{
   construct(activity: Activity) {
     if (!activity.card) {
       throw new BadRequestException('Missing [card] on activity');
@@ -24,7 +26,9 @@ export class AddingCardProfileMessage implements ActivityMessageConstructor {
   }
 }
 
-export class AddingCardBoardMessage implements ActivityMessageConstructor {
+export class CardAddedBoardActivityMessage
+  implements ActivityMessageConstructor
+{
   construct(activity: Activity) {
     if (!activity.card) {
       throw new BadRequestException('Missing [card] on activity');
@@ -45,7 +49,9 @@ export class AddingCardBoardMessage implements ActivityMessageConstructor {
   }
 }
 
-export class AddingCardCardMessage implements ActivityMessageConstructor {
+export class CardAddedCardActivityMessage
+  implements ActivityMessageConstructor
+{
   construct(activity: Activity) {
     const builder = new ActivityMessageBuilder();
     return builder

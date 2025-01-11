@@ -1,8 +1,8 @@
 import { ActivityEvent } from '../enums/activity-event.enum';
 import {
-  AddingCardBoardMessage,
-  AddingCardCardMessage,
-  AddingCardProfileMessage,
+  CardAddedBoardActivityMessage,
+  CardAddedCardActivityMessage,
+  CardAddedProfileActivityMessage,
 } from '../strategies/activity-message-constructor/concrete-implementations/add-card.startegies';
 import { ActivityMessageConstructor } from '../strategies/activity-message-constructor/interfaces/activity-message-constructor.interface';
 import { ActivityPage } from '../types/activity-page.type';
@@ -18,11 +18,11 @@ export class ActivityMessageConstructorFactory {
       case 'BOARD_ADDED':
         switch (page) {
           case 'profile':
-            return new AddingCardProfileMessage(); // not real... just placeholder for typescript for now. implment later
+            return new CardAddedProfileActivityMessage(); // not real... just placeholder for typescript for now. implment later
           case 'board':
-            return new AddingCardBoardMessage(); // not real... just placeholder for typescript for now. implment later
+            return new CardAddedBoardActivityMessage(); // not real... just placeholder for typescript for now. implment later
           case 'card':
-            return new AddingCardCardMessage(); // not real... just placeholder for typescript for now. implment later
+            return new CardAddedCardActivityMessage(); // not real... just placeholder for typescript for now. implment later
           default:
             const _unreachable: never = page;
             throw new Error(`Unsupported page type: ${page}`);
@@ -30,11 +30,11 @@ export class ActivityMessageConstructorFactory {
       case 'LIST_ADDED':
         switch (page) {
           case 'profile':
-            return new AddingCardProfileMessage(); // not real... just placeholder for typescript for now. implment later
+            return new CardAddedProfileActivityMessage(); // not real... just placeholder for typescript for now. implment later
           case 'board':
-            return new AddingCardBoardMessage(); // not real... just placeholder for typescript for now. implment later
+            return new CardAddedBoardActivityMessage(); // not real... just placeholder for typescript for now. implment later
           case 'card':
-            return new AddingCardCardMessage(); // not real... just placeholder for typescript for now. implment later
+            return new CardAddedCardActivityMessage(); // not real... just placeholder for typescript for now. implment later
           default:
             const _unreachable: never = page;
             throw new Error(`Unsupported page type: ${page}`);
@@ -43,11 +43,11 @@ export class ActivityMessageConstructorFactory {
       case 'CARD_ADDED':
         switch (page) {
           case 'profile':
-            return new AddingCardProfileMessage();
+            return new CardAddedProfileActivityMessage();
           case 'board':
-            return new AddingCardBoardMessage();
+            return new CardAddedBoardActivityMessage();
           case 'card':
-            return new AddingCardCardMessage();
+            return new CardAddedCardActivityMessage();
           default:
             const _unreachable: never = page;
             throw new Error(`Unsupported page type: ${page}`);
