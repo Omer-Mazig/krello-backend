@@ -8,8 +8,6 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
   ManyToOne,
 } from 'typeorm';
 import { BoardMember } from './board-member.entity';
