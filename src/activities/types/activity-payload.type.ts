@@ -7,33 +7,30 @@ export type ActivityPayloadMap = {
   [ActivityEvent.BOARD_ADDED]: BoardAddedActivityPayload;
 };
 
-// Enforce that ActivityPayloadMap has no extra keys
-type NoExtraKeys<T, U> = keyof T extends U
-  ? U extends keyof T
-    ? true
-    : false
-  : false;
+// Type-level enforcement for completeness
+export type EnsureAllEventsCovered =
+  keyof ActivityPayloadMap extends ActivityEvent
+    ? ActivityEvent extends keyof ActivityPayloadMap
+      ? true
+      : false
+    : false;
 
-// Ensure ActivityPayloadMap matches exactly with ActivityEvent
-type EnsureExactMatch = NoExtraKeys<ActivityPayloadMap, ActivityEvent>;
+// If there are missing keys, this will cause a TypeScript error
+const _ensureAllEventsCovered: EnsureAllEventsCovered = true;
 
-// If there are mismatches, this will cause a TypeScript error
-const _ensureExactMatch: EnsureExactMatch = true;
-
-// Payload Definitions
-type BoardAddedActivityPayload = {
+export type BoardAddedActivityPayload = {
   type: ActivityEvent.BOARD_ADDED;
   userId: string;
   sourceBoardId: string;
 };
 
-type ListAddedActivityPayload = {
+export type ListAddedActivityPayload = {
   type: ActivityEvent.LIST_ADDED;
   userId: string;
   sourceBoardId: string;
 };
 
-type CardAddedActivityPayload = {
+export type CardAddedActivityPayload = {
   type: ActivityEvent.CARD_ADDED;
   userId: string;
   sourceBoardId: string;
