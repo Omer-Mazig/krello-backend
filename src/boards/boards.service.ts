@@ -112,7 +112,7 @@ export class BoardsService {
    * @param relationKey - Key from the RELATION_MAP to specify relations to load.
    * @returns The board with the specified relations.
    */
-  async findBoardWithRelations(
+  async findOneWithRelations(
     boardId: string,
     relationKey: keyof typeof this.RELATION_MAP = 'all', // Default to 'all'
   ): Promise<Board> {

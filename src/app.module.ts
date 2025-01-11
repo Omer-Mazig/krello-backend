@@ -26,6 +26,7 @@ import { ActivitiesModule } from './activities/activities.module';
 import { BoardMember } from './boards/entities/board-member.entity';
 import { LabelsModule } from './labels/labels.module';
 import { Label } from './labels/entities/label.entity';
+import { BoardSuperAdminGuard } from './auth/guards/boards/board-super-admin/board-super-admin-guard';
 
 const ENV = process.env.NODE_ENV;
 console.log(process.env.NODE_ENV);
@@ -37,6 +38,8 @@ console.log(process.env.NODE_ENV);
     BoardsModule,
     ListsModule,
     CardsModule,
+    LabelsModule,
+
     ActivitiesModule,
 
     ConfigModule.forRoot({
@@ -78,8 +81,6 @@ console.log(process.env.NODE_ENV);
     // by the jwtConfig. This allows us to configure JWT options like secret
     // and expiration based on environment variables.
     JwtModule.registerAsync(jwtConfig.asProvider()),
-
-    LabelsModule,
   ],
   controllers: [],
   providers: [
@@ -88,6 +89,7 @@ console.log(process.env.NODE_ENV);
       useClass: AuthenticationGuard,
     },
     AccessTokenGuard,
+    BoardSuperAdminGuard,
   ],
 })
 export class AppModule {}

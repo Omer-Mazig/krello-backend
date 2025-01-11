@@ -17,7 +17,7 @@ export class BoardSuperAdminGuard implements CanActivate {
     const user = request[REQUEST_USER_KEY];
     const boardId = request.params.id;
 
-    const board = await this.boardsService.findBoardWithRelations(
+    const board = await this.boardsService.findOneWithRelations(
       boardId,
       'members',
     );
