@@ -15,7 +15,7 @@ export class CardAddedProfileActivityMessage
 
     const builder = new ActivityMessageBuilder();
     return builder
-      .addLink(activity.user.name, activity.user.id)
+      .addLink(activity.user.username, activity.user.id)
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
@@ -36,7 +36,7 @@ export class CardAddedBoardActivityMessage
 
     const builder = new ActivityMessageBuilder();
     return builder
-      .addLink(activity.user.name, activity.user.id)
+      .addLink(activity.user.username, activity.user.id)
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
@@ -53,7 +53,7 @@ export class CardAddedCardActivityMessage
 
     const builder = new ActivityMessageBuilder();
     return builder
-      .addLink(activity.user.name, activity.user.id)
+      .addLink(activity.user.username, activity.user.id)
       .addText('added this card')
       .build();
   }

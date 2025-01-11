@@ -8,20 +8,50 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HashingProvider } from 'src/auth/providers/hashing.provider';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly hashingProvider: HashingProvider,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const existingUser = await this.userRepository.findOne({
+        where: { email: createUserDto.email },
+      });
+      if (existingUser) {
+        throw new BadRequestException(
+          'The user already exists, please check your email.',
+        );
+      }
+
+      const hashedPassword = await this.hashingProvider.hashPassword(
+        createUserDto.password,
+      );
+      const newUser = this.userRepository.create({
+        ...createUserDto,
+        password: hashedPassword,
+      });
+
+      return await this.userRepository.save(newUser);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please try later',
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    try {
+      const users = await this.userRepository.find();
+      return users;
+    } catch (error) {
+      throw new RequestTimeoutException('Error connecting to the database');
+    }
   }
 
   async findOneById(id: string) {

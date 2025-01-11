@@ -17,16 +17,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get('')
+  public async findAll() {
+    return this.usersService.findAll();
+  }
+
   @Get('active')
   @UseInterceptors(ClassSerializerInterceptor)
-  public async findActiveUser(@ActiveUser() activeUser: ActiveUserData) {
+  public async findActive(@ActiveUser() activeUser: ActiveUserData) {
     return this.usersService.findOneById(activeUser.sub);
   }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @Auth(AuthType.None)
-  public createUser(@Body() createUserDto: CreateUserDto) {
+  public create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 }
