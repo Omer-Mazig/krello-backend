@@ -11,7 +11,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { CookieProvider } from './providers/cookie.provider';
-import { UsersService } from 'src/users/users.service';
 
 // TODO: LOOK AT APP MODULE CONFIG. WE MIGHT REMOE SOME CONFIG HERE
 

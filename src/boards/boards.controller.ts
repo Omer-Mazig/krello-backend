@@ -1,23 +1,21 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Post()
-  create(@Body() createBoardDto: CreateBoardDto) {
-    return this.boardsService.create(createBoardDto);
+  create(
+    @Body() createBoardDto: CreateBoardDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.boardsService.create(createBoardDto, user.sub);
   }
 
   @Get()
@@ -27,16 +25,12 @@ export class BoardsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.boardsService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardsService.update(id, updateBoardDto);
+    return this.boardsService.findBoardWithRelations(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Auth(AuthType.BoardSuperAdmin)
+  async remove(@Param('id') id: string) {
     return this.boardsService.remove(id);
   }
 }
