@@ -1,6 +1,6 @@
 import { Card } from 'src/cards/entities/card.entity';
 import { List } from 'src/lists/entities/list.entity';
-import { User } from 'src/users/entities/user.entity';
+import { BoardMember } from './board-member.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,9 +8,8 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
 } from 'typeorm';
-import { BoardMember } from './board-member.entity';
+import { Label } from 'src/labels/entities/label.entity';
 
 @Entity()
 export class Board {
@@ -25,17 +24,18 @@ export class Board {
 
   @OneToMany(() => BoardMember, (boardMember) => boardMember.board, {
     cascade: true,
+    eager: true, // To ensure at least one admin exists upon creation
   })
   members: BoardMember[];
-
-  @ManyToOne(() => User, { nullable: false })
-  createdBy: User; // Super Admin (board creator)
 
   @OneToMany(() => Card, (card) => card.board, { cascade: true })
   cards: Card[];
 
   @OneToMany(() => List, (list) => list.board, { cascade: true })
   lists: List[];
+
+  @OneToMany(() => Label, (label) => label.board, { cascade: true })
+  labels: Label[];
 
   @CreateDateColumn()
   createdAt: Date;

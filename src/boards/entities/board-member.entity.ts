@@ -17,11 +17,13 @@ export class BoardMember {
   @ManyToOne(() => Board, (board) => board.members, { onDelete: 'CASCADE' })
   board: Board;
 
-  @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.boardMemberships, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
-  @Column({ default: false })
-  isAdmin: boolean;
+  @Column({ default: 'member' })
+  role: 'member' | 'admin' | 'super_admin';
 
   @CreateDateColumn()
   createdAt: Date;

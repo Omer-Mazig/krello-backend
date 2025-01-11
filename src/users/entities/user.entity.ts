@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Board } from 'src/boards/entities/board.entity';
+import { BoardMember } from 'src/boards/entities/board-member.entity';
 import { Card } from 'src/cards/entities/card.entity';
 import {
   Entity,
@@ -7,6 +7,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
   ManyToMany,
   JoinTable,
 } from 'typeorm';
@@ -26,9 +27,8 @@ export class User {
   @Exclude()
   password: string;
 
-  @ManyToMany(() => Board, (board) => board.members)
-  @JoinTable()
-  boards: Board[];
+  @OneToMany(() => BoardMember, (boardMember) => boardMember.user)
+  boardMemberships: BoardMember[];
 
   @ManyToMany(() => Card, (card) => card.members)
   @JoinTable()
