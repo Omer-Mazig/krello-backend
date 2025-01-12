@@ -23,7 +23,7 @@ export class Activity {
   type: ActivityType;
 
   @ManyToOne(() => User, { eager: true }) // Add `eager` if user is always required
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn()
   user: User;
 
   @ManyToOne(() => Board, { eager: true }) // Add `eager` if board is always required
