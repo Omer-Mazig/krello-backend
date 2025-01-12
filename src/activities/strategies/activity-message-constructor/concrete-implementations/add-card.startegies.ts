@@ -1,7 +1,7 @@
 import { Activity } from 'src/activities/entities/activity.entity';
 import { ActivityMessageBuilder } from '../builders/activity-message-builder';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
-import { validateActivityFields } from 'src/activities/utils/validateActivityFields.util';
+import { validateActivityFields } from 'src/activities/utils/validate-activity-fields.util';
 
 export class CardAddedProfileActivityMessage
   implements ActivityMessageConstructor
@@ -19,7 +19,7 @@ export class CardAddedProfileActivityMessage
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
-      .addStyledText(activity.sourceListTitle) // Non-clickable
+      .addStyledText(activity.sourceListTitle)
       .build();
   }
 }
@@ -40,7 +40,7 @@ export class CardAddedBoardActivityMessage
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
-      .addStyledText(activity.sourceListTitle) // Non-clickable
+      .addStyledText(activity.sourceListTitle)
       .build();
   }
 }
