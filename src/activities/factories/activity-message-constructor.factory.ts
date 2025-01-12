@@ -64,8 +64,6 @@ export class ActivityMessageConstructorFactory {
     type: `${ActivityType}`,
     page: ActivityPage,
   ): ActivityMessageConstructor {
-    console.log('ActivityMessageConstructorFactory');
-
     const pageConstructors = this.constructorMap[type];
     if (!pageConstructors) {
       throw new UnsupportedActivityTypeError(type, this.name);
