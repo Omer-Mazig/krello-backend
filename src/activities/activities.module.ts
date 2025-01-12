@@ -8,7 +8,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Module({
   controllers: [ActivitiesController],
-  providers: [ActivitiesService, ActivityListener, EventEmitter2],
+  providers: [ActivitiesService, ActivityListener],
   imports: [TypeOrmModule.forFeature([Activity])],
 })
 export class ActivitiesModule {}

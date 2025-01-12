@@ -5,20 +5,20 @@ import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
 @Controller('activities')
 export class ActivitiesController {
-  constructor(private readonly activityService: ActivitiesService) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Get('/profile')
   async getProfileActivities(@ActiveUser() user: ActiveUserData) {
-    return this.activityService.queryProfileActivities(user.sub);
+    return this.activitiesService.queryProfileActivities(user.sub);
   }
 
   @Get('/board/:boardId')
   async getBoardActivities(@Param('boardId') boardId: string) {
-    return this.activityService.queryBoardActivities(boardId);
+    return this.activitiesService.queryBoardActivities(boardId);
   }
 
   @Get('/card/:cardId')
   async getCardActivities(@Param('cardId') cardId: string) {
-    return this.activityService.queryCardActivities(cardId);
+    return this.activitiesService.queryCardActivities(cardId);
   }
 }

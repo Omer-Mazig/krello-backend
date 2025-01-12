@@ -8,7 +8,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Module({
   controllers: [BoardsController],
-  providers: [BoardsService, EventEmitter2],
+  providers: [BoardsService],
   imports: [TypeOrmModule.forFeature([Board, BoardMember])],
   exports: [BoardsService],
 })

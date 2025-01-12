@@ -19,8 +19,6 @@ export class ActivitiesService {
       payload as DeepPartial<Activity>,
     ); // Explicitly cast to DeepPartial<Activity>
 
-    console.log('ActivitiesService:', activity);
-
     return this.activityRepository.save(activity);
   }
 

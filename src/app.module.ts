@@ -34,6 +34,8 @@ console.log(process.env.NODE_ENV);
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
+
     UsersModule,
     AuthModule,
     BoardsModule,
@@ -74,8 +76,6 @@ console.log(process.env.NODE_ENV);
       Label,
       BoardMember,
     ]),
-
-    EventEmitterModule.forRoot(),
 
     // Register the JWT configuration, making it available via the ConfigService
     ConfigModule.forFeature(jwtConfig),
