@@ -89,10 +89,7 @@ export class BoardsService {
       await queryRunner.commitTransaction();
 
       // Step 3: Fetch and return the board with its members
-      const boardToReturn = this.boardRepository.findOne({
-        where: { id: newBoard.id },
-        relations: ['members'],
-      });
+      const boardToReturn = this.findOneWithRelations(newBoard.id);
 
       this.eventEmitter.emit(BOARD_ADDED, {
         type: ActivityType.BOARD_ADDED,
