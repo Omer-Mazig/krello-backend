@@ -28,7 +28,11 @@ export class ActivitiesService {
   async queryProfileActivities(userId: string) {
     const activities = await this.activityRepository.find({
       where: { user: { id: userId } },
-      relations: ['user', 'sourceBoard', 'card'],
+      relations: {
+        user: true,
+        sourceBoard: true,
+        card: true,
+      },
     });
 
     return activities.map((activity) =>
@@ -42,7 +46,11 @@ export class ActivitiesService {
   async queryBoardActivities(boardId: string) {
     const activities = await this.activityRepository.find({
       where: { sourceBoard: { id: boardId } },
-      relations: ['user', 'sourceBoard', 'card'],
+      relations: {
+        user: true,
+        sourceBoard: true,
+        card: true,
+      },
     });
 
     return activities.map((activity) =>
@@ -56,7 +64,11 @@ export class ActivitiesService {
   async queryCardActivities(cardId: string) {
     const activities = await this.activityRepository.find({
       where: { card: { id: cardId } },
-      relations: ['user', 'sourceBoard', 'card'],
+      relations: {
+        user: true,
+        sourceBoard: true,
+        card: true,
+      },
     });
 
     return activities.map((activity) =>
