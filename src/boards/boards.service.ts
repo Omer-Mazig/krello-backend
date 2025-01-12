@@ -10,7 +10,7 @@ import { DataSource, Repository } from 'typeorm';
 import { BoardMember } from './entities/board-member.entity';
 import { ActivityType } from 'src/activities/enums/activity-type.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { BOARD_ADDED } from 'src/events/event.constants';
+import { EVENT_BOARD_ADDED } from 'src/constants/event.constants';
 import { ActivityPayloadMap } from 'src/activities/types/activity-payload.type';
 
 @Injectable()
@@ -92,7 +92,7 @@ export class BoardsService {
       // Step 3: Fetch and return the board with its members
       const boardToReturn = this.findOneWithRelations(newBoard.id);
 
-      this.eventEmitter.emit(BOARD_ADDED, {
+      this.eventEmitter.emit(EVENT_BOARD_ADDED, {
         type: ActivityType.BOARD_ADDED,
         user: userId,
         sourceBoard: newBoard.id,

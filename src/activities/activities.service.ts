@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './entities/activity.entity';
 import { ActivityMessageConstructorFactory } from './factories/activity-message-constructor.factory';
 import { OnEvent } from '@nestjs/event-emitter';
-import { BOARD_ADDED } from 'src/events/event.constants';
+import { EVENT_BOARD_ADDED } from 'src/constants/event.constants';
 
 @Injectable()
 export class ActivitiesService {
@@ -13,7 +13,7 @@ export class ActivitiesService {
     private readonly activityRepository: Repository<Activity>,
   ) {}
 
-  @OnEvent(BOARD_ADDED)
+  @OnEvent(EVENT_BOARD_ADDED)
   async createActivity(payload: DeepPartial<Activity>): Promise<Activity> {
     const activity = this.activityRepository.create(payload);
 

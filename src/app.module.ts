@@ -30,7 +30,6 @@ import { BoardSuperAdminGuard } from './auth/guards/boards/board-super-admin/boa
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 const ENV = process.env.NODE_ENV;
-console.log(process.env.NODE_ENV);
 
 @Module({
   imports: [
