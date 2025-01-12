@@ -7,6 +7,8 @@ export class BoardAddedProfileActivityMessage
 {
   construct(activity: Activity) {
     const builder = new ActivityMessageBuilder();
+    console.log('BoardAddedProfileActivityMessage', activity);
+
     return builder
       .addLink(activity.user.username, activity.user.id)
       .addText('created')

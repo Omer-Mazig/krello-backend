@@ -28,6 +28,8 @@ export class ActivitiesService {
       relations: ['user', 'sourceBoard', 'card'],
     });
 
+    console.log('ActivityMessageConstructorFactory');
+
     return activities.map((activity) =>
       ActivityMessageConstructorFactory.getConstructor(
         activity.type,
