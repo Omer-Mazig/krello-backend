@@ -4,7 +4,6 @@ import { BoardsController } from './boards.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { BoardMember } from './entities/board-member.entity';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Module({
   controllers: [BoardsController],
