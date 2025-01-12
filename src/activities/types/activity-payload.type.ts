@@ -23,20 +23,20 @@ const _payloadTypeValidation: PayloadTypeValidation = {
 // Define the payload types for each activity event
 type BoardAddedActivityPayload = {
   type: ActivityType.BOARD_ADDED;
-  userId: string;
-  sourceBoardId: string;
+  user: string;
+  sourceBoard: string;
 };
 
 type ListAddedActivityPayload = {
   type: ActivityType.LIST_ADDED;
-  userId: string;
-  sourceBoardId: string;
+  user: string;
+  sourceBoard: string;
 };
 
 type CardAddedActivityPayload = {
   type: ActivityType.CARD_ADDED;
-  userId: string;
-  sourceBoardId: string;
-  cardId: string;
+  user: string;
+  sourceBoard: string;
+  card: string;
   sourceListTitle: string;
 };

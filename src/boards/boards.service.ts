@@ -11,6 +11,7 @@ import { BoardMember } from './entities/board-member.entity';
 import { ActivityType } from 'src/activities/enums/activity-type.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BOARD_ADDED } from 'src/events/event.constants';
+import { ActivityPayloadMap } from 'src/activities/types/activity-payload.type';
 
 @Injectable()
 export class BoardsService {
@@ -93,9 +94,9 @@ export class BoardsService {
 
       this.eventEmitter.emit(BOARD_ADDED, {
         type: ActivityType.BOARD_ADDED,
-        userId,
-        sourceBoardId: newBoard.id,
-      });
+        user: userId,
+        sourceBoard: newBoard.id,
+      } satisfies ActivityPayloadMap[ActivityType.BOARD_ADDED]);
 
       return boardToReturn;
     } catch (error) {
