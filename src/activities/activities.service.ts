@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './entities/activity.entity';
@@ -14,7 +14,15 @@ export class ActivitiesService {
   //TODO: extract to 'ActivityCreatorProvider'
   async createActivity(payload: DeepPartial<Activity>): Promise<Activity> {
     const activity = this.activityRepository.create(payload);
-    return this.activityRepository.save(activity);
+
+    try {
+      return this.activityRepository.save(activity);
+    } catch (error) {
+      console.error(`Error creating activity with payload ${payload}`, error);
+      throw new InternalServerErrorException(
+        'Failed to create activity. Please try again later.',
+      );
+    }
   }
 
   async queryProfileActivities(userId: string) {
@@ -22,8 +30,6 @@ export class ActivitiesService {
       where: { user: { id: userId } },
       relations: ['user', 'sourceBoard', 'card'],
     });
-
-    console.log('ActivityMessageConstructorFactory');
 
     return activities.map((activity) =>
       ActivityMessageConstructorFactory.getConstructor(
