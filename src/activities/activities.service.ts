@@ -12,13 +12,8 @@ export class ActivitiesService {
   ) {}
 
   //TODO: extract to 'ActivityCreatorProvider'
-  async createActivity<TActivityPayload>(
-    payload: TActivityPayload,
-  ): Promise<Activity> {
-    const activity = this.activityRepository.create(
-      payload as DeepPartial<Activity>,
-    ); // Explicitly cast to DeepPartial<Activity>
-
+  async createActivity(payload: DeepPartial<Activity>): Promise<Activity> {
+    const activity = this.activityRepository.create(payload);
     return this.activityRepository.save(activity);
   }
 
@@ -41,7 +36,7 @@ export class ActivitiesService {
   async queryBoardActivities(boardId: string) {
     const activities = await this.activityRepository.find({
       where: { sourceBoard: { id: boardId } },
-      relations: ['user', 'board', 'card'],
+      relations: ['user', 'sourceBoard', 'card'],
     });
 
     return activities.map((activity) =>
@@ -55,7 +50,7 @@ export class ActivitiesService {
   async queryCardActivities(cardId: string) {
     const activities = await this.activityRepository.find({
       where: { card: { id: cardId } },
-      relations: ['user', 'board', 'card'],
+      relations: ['user', 'sourceBoard', 'card'],
     });
 
     return activities.map((activity) =>

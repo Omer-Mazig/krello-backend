@@ -4,6 +4,8 @@ import { ActivitiesService } from '../activities.service';
 import { ActivityType } from '../enums/activity-type.enum';
 import { ActivityPayloadMap } from '../types/activity-payload.type';
 import { BOARD_ADDED, CARD_ADDED } from 'src/events/event.constants';
+import { Activity } from '../entities/activity.entity';
+import { DeepPartial } from 'typeorm';
 
 /**
  * Handles activity events and delegates actions to the `ActivitiesService`.
@@ -19,17 +21,14 @@ export class ActivityListener {
   handleAddingBoardEvent(
     payload: ActivityPayloadMap[ActivityType.BOARD_ADDED],
   ) {
-    this.activitiesService.createActivity<
-      ActivityPayloadMap[ActivityType.BOARD_ADDED]
-    >(payload);
-  }
+    // Preprocess the payload
+    const processedPayload: DeepPartial<Activity> = {
+      ...payload,
+      user: { id: payload.userId },
+      sourceBoard: { id: payload.sourceBoardId },
+      // baba: 'baba', // this will error
+    };
 
-  @OnEvent(CARD_ADDED)
-  handleAddingCardEvent(payload: ActivityPayloadMap[ActivityType.CARD_ADDED]) {
-    console.log('ActivityListener', payload);
-
-    this.activitiesService.createActivity<
-      ActivityPayloadMap[ActivityType.CARD_ADDED]
-    >(payload);
+    this.activitiesService.createActivity(processedPayload);
   }
 }
