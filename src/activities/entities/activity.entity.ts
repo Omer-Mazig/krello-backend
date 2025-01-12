@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { ActivityType } from '../enums/activity-type.enum';
 
-@Entity('activities')
+@Entity()
 export class Activity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
