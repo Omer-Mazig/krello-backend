@@ -35,8 +35,8 @@ export class ActivityMessageConstructorFactory {
    */
   private static constructorMap: ConstructorMap = {
     BOARD_ADDED: {
-      profile: BoardAddedProfileActivityMessage, // placeholder for now
-      board: BoardAddedBoardActivityMessage, // placeholder for now
+      profile: BoardAddedProfileActivityMessage,
+      board: BoardAddedBoardActivityMessage,
     },
     LIST_ADDED: {
       profile: CardAddedProfileActivityMessage, // placeholder for now
