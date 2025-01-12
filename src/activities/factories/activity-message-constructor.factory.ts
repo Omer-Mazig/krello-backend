@@ -1,4 +1,4 @@
-import { ActivityEvent } from '../enums/activity-event.enum';
+import { ActivityType } from '../enums/activity-type.enum';
 import {
   CardAddedBoardActivityMessage,
   CardAddedCardActivityMessage,
@@ -16,7 +16,7 @@ import {
 } from '../strategies/activity-message-constructor/concrete-implementations/add-board.startegies';
 
 type ConstructorMap = {
-  [key in ActivityEvent]: Partial<
+  [key in ActivityType]: Partial<
     Record<ActivityPage, new () => ActivityMessageConstructor>
   >;
 };
@@ -53,7 +53,7 @@ export class ActivityMessageConstructorFactory {
    * Retrieves the appropriate `ActivityMessageConstructor` based on the provided
    * activity event type and page type.
    *
-   * @param {`${ActivityEvent}`} type - The type of the activity event (e.g., `CARD_ADDED`, `BOARD_ADDED`).
+   * @param {`${ActivityType}`} type - The type of the activity event (e.g., `CARD_ADDED`, `BOARD_ADDED`).
    * @param {ActivityPage} page - The type of the activity page (e.g., `profile`, `board`, `card`).
    * @returns {ActivityMessageConstructor} The constructor for the specified activity event and page.
    * @throws {UnsupportedActivityTypeError} If the provided `type` is not supported.
@@ -61,7 +61,7 @@ export class ActivityMessageConstructorFactory {
    *
    */
   static getConstructor(
-    type: `${ActivityEvent}`,
+    type: `${ActivityType}`,
     page: ActivityPage,
   ): ActivityMessageConstructor {
     const pageConstructors = this.constructorMap[type];

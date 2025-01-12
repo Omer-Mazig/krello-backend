@@ -8,8 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { DataSource, Repository } from 'typeorm';
 import { BoardMember } from './entities/board-member.entity';
-import { ActivityEventEmitter } from 'src/activities/providers/activity-event-emitter.provider';
-import { ActivityEvent } from 'src/activities/enums/activity-event.enum';
+import { ActivityType } from 'src/activities/enums/activity-type.enum';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { BOARD_ADDED } from 'src/events/board.event';
 
 @Injectable()
 export class BoardsService {
@@ -17,7 +18,7 @@ export class BoardsService {
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
     private readonly dataSource: DataSource,
-    private readonly activityEventEmitter: ActivityEventEmitter,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private readonly RELATION_MAP = {
@@ -93,9 +94,8 @@ export class BoardsService {
         relations: ['members'],
       });
 
-      // Trigger BOARD_ADDED event
-      this.activityEventEmitter.emitActivity(ActivityEvent.BOARD_ADDED, {
-        type: ActivityEvent.BOARD_ADDED,
+      this.eventEmitter.emit(BOARD_ADDED, {
+        type: ActivityType.BOARD_ADDED,
         userId,
         sourceBoardId: newBoard.id,
       });

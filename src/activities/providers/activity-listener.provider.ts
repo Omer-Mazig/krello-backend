@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ActivitiesService } from '../activities.service';
-import { ActivityEvent } from '../enums/activity-event.enum';
+import { ActivityType } from '../enums/activity-type.enum';
 import { ActivityPayloadMap } from '../types/activity-payload.type';
+import { BOARD_ADDED } from 'src/events/board.event';
+import { CARD_ADDED } from 'src/events/card.event';
 
 /**
  * Handles activity events and delegates actions to the `ActivitiesService`.
@@ -14,23 +16,21 @@ import { ActivityPayloadMap } from '../types/activity-payload.type';
 export class ActivityListener {
   constructor(private readonly activityService: ActivitiesService) {}
 
-  @OnEvent(ActivityEvent.BOARD_ADDED)
+  @OnEvent(BOARD_ADDED)
   async handleAddingBoardEvent(
-    payload: ActivityPayloadMap[ActivityEvent.BOARD_ADDED],
+    payload: ActivityPayloadMap[ActivityType.BOARD_ADDED],
   ) {
-    console.log('baba');
-
     await this.activityService.createActivity<
-      ActivityPayloadMap[ActivityEvent.BOARD_ADDED]
+      ActivityPayloadMap[ActivityType.BOARD_ADDED]
     >(payload);
   }
 
-  @OnEvent(ActivityEvent.CARD_ADDED)
+  @OnEvent(CARD_ADDED)
   async handleAddingCardEvent(
-    payload: ActivityPayloadMap[ActivityEvent.CARD_ADDED],
+    payload: ActivityPayloadMap[ActivityType.CARD_ADDED],
   ) {
     await this.activityService.createActivity<
-      ActivityPayloadMap[ActivityEvent.CARD_ADDED]
+      ActivityPayloadMap[ActivityType.CARD_ADDED]
     >(payload);
   }
 }

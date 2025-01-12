@@ -9,7 +9,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { ActivityEvent } from '../enums/activity-event.enum';
+import { ActivityType } from '../enums/activity-type.enum';
 
 @Entity('activities')
 export class Activity {
@@ -18,9 +18,9 @@ export class Activity {
 
   @Column({
     type: 'enum',
-    enum: ActivityEvent,
+    enum: ActivityType,
   })
-  type: ActivityEvent;
+  type: ActivityType;
 
   @ManyToOne(() => User, { eager: true }) // Add `eager` if user is always required
   @JoinColumn({ name: 'user_id' })
