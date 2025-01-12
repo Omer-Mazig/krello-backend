@@ -27,6 +27,7 @@ import { BoardMember } from './boards/entities/board-member.entity';
 import { LabelsModule } from './labels/labels.module';
 import { Label } from './labels/entities/label.entity';
 import { BoardSuperAdminGuard } from './auth/guards/boards/board-super-admin/board-super-admin-guard';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 const ENV = process.env.NODE_ENV;
 console.log(process.env.NODE_ENV);
@@ -73,6 +74,8 @@ console.log(process.env.NODE_ENV);
       Label,
       BoardMember,
     ]),
+
+    EventEmitterModule.forRoot(),
 
     // Register the JWT configuration, making it available via the ConfigService
     ConfigModule.forFeature(jwtConfig),
