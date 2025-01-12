@@ -27,15 +27,15 @@ export class Activity {
   user: User;
 
   @ManyToOne(() => Board, { eager: true }) // Add `eager` if board is always required
-  @JoinColumn({ name: 'source_board_id' })
+  @JoinColumn()
   sourceBoard: Board;
 
   @ManyToOne(() => Board)
-  @JoinColumn({ name: 'dest_board_id' })
+  @JoinColumn()
   destBoard?: Board;
 
   @ManyToOne(() => Card, { nullable: true })
-  @JoinColumn({ name: 'card_id' })
+  @JoinColumn()
   card?: Card;
 
   @Column({ nullable: true })
