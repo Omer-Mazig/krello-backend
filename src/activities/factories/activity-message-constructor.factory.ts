@@ -23,11 +23,11 @@ type ConstructorMap = {
 
 /**
  * Factory class to retrieve the appropriate `ActivityMessageConstructor` implementation
- * based on the `ActivityEvent` type and the `ActivityPage`.
+ * based on the `ActivityType` type and the `ActivityPage`.
  */
 export class ActivityMessageConstructorFactory {
   /**
-   * Mapping configuration for `ActivityEvent` types and their corresponding constructors
+   * Mapping configuration for `ActivityType` types and their corresponding constructors
    * based on the `ActivityPage`.
    *
    * This acts as the source of truth for determining which constructor to use for

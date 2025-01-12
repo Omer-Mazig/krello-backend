@@ -23,8 +23,8 @@ export class ActivityEventEmitter {
    *
    * ### Example
    * ```typescript
-   * this.activityEventEmitter.emitActivity(ActivityEvent.CARD_ADDED, {
-   *   type: ActivityEvent.CARD_ADDED,
+   * this.activityEventEmitter.emitActivity(ActivityType.CARD_ADDED, {
+   *   type: ActivityType.CARD_ADDED,
    *   userId: 'user123',
    *   sourceBoardId: 'board456',
    *   cardId: 'card789',
