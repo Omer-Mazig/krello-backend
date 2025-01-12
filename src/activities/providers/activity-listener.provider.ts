@@ -3,8 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { ActivitiesService } from '../activities.service';
 import { ActivityType } from '../enums/activity-type.enum';
 import { ActivityPayloadMap } from '../types/activity-payload.type';
-import { BOARD_ADDED } from 'src/events/board.event';
-import { CARD_ADDED } from 'src/events/card.event';
+import { BOARD_ADDED, CARD_ADDED } from 'src/events/event.constants';
 
 /**
  * Handles activity events and delegates actions to the `ActivitiesService`.

@@ -5,7 +5,7 @@ import { Card } from './entities/card.entity';
 import { ActivityType } from 'src/activities/enums/activity-type.enum';
 import { CreateCardDto } from './dto/create-card.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CARD_ADDED } from 'src/events/card.event';
+import { CARD_ADDED } from 'src/events/event.constants';
 
 @Injectable()
 export class CardsService {

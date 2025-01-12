@@ -10,7 +10,7 @@ import { DataSource, Repository } from 'typeorm';
 import { BoardMember } from './entities/board-member.entity';
 import { ActivityType } from 'src/activities/enums/activity-type.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { BOARD_ADDED } from 'src/events/board.event';
+import { BOARD_ADDED } from 'src/events/event.constants';
 
 @Injectable()
 export class BoardsService {
