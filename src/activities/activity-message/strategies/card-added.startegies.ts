@@ -3,9 +3,13 @@ import { ActivityMessageBuilder } from '../builders/activity-message-builder';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
 import { validateActivityFields } from 'src/activities/utils/validate-activity-fields.util';
 
-export class CardAddedProfileActivityMessage
-  implements ActivityMessageConstructor
-{
+export class CardAddedProfileConstructor implements ActivityMessageConstructor {
+  private readonly builder;
+
+  constructor(builder: ActivityMessageBuilder) {
+    this.builder = builder;
+  }
+
   construct(activity: Activity) {
     validateActivityFields(
       activity,
@@ -13,8 +17,7 @@ export class CardAddedProfileActivityMessage
       this.constructor.name,
     );
 
-    const builder = new ActivityMessageBuilder();
-    return builder
+    return this.builder
       .addLink(activity.user.username, activity.user.id)
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
@@ -24,9 +27,13 @@ export class CardAddedProfileActivityMessage
   }
 }
 
-export class CardAddedBoardActivityMessage
-  implements ActivityMessageConstructor
-{
+export class CardAddedBoardConstructor implements ActivityMessageConstructor {
+  private readonly builder;
+
+  constructor(builder: ActivityMessageBuilder) {
+    this.builder = builder;
+  }
+
   construct(activity: Activity) {
     validateActivityFields(
       activity,
@@ -34,8 +41,7 @@ export class CardAddedBoardActivityMessage
       this.constructor.name,
     );
 
-    const builder = new ActivityMessageBuilder();
-    return builder
+    return this.builder
       .addLink(activity.user.username, activity.user.id)
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
@@ -45,12 +51,15 @@ export class CardAddedBoardActivityMessage
   }
 }
 
-export class CardAddedCardActivityMessage
-  implements ActivityMessageConstructor
-{
+export class CardAddedCardConstructor implements ActivityMessageConstructor {
+  private readonly builder;
+
+  constructor(builder: ActivityMessageBuilder) {
+    this.builder = builder;
+  }
+
   construct(activity: Activity) {
-    const builder = new ActivityMessageBuilder();
-    return builder
+    return this.builder
       .addLink(activity.user.username, activity.user.id)
       .addText('added this card')
       .build();

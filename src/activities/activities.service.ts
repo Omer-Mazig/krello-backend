@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './entities/activity.entity';
-import { ActivityMessageConstructorFactory } from './factories/activity-message-constructor.factory';
+import { ActivityMessageConstructorFactory } from './activity-message/factories/activity-message-constructor.factory';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EVENT_BOARD_ADDED } from 'src/constants/event.constants';
 

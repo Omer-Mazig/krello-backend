@@ -1,23 +1,25 @@
-import { ActivityType } from '../enums/activity-type.enum';
+import { ActivityType } from '../../enums/activity-type.enum';
 import {
-  CardAddedBoardActivityMessage,
-  CardAddedCardActivityMessage,
-  CardAddedProfileActivityMessage,
-} from '../strategies/activity-message-constructor/concrete-implementations/add-card.startegies';
-import { ActivityMessageConstructor } from '../strategies/activity-message-constructor/interfaces/activity-message-constructor.interface';
-import { ActivityPage } from '../types/activity-page.type';
+  CardAddedBoardConstructor,
+  CardAddedCardConstructor,
+  CardAddedProfileConstructor,
+} from '../strategies/card-added.startegies';
+import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
+import { ActivityPage } from '../../types/activity-page.type';
+import { UnsupportedActivityTypeError } from '../errors/unsupported-activity-type-error.error';
 import {
-  UnsupportedActivityTypeError,
-  UnsupportedPageTypeError,
-} from '../errors/errors';
-import {
-  BoardAddedBoardActivityMessage,
-  BoardAddedProfileActivityMessage,
-} from '../strategies/activity-message-constructor/concrete-implementations/add-board.startegies';
+  BoardAddedBoardConstructor,
+  BoardAddedProfileConstructor as BoardAddedProfileConstructor,
+} from '../strategies/board-added.startegies';
+import { UnsupportedPageTypeError } from '../errors/unsupported-page-type-error.error';
+import { ActivityMessageBuilder } from '../builders/activity-message-builder';
 
 type ConstructorMap = {
   [key in ActivityType]: Partial<
-    Record<ActivityPage, new () => ActivityMessageConstructor>
+    Record<
+      ActivityPage,
+      new (builder: ActivityMessageBuilder) => ActivityMessageConstructor
+    >
   >;
 };
 
@@ -35,17 +37,17 @@ export class ActivityMessageConstructorFactory {
    */
   private static constructorMap: ConstructorMap = {
     BOARD_ADDED: {
-      profile: BoardAddedProfileActivityMessage,
-      board: BoardAddedBoardActivityMessage,
+      profile: BoardAddedProfileConstructor,
+      board: BoardAddedBoardConstructor,
     },
     LIST_ADDED: {
-      profile: CardAddedProfileActivityMessage, // placeholder for now
-      board: CardAddedBoardActivityMessage, // placeholder for now
+      profile: CardAddedProfileConstructor, // placeholder for now
+      board: CardAddedBoardConstructor, // placeholder for now
     },
     CARD_ADDED: {
-      profile: CardAddedProfileActivityMessage,
-      board: CardAddedBoardActivityMessage,
-      card: CardAddedCardActivityMessage,
+      profile: CardAddedProfileConstructor,
+      board: CardAddedBoardConstructor,
+      card: CardAddedCardConstructor,
     },
   };
 
@@ -74,6 +76,6 @@ export class ActivityMessageConstructorFactory {
       throw new UnsupportedPageTypeError(page, this.name);
     }
 
-    return new Constructor();
+    return new Constructor(new ActivityMessageBuilder());
   }
 }

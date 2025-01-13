@@ -31,6 +31,7 @@ export interface ActivityMessageConstructor {
    * // ]
    * ```
    */
+
   construct(activity: Activity): {
     parts: ActivityMessagePartObject[];
   };

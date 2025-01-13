@@ -3,18 +3,23 @@ import { ActivityMessageBuilder } from '../builders/activity-message-builder';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
 import { validateActivityFields } from 'src/activities/utils/validate-activity-fields.util';
 
-export class BoardAddedProfileActivityMessage
+export class BoardAddedProfileConstructor
   implements ActivityMessageConstructor
 {
+  private readonly builder;
+
+  constructor(builder: ActivityMessageBuilder) {
+    this.builder = builder;
+  }
+
   construct(activity: Activity) {
     // UNCOMMENT this to see the BadRequestException(`Missing [${field}] on activity`)
-    validateActivityFields(
-      activity,
-      ['sourceListTitle', 'card'],
-      this.constructor.name,
-    );
-    const builder = new ActivityMessageBuilder();
-    return builder
+    // validateActivityFields(
+    //   activity,
+    //   ['sourceListTitle', 'card'],
+    //   this.constructor.name,
+    // );
+    return this.builder
       .addLink(activity.user.username, activity.user.id)
       .addText('created')
       .addLink(activity.sourceBoard.name, activity.sourceBoard.id)
@@ -22,12 +27,15 @@ export class BoardAddedProfileActivityMessage
   }
 }
 
-export class BoardAddedBoardActivityMessage
-  implements ActivityMessageConstructor
-{
+export class BoardAddedBoardConstructor implements ActivityMessageConstructor {
+  private readonly builder;
+
+  constructor(builder: ActivityMessageBuilder) {
+    this.builder = builder;
+  }
+
   construct(activity: Activity) {
-    const builder = new ActivityMessageBuilder();
-    return builder
+    return this.builder
       .addLink(activity.user.username, activity.user.id)
       .addText('created this board')
       .build();
