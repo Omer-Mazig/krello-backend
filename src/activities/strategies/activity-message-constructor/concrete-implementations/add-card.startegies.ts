@@ -49,8 +49,6 @@ export class CardAddedCardActivityMessage
   implements ActivityMessageConstructor
 {
   construct(activity: Activity) {
-    validateActivityFields(activity, [], this.constructor.name);
-
     const builder = new ActivityMessageBuilder();
     return builder
       .addLink(activity.user.username, activity.user.id)
