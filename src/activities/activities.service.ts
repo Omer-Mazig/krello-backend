@@ -38,7 +38,7 @@ export class ActivitiesService {
     });
 
     return activities.map((activity) =>
-      ActivityMessageConstructorFactory.getConstructor(
+      ActivityMessageConstructorFactory.create(
         activity.type,
         'profile',
       ).construct(activity),
@@ -56,7 +56,7 @@ export class ActivitiesService {
     });
 
     return activities.map((activity) =>
-      ActivityMessageConstructorFactory.getConstructor(
+      ActivityMessageConstructorFactory.create(
         activity.type,
         'board',
       ).construct(activity),
@@ -74,10 +74,9 @@ export class ActivitiesService {
     });
 
     return activities.map((activity) =>
-      ActivityMessageConstructorFactory.getConstructor(
-        activity.type,
-        'card',
-      ).construct(activity),
+      ActivityMessageConstructorFactory.create(activity.type, 'card').construct(
+        activity,
+      ),
     );
   }
 }

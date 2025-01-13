@@ -60,7 +60,7 @@ export class ActivityMessageConstructorFactory {
    * @throws {UnsupportedPageTypeError} If the provided `page` is not supported for the given `type`.
    *
    */
-  static getConstructor(
+  static create(
     type: `${ActivityType}`,
     page: ActivityPage,
   ): ActivityMessageConstructor {
