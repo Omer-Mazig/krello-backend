@@ -34,20 +34,20 @@ export class ActivitiesService {
   }
 
   async queryProfileActivities(userId: string) {
-    const activities = await this.fetchActivities({ user: { id: userId } });
-    return this.constructActivityMessages(activities, 'profile');
+    const activities = await this._fetchActivities({ user: { id: userId } });
+    return this._constructActivityMessages(activities, 'profile');
   }
 
   async queryBoardActivities(boardId: string) {
-    const activities = await this.fetchActivities({
+    const activities = await this._fetchActivities({
       sourceBoard: { id: boardId },
     });
-    return this.constructActivityMessages(activities, 'board');
+    return this._constructActivityMessages(activities, 'board');
   }
 
   async queryCardActivities(cardId: string) {
-    const activities = await this.fetchActivities({ card: { id: cardId } });
-    return this.constructActivityMessages(activities, 'card');
+    const activities = await this._fetchActivities({ card: { id: cardId } });
+    return this._constructActivityMessages(activities, 'card');
   }
 
   /**
@@ -55,7 +55,7 @@ export class ActivitiesService {
    * @param where - The query condition for activities.
    * @returns A list of activities.
    */
-  private async fetchActivities(
+  private async _fetchActivities(
     where: Record<string, any>,
   ): Promise<Activity[]> {
     try {
@@ -84,33 +84,14 @@ export class ActivitiesService {
    * @param page - The activity page type (`profile`, `board`, `card`).
    * @returns The constructed activity messages.
    */
-  private constructActivityMessages(
+  private _constructActivityMessages(
     activities: Activity[],
     page: ActivityPage,
   ) {
-    try {
-      return activities.map((activity) =>
-        ActivityMessageConstructorFactory.create(activity.type, page).construct(
-          activity,
-        ),
-      );
-    } catch (error) {
-      if (
-        error instanceof UnsupportedActivityTypeError ||
-        error instanceof UnsupportedPageTypeError
-      ) {
-        console.error(
-          `Unsupported activity type or page (${page}): ${error.message}`,
-        );
-      } else {
-        console.error(
-          `Error constructing activity messages for page (${page}): ${error.message}`,
-          error,
-        );
-      }
-      throw new InternalServerErrorException(
-        `Failed to construct activities for page (${page}). Please contact support.`,
-      );
-    }
+    return activities.map((activity) =>
+      ActivityMessageConstructorFactory.create(activity.type, page).construct(
+        activity,
+      ),
+    );
   }
 }
