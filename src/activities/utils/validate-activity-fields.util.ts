@@ -32,8 +32,9 @@ export function validateActivityFields<T extends keyof Activity>(
   for (const field of requiredFields) {
     if (activity[field] == null) {
       // Check for null or undefined
-      console.log(`[${className}] Missing [${field}] on activity`);
-      throw new BadRequestException(`Missing [${field}] on activity`);
+      const message = `[${className}] Missing [${field}] on activity`;
+      console.log(message);
+      throw new BadRequestException(message);
     }
   }
 }
