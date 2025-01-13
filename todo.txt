@@ -1,1 +1,1 @@
-acrchive should be falged (is archive). archive card are still exist on thr original list. when removing the list the cards are gone. soo consider removing relation between boards and cards
+acrchive should be falged (is archive). archive card are still exist on thr original list. when removing the list the cards are gone
