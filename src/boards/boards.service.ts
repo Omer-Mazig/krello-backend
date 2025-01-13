@@ -11,7 +11,7 @@ import { BoardMember } from './entities/board-member.entity';
 import { ActivityType } from 'src/activities/enums/activity-type.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENT_BOARD_ADDED } from 'src/constants/event.constants';
-import { ActivityPayloadMap } from 'src/activities/types/activity-payload.type';
+import { ActivityPayloadMap } from 'src/activities/types/activity-payload copyy.type';
 
 @Injectable()
 export class BoardsService {
