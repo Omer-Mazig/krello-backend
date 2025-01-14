@@ -13,16 +13,6 @@ import { Activity } from '../entities/activity.entity';
  * @param {string} className - The name of the class invoking this function, used for contextual error messages.
  * @throws {BadRequestException} If any of the required fields are `null` or `undefined`.
  *
- * @example
- * ```typescript
- * validateActivityFields(activity, ['card', 'sourceListTitle'], 'CardAddedActivityMessage');
- * ```
- *
- * After calling this function, TypeScript will treat the specified fields as non-nullable:
- * ```typescript
- * activity.card; // Now guaranteed to be non-null
- * activity.sourceListTitle; // Now guaranteed to be non-null
- * ```
  */
 export function validateActivityFields<T extends keyof Activity>(
   activity: Activity,

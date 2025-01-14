@@ -1,5 +1,5 @@
 import { Activity } from 'src/activities/entities/activity.entity';
-import { ActivityMessageBuilder } from '../builders/activity-message-builder';
+import { ActivityMessageBuilder } from '../builders/activity-message.builder';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
 import { validateActivityFields } from 'src/activities/utils/validate-activity-fields.util';
 

@@ -1,5 +1,5 @@
 import { Activity } from 'src/activities/entities/activity.entity';
-import { ActivityMessageBuilder } from '../builders/activity-message-builder';
+import { ActivityMessageBuilder } from '../builders/activity-message.builder';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
 import { validateActivityFields } from 'src/activities/utils/validate-activity-fields.util';
 
@@ -13,14 +13,8 @@ export class BoardAddedProfileConstructor
   }
 
   construct(activity: Activity) {
-    validateActivityFields(
-      activity,
-      ['card', 'sourceListTitle'],
-      this.constructor.name,
-    );
-
     return this.builder
-      .addLink(activity.user.username, activity.user.id)
+      .addLink(activity.user.username, activity.user.id) // no need for user link
       .addText('created')
       .addLink(activity.sourceBoard.name, activity.sourceBoard.id)
       .build();

@@ -12,7 +12,7 @@ import {
   BoardAddedProfileConstructor as BoardAddedProfileConstructor,
 } from '../strategies/board-added.startegies';
 import { UnsupportedPageTypeError } from '../errors/unsupported-page-type-error.error';
-import { ActivityMessageBuilder } from '../builders/activity-message-builder';
+import { ActivityMessageBuilder } from '../builders/activity-message.builder';
 
 type ConstructorMap = {
   [key in ActivityType]: Partial<
