@@ -40,12 +40,3 @@ type CardAddedActivityPayload = {
   card: string;
   sourceListTitle: string;
 };
-
-// Utility function to get the keys of the payload type for a specific ActivityType
-export function createKeysArray<T extends ActivityType>(
-  activityType: T,
-): (keyof ActivityPayloadMap[T])[] {
-  // Use an example object to extract the keys
-  type Payload = ActivityPayloadMap[T];
-  return Object.keys({} as Payload) as (keyof Payload)[];
-}
