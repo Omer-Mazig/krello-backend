@@ -18,7 +18,7 @@ export class CardAddedProfileConstructor implements ActivityMessageConstructor {
     );
 
     return this.builder
-      .addLink(activity.user.username, activity.user.id)
+      .addUserLink(activity.user.username, activity.user.id)
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
