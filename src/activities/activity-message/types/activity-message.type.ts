@@ -9,7 +9,7 @@ export type ActivityMessagePartObject = {
    * The type of the message part, determining how it should be displayed.
    * - `text`: Plain text.
    * - `styled-text`: Styled or emphasized text.
-   * - `link`: Clickable text linking to another entity (except).
+   * - `link`: Clickable text linking to another entity (except user).
    * - `user-link`: Clickable text linking to a user entity.
    */
   type: 'text' | 'styled-text' | 'link' | 'user-link';
