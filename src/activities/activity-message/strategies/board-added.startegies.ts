@@ -13,7 +13,7 @@ export class BoardAddedProfileConstructor
 
   construct(activity: Activity) {
     return this.builder
-      .addLink(activity.user.username, activity.user.id)
+      .addUserLink(activity.user.username, activity.user.id)
       .addText('created')
       .addLink(activity.sourceBoard.name, activity.sourceBoard.id)
       .build();
@@ -29,7 +29,7 @@ export class BoardAddedBoardConstructor implements ActivityMessageConstructor {
 
   construct(activity: Activity) {
     return this.builder
-      .addLink(activity.user.username, activity.user.id)
+      .addUserLink(activity.user.username, activity.user.id)
       .addText('created this board')
       .build();
   }

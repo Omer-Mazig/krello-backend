@@ -42,7 +42,7 @@ export class CardAddedBoardConstructor implements ActivityMessageConstructor {
     );
 
     return this.builder
-      .addLink(activity.user.username, activity.user.id)
+      .addUserLink(activity.user.username, activity.user.id)
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
@@ -60,7 +60,7 @@ export class CardAddedCardConstructor implements ActivityMessageConstructor {
 
   construct(activity: Activity) {
     return this.builder
-      .addLink(activity.user.username, activity.user.id)
+      .addUserLink(activity.user.username, activity.user.id)
       .addText('added this card')
       .build();
   }
