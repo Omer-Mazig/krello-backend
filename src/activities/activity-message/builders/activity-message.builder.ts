@@ -18,6 +18,11 @@ export class ActivityMessageBuilder {
     return this;
   }
 
+  addUserLink(content: string, referenceId: string): ActivityMessageBuilder {
+    this.parts.push({ type: 'user-link', content, referenceId });
+    return this;
+  }
+
   build() {
     const result = { parts: this.parts };
     this.reset(); // Automatically reset after building

@@ -62,7 +62,7 @@ export class BoardsService {
     ],
   };
 
-  async create({ name }: CreateBoardDto, userId: string) {
+  async create({ name }: CreateBoardDto, userId: string): Promise<Board> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     // Connect the query runner to a transaction
@@ -112,7 +112,7 @@ export class BoardsService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<Board[]> {
     try {
       const boards = await this.boardRepository.find();
 
