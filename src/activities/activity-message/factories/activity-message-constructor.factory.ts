@@ -35,7 +35,7 @@ export class ActivityMessageConstructorFactory {
    * This acts as the source of truth for determining which constructor to use for
    * each combination of activity event and page type.
    */
-  private static constructorMap: ConstructorMap = {
+  private static readonly constructorMap: ConstructorMap = {
     BOARD_ADDED: {
       profile: BoardAddedProfileConstructor,
       board: BoardAddedBoardConstructor,
