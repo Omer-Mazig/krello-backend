@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { WorkspaceMember } from './workspace-member.entity';
 
 @Entity('workspaces')
 export class Workspace {
