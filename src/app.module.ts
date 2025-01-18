@@ -28,6 +28,7 @@ import { LabelsModule } from './labels/labels.module';
 import { Label } from './labels/entities/label.entity';
 import { BoardSuperAdminGuard } from './auth/guards/boards/board-super-admin/board-super-admin-guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { WorkspacesModule } from './workspaces/workspaces.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -83,6 +84,8 @@ const ENV = process.env.NODE_ENV;
     // by the jwtConfig. This allows us to configure JWT options like secret
     // and expiration based on environment variables.
     JwtModule.registerAsync(jwtConfig.asProvider()),
+
+    WorkspacesModule,
   ],
   controllers: [],
   providers: [

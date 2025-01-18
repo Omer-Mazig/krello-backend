@@ -1,6 +1,8 @@
 import { Exclude } from 'class-transformer';
 import { BoardMember } from 'src/boards/entities/board-member.entity';
 import { Card } from 'src/cards/entities/card.entity';
+import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
+import { Workspace } from 'src/workspaces/entities/workspace.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -33,6 +35,12 @@ export class User {
   @ManyToMany(() => Card, (card) => card.members)
   @JoinTable()
   cards: Card[];
+
+  @OneToMany(() => Workspace, (workspace) => workspace.createdBy)
+  createdWorkspaces: Workspace[];
+
+  @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
+  workspaceMemberships: WorkspaceMember[];
 
   @CreateDateColumn()
   createdAt: Date;

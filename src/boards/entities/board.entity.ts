@@ -8,8 +8,10 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Label } from 'src/labels/entities/label.entity';
+import { Workspace } from 'src/workspaces/entities/workspace.entity';
 
 @Entity()
 export class Board {
@@ -27,6 +29,11 @@ export class Board {
     eager: true, // To ensure at least one admin exists upon creation
   })
   members: BoardMember[];
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.boards, {
+    nullable: false,
+  })
+  workspace: Workspace;
 
   @OneToMany(() => Card, (card) => card.board, { cascade: true })
   cards: Card[];
