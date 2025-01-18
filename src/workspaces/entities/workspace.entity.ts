@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { WorkspaceMember } from './workspace-member.entity';
 
-@Entity('workspaces')
+@Entity()
 export class Workspace {
   @PrimaryGeneratedColumn('uuid')
   id: string;

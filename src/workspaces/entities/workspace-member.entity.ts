@@ -9,7 +9,7 @@ import {
 import { Workspace } from './workspace.entity';
 import { User } from 'src/users/entities/user.entity';
 
-@Entity('workspace_members')
+@Entity()
 export class WorkspaceMember {
   @PrimaryGeneratedColumn('uuid')
   id: string;

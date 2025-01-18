@@ -29,6 +29,8 @@ import { Label } from './labels/entities/label.entity';
 import { BoardSuperAdminGuard } from './auth/guards/boards/board-super-admin/board-super-admin-guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { WorkspacesModule } from './workspaces/workspaces.module';
+import { Workspace } from './workspaces/entities/workspace.entity';
+import { WorkspaceMember } from './workspaces/entities/workspace-member.entity';
 
 const ENV = process.env.NODE_ENV;
 
@@ -38,6 +40,7 @@ const ENV = process.env.NODE_ENV;
 
     UsersModule,
     AuthModule,
+    WorkspacesModule,
     BoardsModule,
     ListsModule,
     CardsModule,
@@ -70,11 +73,13 @@ const ENV = process.env.NODE_ENV;
     TypeOrmModule.forFeature([
       User,
       AuthModule,
+      Workspace,
+      WorkspaceMember,
       Board,
+      BoardMember,
       List,
       Card,
       Label,
-      BoardMember,
     ]),
 
     // Register the JWT configuration, making it available via the ConfigService
