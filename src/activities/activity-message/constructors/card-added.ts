@@ -22,7 +22,7 @@ export class CardAddedProfileConstructor implements ActivityMessageConstructor {
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
-      .addStyledText(activity.sourceListTitle)
+      .addText(activity.sourceListTitle)
       .build();
   }
 }
@@ -46,7 +46,7 @@ export class CardAddedBoardConstructor implements ActivityMessageConstructor {
       .addText('added')
       .addLink(activity.card.title, activity.card.id)
       .addText('to')
-      .addStyledText(activity.sourceListTitle)
+      .addText(activity.sourceListTitle)
       .build();
   }
 }

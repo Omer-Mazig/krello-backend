@@ -1,18 +1,17 @@
 /**
  * Represents a single part of an activity message.
  *
- * Each part can be of a specific type (`text`, `styled-text`, `link` or 'user-link') and contains the content
+ * Each part can be of a specific type (`text`, `link` or 'user-link') and contains the content
  * to display in the message. Optionally, a `referenceId` can be included for linking purposes.
  */
 export type ActivityMessagePartObject = {
   /**
    * The type of the message part, determining how it should be displayed.
    * - `text`: Plain text.
-   * - `styled-text`: Styled or emphasized text.
    * - `link`: Clickable text linking to another entity (except user).
    * - `user-link`: Clickable text linking to a user entity.
    */
-  type: 'text' | 'styled-text' | 'link' | 'user-link';
+  type: 'text' | 'link' | 'user-link';
 
   /**
    * The content of the message part to be displayed.

@@ -8,11 +8,6 @@ export class ActivityMessageBuilder {
     return this;
   }
 
-  addStyledText(content: string): ActivityMessageBuilder {
-    this.parts.push({ type: 'styled-text', content });
-    return this;
-  }
-
   addLink(content: string, referenceId: string): ActivityMessageBuilder {
     this.parts.push({ type: 'link', content, referenceId });
     return this;
