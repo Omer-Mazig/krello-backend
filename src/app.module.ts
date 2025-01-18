@@ -26,11 +26,11 @@ import { ActivitiesModule } from './activities/activities.module';
 import { BoardMember } from './boards/entities/board-member.entity';
 import { LabelsModule } from './labels/labels.module';
 import { Label } from './labels/entities/label.entity';
-import { BoardSuperAdminGuard } from './auth/guards/boards/board-super-admin/board-super-admin-guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { Workspace } from './workspaces/entities/workspace.entity';
 import { WorkspaceMember } from './workspaces/entities/workspace-member.entity';
+import { BoardAdminGuard } from './auth/guards/boards/board-admin-guard';
 
 const ENV = process.env.NODE_ENV;
 
@@ -99,7 +99,7 @@ const ENV = process.env.NODE_ENV;
       useClass: AuthGuard,
     },
     AccessTokenGuard,
-    BoardSuperAdminGuard,
+    BoardAdminGuard,
   ],
 })
 export class AppModule {}

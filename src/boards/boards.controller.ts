@@ -29,7 +29,7 @@ export class BoardsController {
   }
 
   @Delete(':id')
-  @Auth(AuthType.BoardSuperAdmin)
+  @Auth(AuthType.BoardAdmin)
   async remove(@Param('id') id: string) {
     return this.boardsService.remove(id);
   }

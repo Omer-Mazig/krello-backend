@@ -82,7 +82,7 @@ export class BoardsService {
         .create({
           board: newBoard,
           user: { id: userId },
-          role: 'super_admin',
+          role: 'admin',
         });
       await queryRunner.manager.getRepository(BoardMember).save(boardMember);
 
@@ -144,6 +144,7 @@ export class BoardsService {
     boardId: string,
     relationKey: keyof typeof this.RELATION_MAP = 'all', // Default to 'all'
   ): Promise<Board> {
+    // TODO: add try error hadnling
     const relations = this.RELATION_MAP[relationKey];
 
     const board = await this.boardRepository.findOne({

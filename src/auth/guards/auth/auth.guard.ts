@@ -8,7 +8,7 @@ import { AUTH_TYPE_KEY } from 'src/auth/decorators/auth.decorator';
 import { AccessTokenGuard } from '../access-token/access-token.guard';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { Reflector } from '@nestjs/core';
-import { BoardSuperAdminGuard } from '../boards/board-super-admin/board-super-admin-guard';
+import { BoardAdminGuard } from '../boards/board-admin-guard';
 
 /**
  * AuthGuard dynamically executes a set of guards based on the `AuthType` specified
@@ -34,10 +34,7 @@ export class AuthGuard implements CanActivate {
   > = {
     [AuthType.None]: { canActivate: () => true },
     [AuthType.Bearer]: this.accessTokenGuard,
-    [AuthType.BoardSuperAdmin]: [
-      this.accessTokenGuard,
-      this.boardSuperAdminGuard,
-    ],
+    [AuthType.BoardAdmin]: [this.accessTokenGuard, this.boardAdminGuard],
   };
 
   /**
@@ -45,12 +42,12 @@ export class AuthGuard implements CanActivate {
    *
    * @param reflector - A utility to access metadata set by decorators.
    * @param accessTokenGuard - Guard responsible for validating access tokens.
-   * @param boardSuperAdminGuard - Guard responsible for ensuring the user has `super_admin` privileges on the board.
+   * @param boardAdminGuard - Guard responsible for ensuring the user has `admin` privileges on the board.
    */
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuard: AccessTokenGuard,
-    private readonly boardSuperAdminGuard: BoardSuperAdminGuard,
+    private readonly boardAdminGuard: BoardAdminGuard,
   ) {}
 
   /**

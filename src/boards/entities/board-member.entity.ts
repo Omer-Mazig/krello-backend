@@ -23,7 +23,7 @@ export class BoardMember {
   user: User;
 
   @Column({ default: 'member' })
-  role: 'member' | 'admin' | 'super_admin';
+  role: 'member' | 'admin';
 
   @CreateDateColumn()
   createdAt: Date;

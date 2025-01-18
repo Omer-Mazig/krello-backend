@@ -9,11 +9,11 @@ import { BoardsService } from 'src/boards/boards.service';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 
 @Injectable()
-export class BoardSuperAdminGuard implements CanActivate {
+export class BoardAdminGuard implements CanActivate {
   constructor(private readonly boardsService: BoardsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('BoardSuperAdminGuard executed');
+    console.log('BoardAdminGuard executed');
     const request = context.switchToHttp().getRequest();
     const user = request[REQUEST_USER_KEY];
     const boardId = request.params.id;
@@ -27,11 +27,11 @@ export class BoardSuperAdminGuard implements CanActivate {
       throw new NotFoundException(`Board with ID ${boardId} not found.`);
     }
 
-    const isSuperAdmin = board.members.some(
-      (member) => member.user.id === user.sub && member.role === 'super_admin',
+    const isAdmin = board.members.some(
+      (member) => member.user.id === user.sub && member.role === 'admin',
     );
 
-    if (!isSuperAdmin) {
+    if (!isAdmin) {
       throw new ForbiddenException(
         'You are not authorized to perform this action.',
       );
