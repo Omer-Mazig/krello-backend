@@ -3,14 +3,14 @@ import {
   CardAddedBoardConstructor,
   CardAddedCardConstructor,
   CardAddedProfileConstructor,
-} from '../strategies/card-added.startegies';
+} from '../constructors/card-added';
 import { ActivityMessageConstructor } from '../interfaces/activity-message-constructor.interface';
 import { ActivityPage } from '../../types/activity-page.type';
 import { UnsupportedActivityTypeError } from '../errors/unsupported-activity-type-error.error';
 import {
   BoardAddedBoardConstructor,
   BoardAddedProfileConstructor as BoardAddedProfileConstructor,
-} from '../strategies/board-added.startegies';
+} from '../constructors/board-added';
 import { UnsupportedPageTypeError } from '../errors/unsupported-page-type-error.error';
 import { ActivityMessageBuilder } from '../builders/activity-message.builder';
 
