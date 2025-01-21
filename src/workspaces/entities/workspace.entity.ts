@@ -22,9 +22,6 @@ export class Workspace {
   @Column({ type: 'enum', enum: ['private', 'public'], default: 'private' })
   visibility: 'private' | 'public';
 
-  @ManyToOne(() => User, (user) => user.createdWorkspaces, { nullable: false })
-  createdBy: User;
-
   @OneToMany(() => WorkspaceMember, (member) => member.workspace)
   members: WorkspaceMember[];
 

@@ -29,18 +29,15 @@ export class User {
   @Exclude()
   password: string;
 
+  @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
+  workspaceMemberships: WorkspaceMember[];
+
   @OneToMany(() => BoardMember, (boardMember) => boardMember.user)
   boardMemberships: BoardMember[];
 
   @ManyToMany(() => Card, (card) => card.members)
   @JoinTable()
   cards: Card[];
-
-  @OneToMany(() => Workspace, (workspace) => workspace.createdBy)
-  createdWorkspaces: Workspace[];
-
-  @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
-  workspaceMemberships: WorkspaceMember[];
 
   @CreateDateColumn()
   createdAt: Date;

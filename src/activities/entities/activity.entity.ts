@@ -22,11 +22,11 @@ export class Activity {
   })
   type: ActivityType;
 
-  @ManyToOne(() => User, { eager: true }) // Add `eager` if user is always required
+  @ManyToOne(() => User)
   @JoinColumn()
   user: User;
 
-  @ManyToOne(() => Board, { eager: true, onDelete: 'CASCADE' }) // Automatically delete activities when the board is deleted
+  @ManyToOne(() => Board)
   @JoinColumn()
   sourceBoard: Board;
 

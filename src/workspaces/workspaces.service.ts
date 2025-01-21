@@ -32,7 +32,7 @@ export class WorkspacesService {
       const user = { id: userId }; // Reference to the user creating the workspace
       const newWorkspace = queryRunner.manager
         .getRepository(Workspace)
-        .create({ name, createdBy: user }); // Set the createdBy field
+        .create({ name }); // Set the createdBy field
 
       await queryRunner.manager.getRepository(Workspace).save(newWorkspace);
 

@@ -108,11 +108,11 @@ export class BoardsService {
       // Step 4: Fetch and return the board with its members
       const boardToReturn = await this.findOneWithRelations(newBoard.id);
 
-      this.eventEmitter.emit(EVENT_BOARD_ADDED, {
-        type: ActivityType.BOARD_ADDED,
-        user: userId,
-        sourceBoard: newBoard.id,
-      } satisfies ActivityPayloadMap[ActivityType.BOARD_ADDED]);
+      // this.eventEmitter.emit(EVENT_BOARD_ADDED, {
+      //   type: ActivityType.BOARD_ADDED,
+      //   user: userId,
+      //   sourceBoard: newBoard.id,
+      // } satisfies ActivityPayloadMap[ActivityType.BOARD_ADDED]);
 
       return boardToReturn;
     } catch (error) {
