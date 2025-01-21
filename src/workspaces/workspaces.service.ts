@@ -29,9 +29,11 @@ export class WorkspacesService {
 
     try {
       // Step 1: Create the workspace
+      const user = { id: userId }; // Reference to the user creating the workspace
       const newWorkspace = queryRunner.manager
         .getRepository(Workspace)
-        .create({ name });
+        .create({ name, createdBy: user }); // Set the createdBy field
+
       await queryRunner.manager.getRepository(Workspace).save(newWorkspace);
 
       // Step 2: Create the workspace member
@@ -51,7 +53,7 @@ export class WorkspacesService {
       await queryRunner.commitTransaction();
 
       // Step 3: Fetch and return the workspace with its members
-      const workspaceToReturn = this.findOne(newWorkspace.id);
+      const workspaceToReturn = await this.findOne(newWorkspace.id);
 
       return workspaceToReturn;
     } catch (error) {
