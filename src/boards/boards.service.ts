@@ -12,6 +12,7 @@ import { ActivityType } from 'src/activities/enums/activity-type.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENT_BOARD_ADDED } from 'src/constants/event.constants';
 import { ActivityPayloadMap } from 'src/activities/types/activity-payload.type';
+import { Workspace } from 'src/workspaces/entities/workspace.entity';
 
 @Injectable()
 export class BoardsService {
@@ -51,6 +52,7 @@ export class BoardsService {
 
     // Fetch everything related to the board
     all: [
+      'workspace',
       'members',
       'members.user',
       'lists',
@@ -62,7 +64,10 @@ export class BoardsService {
     ],
   };
 
-  async create({ name }: CreateBoardDto, userId: string): Promise<Board> {
+  async create(
+    { name, workspaceId }: CreateBoardDto,
+    userId: string,
+  ): Promise<Board> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     // Connect the query runner to a transaction
@@ -70,13 +75,24 @@ export class BoardsService {
     await queryRunner.startTransaction();
 
     try {
-      // Step 1: Create the board
+      // Step 1: Validate the workspace exists
+      const workspace = await queryRunner.manager
+        .getRepository(Workspace)
+        .findOne({ where: { id: workspaceId } });
+
+      if (!workspace) {
+        throw new NotFoundException(
+          `Workspace with ID ${workspaceId} not found.`,
+        );
+      }
+
+      // Step 2: Create the board
       const newBoard = queryRunner.manager
         .getRepository(Board)
-        .create({ name });
+        .create({ name, workspace });
       await queryRunner.manager.getRepository(Board).save(newBoard);
 
-      // Step 2: Create the board member
+      // Step 3: Create the board member
       const boardMember = queryRunner.manager
         .getRepository(BoardMember)
         .create({
@@ -89,8 +105,8 @@ export class BoardsService {
       // Commit the transaction
       await queryRunner.commitTransaction();
 
-      // Step 3: Fetch and return the board with its members
-      const boardToReturn = this.findOneWithRelations(newBoard.id);
+      // Step 4: Fetch and return the board with its members
+      const boardToReturn = await this.findOneWithRelations(newBoard.id);
 
       this.eventEmitter.emit(EVENT_BOARD_ADDED, {
         type: ActivityType.BOARD_ADDED,
@@ -114,7 +130,9 @@ export class BoardsService {
 
   async findAll(): Promise<Board[]> {
     try {
-      const boards = await this.boardRepository.find();
+      const boards = await this.boardRepository.find({
+        relations: this.RELATION_MAP.all,
+      });
 
       if (!boards) {
         throw new NotFoundException('No boards found.');
