@@ -31,6 +31,7 @@ export class Board {
   members: BoardMember[];
 
   @ManyToOne(() => Workspace, (workspace) => workspace.boards, {
+    onDelete: 'CASCADE',
     nullable: false,
   })
   workspace: Workspace;

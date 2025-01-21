@@ -2,7 +2,9 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,20 +21,27 @@ export class UsersController {
 
   @Get('')
   @Auth(AuthType.None) // JUST FOR TESTING!!!
-  public async findAll() {
+  findAll() {
     return this.usersService.findAll();
   }
 
   @Get('active')
   @UseInterceptors(ClassSerializerInterceptor)
-  public async findActive(@ActiveUser() activeUser: ActiveUserData) {
+  findActive(@ActiveUser() activeUser: ActiveUserData) {
     return this.usersService.findOneById(activeUser.sub);
   }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @Auth(AuthType.None)
-  public create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  // TODO: Just for development!
+  @Auth(AuthType.None)
+  @Delete()
+  remove(@Param('userId') userId: string) {
+    return this.usersService.remove(userId);
   }
 }

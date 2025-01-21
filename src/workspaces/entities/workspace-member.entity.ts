@@ -21,7 +21,6 @@ export class WorkspaceMember {
   workspace: Workspace;
 
   @ManyToOne(() => User, (user) => user.workspaceMemberships, {
-    nullable: false,
     onDelete: 'CASCADE',
   })
   user: User;

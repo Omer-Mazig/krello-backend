@@ -26,7 +26,7 @@ export class Activity {
   @JoinColumn()
   user: User;
 
-  @ManyToOne(() => Board, { eager: true }) // Add `eager` if board is always required
+  @ManyToOne(() => Board, { eager: true, onDelete: 'CASCADE' }) // Automatically delete activities when the board is deleted
   @JoinColumn()
   sourceBoard: Board;
 
