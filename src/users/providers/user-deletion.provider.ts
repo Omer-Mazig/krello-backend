@@ -151,6 +151,7 @@ export class UserDeletionProvider {
     await queryRunner.manager.getRepository(BoardMember).delete({ user });
   }
 
+  // TODO: query only user related
   private async cleanupOrphanedWorkspaces(
     queryRunner: QueryRunner,
   ): Promise<void> {
@@ -168,6 +169,7 @@ export class UserDeletionProvider {
     }
   }
 
+  // TODO: query only user related
   private async cleanupOrphanedBoards(queryRunner: QueryRunner): Promise<void> {
     const orphanedBoards = await queryRunner.manager.getRepository(Board).find({
       relations: ['members'],
