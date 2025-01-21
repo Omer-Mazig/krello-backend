@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -8,12 +9,18 @@ import { Workspace } from './entities/workspace.entity';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class WorkspacesService {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceMember)
+    private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
     private readonly dataSource: DataSource,
   ) {}
 
@@ -79,5 +86,55 @@ export class WorkspacesService {
     }
 
     return workspace;
+  }
+
+  async addMember(
+    workspaceId: string,
+    userId: string,
+  ): Promise<WorkspaceMember> {
+    // Validate workspace
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    // Validate user
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Ensure the user to be added is not already a member
+    const existingMember = await this.workspaceMemberRepository.findOne({
+      where: { workspace: { id: workspaceId }, user: { id: userId } },
+    });
+
+    if (existingMember) {
+      throw new BadRequestException(
+        'User is already a member of this workspace',
+      );
+    }
+
+    // Add the new member
+    const newMember = this.workspaceMemberRepository.create({
+      workspace,
+      user,
+    });
+
+    return await this.workspaceMemberRepository.save(newMember);
+  }
+
+  async isMember(workspaceId: string, userId: string): Promise<boolean> {
+    const member = await this.workspaceMemberRepository.findOne({
+      where: {
+        workspace: { id: workspaceId },
+        user: { id: userId },
+      },
+      relations: ['workspace', 'user'], // Ensures related entities are loaded if needed
+    });
+
+    return !!member; // Returns true if a member exists, false otherwise
   }
 }
