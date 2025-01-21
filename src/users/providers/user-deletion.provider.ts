@@ -30,6 +30,10 @@ export class UserDeletionProvider {
       // Remove memberships
       await this.removeUserMemberships(queryRunner, user);
 
+      // Check for orphaned workspaces and boards
+      await this.cleanupOrphanedWorkspaces(queryRunner);
+      await this.cleanupOrphanedBoards(queryRunner);
+
       // Delete the user
       await queryRunner.manager.getRepository(User).remove(user);
 
@@ -145,5 +149,34 @@ export class UserDeletionProvider {
   ): Promise<void> {
     await queryRunner.manager.getRepository(WorkspaceMember).delete({ user });
     await queryRunner.manager.getRepository(BoardMember).delete({ user });
+  }
+
+  private async cleanupOrphanedWorkspaces(
+    queryRunner: QueryRunner,
+  ): Promise<void> {
+    const orphanedWorkspaces = await queryRunner.manager
+      .getRepository(Workspace)
+      .find({
+        relations: ['members'],
+      });
+
+    for (const workspace of orphanedWorkspaces) {
+      if (workspace.members.length === 0) {
+        await queryRunner.manager.getRepository(Board).delete({ workspace });
+        await queryRunner.manager.getRepository(Workspace).delete(workspace.id);
+      }
+    }
+  }
+
+  private async cleanupOrphanedBoards(queryRunner: QueryRunner): Promise<void> {
+    const orphanedBoards = await queryRunner.manager.getRepository(Board).find({
+      relations: ['members'],
+    });
+
+    for (const board of orphanedBoards) {
+      if (board.members.length === 0) {
+        await queryRunner.manager.getRepository(Board).delete(board.id);
+      }
+    }
   }
 }
