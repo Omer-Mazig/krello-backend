@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { User } from './entities/user.entity';
 import { UserDeletionProvider } from './providers/user-deletion.provider';
+import { HashingProvider } from 'src/auth/providers/hashing.provider';
 
 @Module({
   controllers: [UsersController],

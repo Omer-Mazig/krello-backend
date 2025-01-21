@@ -20,7 +20,6 @@ export class WorkspacesService {
     private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
     private readonly dataSource: DataSource,
   ) {}
 

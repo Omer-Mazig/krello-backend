@@ -31,6 +31,7 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
 import { Workspace } from './workspaces/entities/workspace.entity';
 import { WorkspaceMember } from './workspaces/entities/workspace-member.entity';
 import { BoardAdminGuard } from './auth/guards/boards/board-admin-guard';
+import { WorkspaceMemberGuard } from './auth/guards/workspaces/workspace-member-guard';
 
 const ENV = process.env.NODE_ENV;
 
@@ -100,6 +101,7 @@ const ENV = process.env.NODE_ENV;
     },
     AccessTokenGuard,
     BoardAdminGuard,
+    WorkspaceMemberGuard,
   ],
 })
 export class AppModule {}
