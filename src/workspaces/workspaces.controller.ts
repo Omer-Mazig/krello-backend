@@ -19,15 +19,11 @@ export class WorkspacesController {
     return this.workspacesService.create(createWorkspaceDto, user.sub);
   }
 
-  @Post(':workspaceId/members')
+  @Post('/members')
   @Auth(AuthType.WorkspaceMember)
   async addWorkspaceMember(
-    @Param('workspaceId') workspaceId: string,
     @Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ) {
-    return await this.workspacesService.addMember(
-      workspaceId,
-      createWorkspaceMemberDto,
-    );
+    return await this.workspacesService.addMember(createWorkspaceMemberDto);
   }
 }

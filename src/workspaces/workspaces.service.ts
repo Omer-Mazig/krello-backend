@@ -94,13 +94,12 @@ export class WorkspacesService {
   }
 
   async addMember(
-    workspaceId: string,
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
     try {
       // Validate workspace
       const workspace = await this.workspaceRepository.findOne({
-        where: { id: workspaceId },
+        where: { id: createWorkspaceMemberDto.workspaceId },
       });
       if (!workspace) {
         throw new NotFoundException('Workspace not found');
@@ -117,7 +116,7 @@ export class WorkspacesService {
       // Ensure the user to be added is not already a member
       const existingMember = await this.workspaceMemberRepository.findOne({
         where: {
-          workspace: { id: workspaceId },
+          workspace: { id: createWorkspaceMemberDto.workspaceId },
           user: { id: createWorkspaceMemberDto.userId },
         },
       });
