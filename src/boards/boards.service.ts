@@ -153,19 +153,23 @@ export class BoardsService {
     boardId: string,
     relationKey: keyof typeof this.RELATION_MAP = 'all', // Default to 'all'
   ): Promise<Board> {
-    // TODO: add try error hadnling
-    const relations = this.RELATION_MAP[relationKey];
+    try {
+      const relations = this.RELATION_MAP[relationKey];
 
-    const board = await this.boardRepository.findOne({
-      where: { id: boardId },
-      relations,
-    });
+      const board = await this.boardRepository.findOne({
+        where: { id: boardId },
+        relations,
+      });
 
-    if (!board) {
-      throw new NotFoundException(`Board with ID ${boardId} not found.`);
+      if (!board) {
+        throw new NotFoundException(`Board with ID ${boardId} not found.`);
+      }
+
+      return board;
+    } catch (error) {
+      console.error('Error finding board with relations', error);
+      throw error;
     }
-
-    return board;
   }
 
   async remove(boardId: string): Promise<void> {
