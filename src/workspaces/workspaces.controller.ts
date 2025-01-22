@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
@@ -17,6 +17,11 @@ export class WorkspacesController {
     @ActiveUser() user: ActiveUserData,
   ) {
     return this.workspacesService.create(createWorkspaceDto, user.sub);
+  }
+
+  @Get()
+  findAllActiveUserWorkspaces(@ActiveUser() user: ActiveUserData) {
+    return this.workspacesService.findAllUserWorkspaces(user.sub);
   }
 
   @Post('/members')

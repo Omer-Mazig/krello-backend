@@ -5,7 +5,7 @@ import {
   NotFoundException,
   RequestTimeoutException,
 } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, FindManyOptions, Repository } from 'typeorm';
 import { Workspace } from './entities/workspace.entity';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
@@ -71,6 +71,27 @@ export class WorkspacesService {
     } finally {
       // Release the query runner
       await queryRunner.release();
+    }
+  }
+
+  async findAllUserWorkspaces(userId: string): Promise<Workspace[]> {
+    const query: FindManyOptions<Workspace> = {
+      where: {
+        members: {
+          user: { id: userId },
+        },
+      },
+    };
+    return this.findAll(query);
+  }
+
+  async findAll(query: FindManyOptions<Workspace>): Promise<Workspace[]> {
+    try {
+      const workspaces = await this.workspaceRepository.find(query);
+      return workspaces;
+    } catch (error) {
+      console.error(`Error finding workspaces`, error);
+      throw error;
     }
   }
 
