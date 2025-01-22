@@ -131,7 +131,6 @@ export class WorkspacesService {
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
     try {
-      // Validate workspace
       const workspace = await this.workspaceRepository.findOne({
         where: { id: createWorkspaceMemberDto.workspaceId },
       });
@@ -139,7 +138,6 @@ export class WorkspacesService {
         throw new NotFoundException('Workspace not found');
       }
 
-      // Validate user
       const user = await this.userRepository.findOne({
         where: { id: createWorkspaceMemberDto.userId },
       });
@@ -147,7 +145,6 @@ export class WorkspacesService {
         throw new NotFoundException('User not found');
       }
 
-      // Ensure the user to be added is not already a member
       const existingMember = await this.workspaceMemberRepository.findOne({
         where: {
           workspace: { id: createWorkspaceMemberDto.workspaceId },
@@ -161,7 +158,6 @@ export class WorkspacesService {
         );
       }
 
-      // Add the new member
       const newMember = this.workspaceMemberRepository.create({
         workspace,
         user,
@@ -174,8 +170,6 @@ export class WorkspacesService {
     }
   }
 
-  // TODO: promote member to be an admin if no admin.
-  // TODO: remove the workspace if no members
   async removeMember(memberId: string): Promise<void> {
     try {
       const member = await this.workspaceMemberRepository.findOne({
