@@ -64,6 +64,7 @@ export class UserDeletionProvider {
     return user;
   }
 
+  // TODO: members are not promoted to admin when they should. workspace does get deleted when it should
   private async handleUserWorkspaces(
     queryRunner: QueryRunner,
     user: User,
