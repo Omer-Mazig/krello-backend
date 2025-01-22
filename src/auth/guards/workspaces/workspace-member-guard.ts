@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
-import { WorkspacesService } from 'src/workspaces/workspaces.service';
 import { Repository } from 'typeorm';
 
 @Injectable()

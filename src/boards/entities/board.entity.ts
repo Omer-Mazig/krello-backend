@@ -21,8 +21,8 @@ export class Board {
   @Column()
   name: string;
 
-  @Column({ default: 'private' })
-  visibility: string;
+  @Column({ default: 'workspace' })
+  visibility: 'private' | 'workspace' | 'public';
 
   @OneToMany(() => BoardMember, (boardMember) => boardMember.board, {
     cascade: true,
