@@ -41,6 +41,11 @@ export class UsersService {
 
       return await this.userRepository.save(newUser);
     } catch (error) {
+      console.error('Error creating user:', error);
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new RequestTimeoutException(
         'Unable to process your request at the moment, please try later',
       );
@@ -52,6 +57,7 @@ export class UsersService {
       const users = await this.userRepository.find();
       return users;
     } catch (error) {
+      console.error('Error finding all users:', error);
       throw new RequestTimeoutException('Error connecting to the database');
     }
   }
@@ -64,6 +70,10 @@ export class UsersService {
       }
       return user;
     } catch (error) {
+      console.error(`Error finding one by ID ${id}:`, error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new RequestTimeoutException('Error connecting to the database');
     }
   }
@@ -76,6 +86,10 @@ export class UsersService {
       }
       return user;
     } catch (error) {
+      console.error(`Error finding one by email ${email}:`, error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new RequestTimeoutException('Error connecting to the database');
     }
   }
@@ -94,6 +108,10 @@ export class UsersService {
 
       return userWithPassword;
     } catch (error) {
+      console.error(`Error finding one with password ${email}:`, error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new RequestTimeoutException('Error connecting to the database');
     }
   }
@@ -103,7 +121,12 @@ export class UsersService {
   }
 
   async remove(userId: string): Promise<void> {
-    const user = await this.findOneById(userId);
-    await this.userDeletionProvider.deleteUser(user);
+    try {
+      const user = await this.findOneById(userId);
+      await this.userDeletionProvider.deleteUser(user);
+    } catch (error) {
+      console.error(`Error removing by with ID ${userId}:`, error);
+      throw error;
+    }
   }
 }
