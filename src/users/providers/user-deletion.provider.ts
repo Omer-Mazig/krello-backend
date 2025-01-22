@@ -99,8 +99,6 @@ export class UserDeletionProvider {
 
       if (adminCount <= 1) {
         if (members.length === 1) {
-          console.log('workspace', workspace);
-
           // If this user is the only member, delete the workspace
           await queryRunner.manager
             .getRepository(Board)
