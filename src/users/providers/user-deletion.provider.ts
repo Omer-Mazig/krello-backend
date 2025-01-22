@@ -56,9 +56,21 @@ export class UserDeletionProvider {
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.error('Error deleting user:', error);
+
+      // Log the error for debugging
+      console.error('Error occurred during user deletion:', {
+        userId,
+        error: error.message,
+        stack: error.stack,
+      });
+
+      // Re-throw specific or general errors with additional context
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
       throw new InternalServerErrorException(
-        'Failed to delete user. Please try again later.',
+        `Failed to delete user with ID ${userId}. Reason: ${error.message}`,
       );
     } finally {
       await queryRunner.release();
