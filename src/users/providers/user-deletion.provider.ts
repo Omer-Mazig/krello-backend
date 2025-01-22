@@ -15,40 +15,24 @@ export class UserDeletionProvider {
   constructor(private readonly dataSource: DataSource) {}
 
   async deleteUser(userId: string): Promise<void> {
-    // Pre-query all necessary data
-    const user = await this.fetchUserDirectly(userId);
-
-    if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found.`);
-    }
-
-    const workspaceMemberships = await this.getWorkspaceMemberships(user);
-    const boardMemberships = await this.getBoardMemberships(user);
-
-    const orphanedWorkspaces = await this.getOrphanedWorkspaces();
-    const orphanedBoards = await this.getOrphanedBoards();
-
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      // Handle user-specific workspace operations
-      await this.handleUserWorkspaces(queryRunner, workspaceMemberships, user);
+      const user = await this.fetchUser(queryRunner, userId);
 
-      // Handle user-specific board operations
-      await this.handleUserBoards(queryRunner, boardMemberships, user);
+      // Handle workspaces and boards
+      await this.handleUserWorkspaces(queryRunner, user);
+      await this.handleUserBoards(queryRunner, user);
 
-      // Remove user memberships
+      // Remove memberships
       await this.removeUserMemberships(queryRunner, user);
 
-      // Clean up orphaned workspaces and boards
-      await this.cleanupSpecificOrphanedWorkspaces(
-        queryRunner,
-        orphanedWorkspaces,
-      );
-      await this.cleanupSpecificOrphanedBoards(queryRunner, orphanedBoards);
+      // Check for orphaned workspaces and boards
+      await this.cleanupOrphanedWorkspaces(queryRunner);
+      await this.cleanupOrphanedBoards(queryRunner);
 
       // Delete the user
       await queryRunner.manager.getRepository(User).remove(user);
@@ -56,85 +40,70 @@ export class UserDeletionProvider {
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-
-      // Log the error for debugging
-      console.error('Error occurred during user deletion:', {
-        userId,
-        error: error.message,
-        stack: error.stack,
-      });
-
-      // Re-throw specific or general errors with additional context
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-
+      console.error('Error deleting user:', error);
       throw new InternalServerErrorException(
-        `Failed to delete user with ID ${userId}. Reason: ${error.message}`,
+        'Failed to delete user. Please try again later.',
       );
     } finally {
       await queryRunner.release();
     }
   }
 
-  // Pre-query helper methods
-  private async fetchUserDirectly(userId: string): Promise<User | null> {
-    return this.dataSource.getRepository(User).findOne({
+  private async fetchUser(
+    queryRunner: QueryRunner,
+    userId: string,
+  ): Promise<User> {
+    const user = await queryRunner.manager.getRepository(User).findOne({
       where: { id: userId },
     });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    return user;
   }
 
-  private async getWorkspaceMemberships(user: User) {
-    return this.dataSource.getRepository(WorkspaceMember).find({
-      where: { user },
-      relations: ['workspace'],
-    });
-  }
-
-  private async getBoardMemberships(user: User) {
-    return this.dataSource.getRepository(BoardMember).find({
-      where: { user },
-      relations: ['board'],
-    });
-  }
-
-  private async getOrphanedWorkspaces() {
-    return this.dataSource.getRepository(Workspace).find({
-      relations: ['members'],
-    });
-  }
-
-  private async getOrphanedBoards() {
-    return this.dataSource.getRepository(Board).find({
-      relations: ['members'],
-    });
-  }
-
-  // Mutation methods
+  // is this function even get called???
+  // TODO: members are not promoted to admin when they should. workspace does get deleted when it should
   private async handleUserWorkspaces(
     queryRunner: QueryRunner,
-    workspaceMemberships: WorkspaceMember[],
     user: User,
   ): Promise<void> {
-    for (const member of workspaceMemberships) {
+    const workspaceMembers = await queryRunner.manager
+      .getRepository(WorkspaceMember)
+      .find({ where: { user }, relations: ['workspace'] });
+
+    for (const member of workspaceMembers) {
       const { workspace } = member;
 
+      // Check the number of current admins in the workspace
       const adminCount = await queryRunner.manager
         .getRepository(WorkspaceMember)
         .count({ where: { workspace: { id: workspace.id }, role: 'admin' } });
 
-      const members = workspaceMemberships.filter(
-        (m) => m.workspace.id === workspace.id,
-      );
+      // Retrieve all workspace members sorted by createdAt (oldest first)
+      const members = await queryRunner.manager
+        .getRepository(WorkspaceMember)
+        .find({
+          where: { workspace: { id: workspace.id } },
+          order: { createdAt: 'ASC' },
+        });
+
+      console.log('adminCount', adminCount);
 
       if (adminCount <= 1) {
+        console.log('members.length', members.length);
+
         if (members.length === 1) {
-          // Delete workspace if this user is the only member
+          // If this user is the only member, delete the workspace
           await queryRunner.manager.getRepository(Board).delete({ workspace });
           await queryRunner.manager.getRepository(Workspace).delete(workspace);
         } else {
-          // Promote the oldest member to admin
+          // Promote the oldest member (excluding the user being deleted) to admin
           const newAdmin = members.find((m) => m.user.id !== user.id);
+          console.log('newAdmin', newAdmin);
+
           if (newAdmin) {
             newAdmin.role = 'admin';
             await queryRunner.manager
@@ -148,17 +117,25 @@ export class UserDeletionProvider {
 
   private async handleUserBoards(
     queryRunner: QueryRunner,
-    boardMemberships: BoardMember[],
     user: User,
   ): Promise<void> {
-    for (const member of boardMemberships) {
+    const boardMembers = await queryRunner.manager
+      .getRepository(BoardMember)
+      .find({ where: { user }, relations: ['board'] });
+
+    for (const member of boardMembers) {
       const { board } = member;
 
       const adminCount = await queryRunner.manager
         .getRepository(BoardMember)
         .count({ where: { board: { id: board.id }, role: 'admin' } });
 
-      const members = boardMemberships.filter((m) => m.board.id === board.id);
+      const members = await queryRunner.manager
+        .getRepository(BoardMember)
+        .find({
+          where: { board: { id: board.id } },
+          order: { createdAt: 'ASC' },
+        });
 
       if (adminCount <= 1) {
         if (members.length === 1) {
@@ -184,10 +161,16 @@ export class UserDeletionProvider {
     await queryRunner.manager.getRepository(BoardMember).delete({ user });
   }
 
-  private async cleanupSpecificOrphanedWorkspaces(
+  // TODO: query only user related
+  private async cleanupOrphanedWorkspaces(
     queryRunner: QueryRunner,
-    orphanedWorkspaces: Workspace[],
   ): Promise<void> {
+    const orphanedWorkspaces = await queryRunner.manager
+      .getRepository(Workspace)
+      .find({
+        relations: ['members'],
+      });
+
     for (const workspace of orphanedWorkspaces) {
       if (workspace.members.length === 0) {
         await queryRunner.manager.getRepository(Board).delete({ workspace });
@@ -196,10 +179,12 @@ export class UserDeletionProvider {
     }
   }
 
-  private async cleanupSpecificOrphanedBoards(
-    queryRunner: QueryRunner,
-    orphanedBoards: Board[],
-  ): Promise<void> {
+  // TODO: query only user related
+  private async cleanupOrphanedBoards(queryRunner: QueryRunner): Promise<void> {
+    const orphanedBoards = await queryRunner.manager.getRepository(Board).find({
+      relations: ['members'],
+    });
+
     for (const board of orphanedBoards) {
       if (board.members.length === 0) {
         await queryRunner.manager.getRepository(Board).delete(board.id);
