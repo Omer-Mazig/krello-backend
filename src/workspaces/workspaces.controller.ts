@@ -5,6 +5,7 @@ import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
+import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 
 @Controller('workspaces')
 export class WorkspacesController {
@@ -22,8 +23,11 @@ export class WorkspacesController {
   @Auth(AuthType.WorkspaceMember)
   async addWorkspaceMember(
     @Param('workspaceId') workspaceId: string,
-    @Body('userId') userId: string,
+    @Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ) {
-    return await this.workspacesService.addMember(workspaceId, userId);
+    return await this.workspacesService.addMember(
+      workspaceId,
+      createWorkspaceMemberDto,
+    );
   }
 }

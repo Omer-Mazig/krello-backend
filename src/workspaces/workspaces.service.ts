@@ -10,6 +10,7 @@ import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 
 @Injectable()
 export class WorkspacesService {
@@ -88,7 +89,7 @@ export class WorkspacesService {
 
   async addMember(
     workspaceId: string,
-    userId: string,
+    createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
     // Validate workspace
     const workspace = await this.workspaceRepository.findOne({
@@ -99,14 +100,19 @@ export class WorkspacesService {
     }
 
     // Validate user
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({
+      where: { id: createWorkspaceMemberDto.userId },
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     // Ensure the user to be added is not already a member
     const existingMember = await this.workspaceMemberRepository.findOne({
-      where: { workspace: { id: workspaceId }, user: { id: userId } },
+      where: {
+        workspace: { id: workspaceId },
+        user: { id: createWorkspaceMemberDto.userId },
+      },
     });
 
     if (existingMember) {
