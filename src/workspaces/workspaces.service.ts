@@ -1,9 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
-  RequestTimeoutException,
 } from '@nestjs/common';
 import { DataSource, FindManyOptions, Repository } from 'typeorm';
 import { Workspace } from './entities/workspace.entity';
@@ -110,6 +108,16 @@ export class WorkspacesService {
       return workspace;
     } catch (error) {
       console.error(`Error finding workspace by ID ${workspaceId}:`, error);
+      throw error;
+    }
+  }
+
+  async delete(workspaceId: string) {
+    try {
+      const workspaceToDelete = await this.findOne(workspaceId);
+      await this.workspaceRepository.remove(workspaceToDelete);
+    } catch (error) {
+      console.error(`Error deleting workspace by ID ${workspaceId}:`, error);
       throw error;
     }
   }

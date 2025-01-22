@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
@@ -26,9 +26,16 @@ export class WorkspacesController {
 
   @Post('/members')
   @Auth(AuthType.WorkspaceMember)
-  async addWorkspaceMember(
+  addWorkspaceMember(
     @Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ) {
-    return await this.workspacesService.addMember(createWorkspaceMemberDto);
+    return this.workspacesService.addMember(createWorkspaceMemberDto);
+  }
+
+  // TODO: allow only admin to remove
+  @Delete(':workspaceId')
+  @Auth(AuthType.WorkspaceMember)
+  delete(@Param('workspaceId') workspaceId: string) {
+    return this.workspacesService.delete(workspaceId);
   }
 }

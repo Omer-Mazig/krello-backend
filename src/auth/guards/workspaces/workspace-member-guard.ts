@@ -20,7 +20,8 @@ export class WorkspaceMemberGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request[REQUEST_USER_KEY];
-    const workspaceId = request.params?.workspaceId;
+    const workspaceId =
+      request.params?.workspaceId || request.body?.workspaceId;
 
     if (!workspaceId || !user.sub) {
       throw new ForbiddenException('Workspace ID and User ID are required');

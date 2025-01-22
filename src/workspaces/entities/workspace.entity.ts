@@ -19,6 +19,9 @@ export class Workspace {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  description?: string;
+
   @Column({ type: 'enum', enum: ['private', 'public'], default: 'private' })
   visibility: 'private' | 'public';
 
