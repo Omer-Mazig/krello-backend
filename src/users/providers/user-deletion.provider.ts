@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
