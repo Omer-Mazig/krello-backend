@@ -99,9 +99,15 @@ export class UserDeletionProvider {
 
       if (adminCount <= 1) {
         if (members.length === 1) {
+          console.log('workspace', workspace);
+
           // If this user is the only member, delete the workspace
-          await queryRunner.manager.getRepository(Board).delete({ workspace });
-          await queryRunner.manager.getRepository(Workspace).delete(workspace);
+          await queryRunner.manager
+            .getRepository(Board)
+            .delete({ workspace: { id: workspace.id } });
+          await queryRunner.manager
+            .getRepository(Workspace)
+            .delete({ id: workspace.id });
         } else {
           // Promote the oldest member (excluding the user being deleted) to admin
           const newAdmin = members.find((m) => m.user.id !== user.id);
