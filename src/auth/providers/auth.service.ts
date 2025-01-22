@@ -5,13 +5,10 @@ import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
 import { Response } from 'express';
 import { CookieProvider } from './cookie.provider';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(forwardRef(() => UsersService))
-    private readonly userService: UsersService,
     private readonly signInProvider: SignInProvider,
     private readonly refreshTokensProvider: RefreshTokensProvider,
     private readonly cookieProvider: CookieProvider,

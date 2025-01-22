@@ -35,7 +35,6 @@ export class WorkspacesService {
 
     try {
       // Step 1: Create the workspace
-      const user = { id: userId }; // Reference to the user creating the workspace
       const newWorkspace = queryRunner.manager
         .getRepository(Workspace)
         .create({ name }); // Set the createdBy field
@@ -123,17 +122,5 @@ export class WorkspacesService {
     });
 
     return await this.workspaceMemberRepository.save(newMember);
-  }
-
-  async isMember(workspaceId: string, userId: string): Promise<boolean> {
-    const member = await this.workspaceMemberRepository.findOne({
-      where: {
-        workspace: { id: workspaceId },
-        user: { id: userId },
-      },
-      relations: ['workspace', 'user'], // Ensures related entities are loaded if needed
-    });
-
-    return !!member; // Returns true if a member exists, false otherwise
   }
 }

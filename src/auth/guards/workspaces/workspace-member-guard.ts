@@ -4,12 +4,18 @@ import {
   Injectable,
   ForbiddenException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
+import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
 import { WorkspacesService } from 'src/workspaces/workspaces.service';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class WorkspaceMemberGuard implements CanActivate {
-  constructor(private readonly workspacesService: WorkspacesService) {}
+  constructor(
+    @InjectRepository(WorkspaceMember)
+    private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -20,11 +26,18 @@ export class WorkspaceMemberGuard implements CanActivate {
       throw new ForbiddenException('Workspace ID and User ID are required');
     }
 
-    const isMember = await this.workspacesService.isMember(
-      workspaceId,
-      user.sub,
-    );
-    if (!isMember) {
+    const member = await this.workspaceMemberRepository.findOne({
+      where: {
+        workspace: { id: workspaceId },
+        user: { id: user.sub },
+      },
+      relations: {
+        user: true,
+        workspace: true,
+      },
+    });
+
+    if (!member) {
       throw new ForbiddenException(
         'You must be a workspace member to perform this action',
       );
