@@ -10,6 +10,7 @@ import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { Reflector } from '@nestjs/core';
 import { BoardAdminGuard } from '../boards/board-admin-guard';
 import { WorkspaceMemberGuard } from '../workspaces/workspace-member-guard';
+import { WorkspaceAdminGuard } from '../workspaces/workspace-admin-guard';
 
 /**
  * AuthGuard dynamically executes a set of guards based on the `AuthType` specified
@@ -35,11 +36,15 @@ export class AuthGuard implements CanActivate {
   > = {
     [AuthType.None]: { canActivate: () => true },
     [AuthType.Bearer]: this.accessTokenGuard,
-    [AuthType.BoardAdmin]: [this.accessTokenGuard, this.boardAdminGuard],
+    [AuthType.WorkspaceAdmin]: [
+      this.accessTokenGuard,
+      this.workspaceAdminGuard,
+    ],
     [AuthType.WorkspaceMember]: [
       this.accessTokenGuard,
       this.workspaceMemberGuard,
     ],
+    [AuthType.BoardAdmin]: [this.accessTokenGuard, this.boardAdminGuard],
   };
 
   /**
@@ -52,8 +57,9 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuard: AccessTokenGuard,
-    private readonly boardAdminGuard: BoardAdminGuard,
+    private readonly workspaceAdminGuard: WorkspaceAdminGuard,
     private readonly workspaceMemberGuard: WorkspaceMemberGuard,
+    private readonly boardAdminGuard: BoardAdminGuard,
   ) {}
 
   /**

@@ -3,4 +3,5 @@ export enum AuthType {
   None,
   BoardAdmin,
   WorkspaceMember,
+  WorkspaceAdmin,
 }

@@ -34,7 +34,7 @@ export class WorkspacesController {
 
   // TODO: allow only admin to remove
   @Delete(':workspaceId')
-  @Auth(AuthType.WorkspaceMember)
+  @Auth(AuthType.WorkspaceAdmin)
   delete(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.delete(workspaceId);
   }
