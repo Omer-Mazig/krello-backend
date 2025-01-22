@@ -3,7 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DataSource, FindManyOptions, Repository } from 'typeorm';
+import {
+  DataSource,
+  FindManyOptions,
+  getRepository,
+  Repository,
+} from 'typeorm';
 import { Workspace } from './entities/workspace.entity';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
@@ -165,6 +170,85 @@ export class WorkspacesService {
       return await this.workspaceMemberRepository.save(newMember);
     } catch (error) {
       console.error(`Error adding workspace member`, error);
+      throw error;
+    }
+  }
+
+  // TODO: promote member to be an admin if no admin.
+  // TODO: remove the workspace if no members
+  async removeMember(memberId: string): Promise<void> {
+    try {
+      const member = await this.workspaceMemberRepository.findOne({
+        where: { id: memberId },
+        relations: {
+          workspace: {
+            members: true,
+          },
+        },
+      });
+
+      if (!member) {
+        throw new NotFoundException('Member not found');
+      }
+
+      const otherMembers = member.workspace.members.filter((m) => {
+        return m.id !== member.id;
+      });
+
+      if (otherMembers.length === 0) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        try {
+          await queryRunner.connect();
+          await queryRunner.startTransaction();
+
+          await queryRunner.manager
+            .getRepository(Workspace)
+            .delete({ id: member.workspace.id });
+
+          await queryRunner.manager
+            .getRepository(WorkspaceMember)
+            .delete({ id: member.id });
+
+          await queryRunner.commitTransaction();
+        } catch (error) {
+          await queryRunner.rollbackTransaction();
+          throw error;
+        } finally {
+          await queryRunner.release();
+        }
+      } else {
+        if (!otherMembers.some((m) => m.role === 'admin')) {
+          const queryRunner = this.dataSource.createQueryRunner();
+
+          try {
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
+
+            // TODO: prompt the oldest
+            const { ...memberToMakeAdmin } = otherMembers[0];
+            memberToMakeAdmin.role = 'admin';
+
+            await queryRunner.manager
+              .getRepository(WorkspaceMember)
+              .update(memberToMakeAdmin.id, memberToMakeAdmin);
+
+            await queryRunner.manager
+              .getRepository(WorkspaceMember)
+              .delete({ id: member.id });
+
+            await queryRunner.commitTransaction();
+          } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw error;
+          } finally {
+            await queryRunner.release();
+          }
+        } else {
+          await this.workspaceMemberRepository.remove(member);
+        }
+      }
+    } catch (error) {
+      console.error(`Error removing workspace member`, error);
       throw error;
     }
   }

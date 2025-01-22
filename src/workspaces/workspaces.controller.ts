@@ -24,6 +24,12 @@ export class WorkspacesController {
     return this.workspacesService.findAllUserWorkspaces(user.sub);
   }
 
+  @Delete(':workspaceId')
+  @Auth(AuthType.WorkspaceAdmin)
+  delete(@Param('workspaceId') workspaceId: string) {
+    return this.workspacesService.delete(workspaceId);
+  }
+
   @Post('/members')
   @Auth(AuthType.WorkspaceMember)
   addWorkspaceMember(
@@ -32,10 +38,12 @@ export class WorkspacesController {
     return this.workspacesService.addMember(createWorkspaceMemberDto);
   }
 
-  // TODO: allow only admin to remove
-  @Delete(':workspaceId')
+  @Delete(':workspaceId/members/:memberId')
   @Auth(AuthType.WorkspaceAdmin)
-  delete(@Param('workspaceId') workspaceId: string) {
-    return this.workspacesService.delete(workspaceId);
+  removeWorkspaceMember(
+    @Param('workspaceId') workspaceId: string, // for guard
+    @Param('memberId') memberId: string,
+  ) {
+    return this.workspacesService.removeMember(memberId);
   }
 }

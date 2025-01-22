@@ -13,6 +13,7 @@ export class UserDeletionProvider {
   async deleteUser(user: User): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
 
+    // TODO: include in try-catch ???
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
