@@ -64,8 +64,6 @@ export class UserDeletionProvider {
     return user;
   }
 
-  // is this function even get called???
-  // TODO: members are not promoted to admin when they should. workspace does get deleted when it should
   private async handleUserWorkspaces(
     queryRunner: QueryRunner,
     user: User,
@@ -79,8 +77,6 @@ export class UserDeletionProvider {
           workspace: true,
         },
       });
-
-    console.log('workspaceMembers', workspaceMembers);
 
     for (const member of workspaceMembers) {
       const { workspace } = member;
@@ -101,11 +97,7 @@ export class UserDeletionProvider {
           order: { createdAt: 'ASC' },
         });
 
-      console.log('adminCount', adminCount);
-
       if (adminCount <= 1) {
-        console.log('members.length', members.length);
-
         if (members.length === 1) {
           // If this user is the only member, delete the workspace
           await queryRunner.manager.getRepository(Board).delete({ workspace });
@@ -113,7 +105,6 @@ export class UserDeletionProvider {
         } else {
           // Promote the oldest member (excluding the user being deleted) to admin
           const newAdmin = members.find((m) => m.user.id !== user.id);
-          console.log('newAdmin', newAdmin);
 
           if (newAdmin) {
             newAdmin.role = 'admin';
