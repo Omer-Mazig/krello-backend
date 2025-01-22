@@ -82,7 +82,7 @@ export class UserDeletionProvider {
         .getRepository(WorkspaceMember)
         .count({ where: { workspace: { id: workspace.id }, role: 'admin' } });
 
-      // Retrieve all workspace members sorted by createdAt (oldest first)
+      // Retrieve all workspace members sorted by createdAt
       const members = await queryRunner.manager
         .getRepository(WorkspaceMember)
         .find({
