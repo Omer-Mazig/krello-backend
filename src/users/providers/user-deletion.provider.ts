@@ -31,8 +31,8 @@ export class UserDeletionProvider {
       await this.removeUserMemberships(queryRunner, user);
 
       // Check for orphaned workspaces and boards
-      await this.cleanupOrphanedWorkspaces(queryRunner);
-      await this.cleanupOrphanedBoards(queryRunner);
+      // await this.cleanupOrphanedWorkspaces(queryRunner);
+      // await this.cleanupOrphanedBoards(queryRunner);
 
       // Delete the user
       await queryRunner.manager.getRepository(User).remove(user);
@@ -123,7 +123,13 @@ export class UserDeletionProvider {
   ): Promise<void> {
     const boardMembers = await queryRunner.manager
       .getRepository(BoardMember)
-      .find({ where: { user }, relations: ['board'] });
+      .find({
+        where: { user: { id: user.id } },
+        relations: {
+          user: true,
+          board: true,
+        },
+      });
 
     for (const member of boardMembers) {
       const { board } = member;
@@ -136,6 +142,9 @@ export class UserDeletionProvider {
         .getRepository(BoardMember)
         .find({
           where: { board: { id: board.id } },
+          relations: {
+            user: true,
+          },
           order: { createdAt: 'ASC' },
         });
 
