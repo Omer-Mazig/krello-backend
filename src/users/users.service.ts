@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   RequestTimeoutException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -42,13 +43,7 @@ export class UsersService {
       return await this.userRepository.save(newUser);
     } catch (error) {
       console.error('Error creating user:', error);
-
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment, please try later',
-      );
+      throw error;
     }
   }
 
@@ -58,7 +53,7 @@ export class UsersService {
       return users;
     } catch (error) {
       console.error('Error finding all users:', error);
-      throw new RequestTimeoutException('Error connecting to the database');
+      throw error;
     }
   }
 
@@ -66,15 +61,12 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({ where: { id } });
       if (!user) {
-        throw new BadRequestException('The user ID does not exist');
+        throw new NotFoundException('The user ID does not exist');
       }
       return user;
     } catch (error) {
       console.error(`Error finding one by ID ${id}:`, error);
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new RequestTimeoutException('Error connecting to the database');
+      throw error;
     }
   }
 
@@ -82,15 +74,12 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({ where: { email } });
       if (!user) {
-        throw new BadRequestException('The user email does not exist');
+        throw new NotFoundException('The user email does not exist');
       }
       return user;
     } catch (error) {
       console.error(`Error finding one by email ${email}:`, error);
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new RequestTimeoutException('Error connecting to the database');
+      throw error;
     }
   }
 
@@ -103,16 +92,13 @@ export class UsersService {
         .getOne();
 
       if (!userWithPassword) {
-        throw new BadRequestException('The user email does not exist');
+        throw new NotFoundException('The user email does not exist');
       }
 
       return userWithPassword;
     } catch (error) {
       console.error(`Error finding one with password ${email}:`, error);
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new RequestTimeoutException('Error connecting to the database');
+      throw error;
     }
   }
 

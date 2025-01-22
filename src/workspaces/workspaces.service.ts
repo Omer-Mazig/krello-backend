@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Workspace } from './entities/workspace.entity';
@@ -66,9 +67,7 @@ export class WorkspacesService {
       // Rollback the transaction in case of error
       await queryRunner.rollbackTransaction();
       console.error('Error creating workspace:', error);
-      throw new InternalServerErrorException(
-        'Failed to create workspace. Please try again later.',
-      );
+      throw error;
     } finally {
       // Release the query runner
       await queryRunner.release();
@@ -76,57 +75,69 @@ export class WorkspacesService {
   }
 
   async findOne(workspaceId: string): Promise<Workspace> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-    });
+    try {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: workspaceId },
+      });
 
-    if (!workspace) {
-      throw new NotFoundException(`Board with ID ${workspaceId} not found.`);
+      if (!workspace) {
+        throw new NotFoundException(
+          `Workspace with ID ${workspaceId} not found.`,
+        );
+      }
+
+      return workspace;
+    } catch (error) {
+      console.error(`Error finding workspace by ID ${workspaceId}:`, error);
+      throw error;
     }
-
-    return workspace;
   }
 
   async addMember(
     workspaceId: string,
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
-    // Validate workspace
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-    });
-    if (!workspace) {
-      throw new NotFoundException('Workspace not found');
+    try {
+      // Validate workspace
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: workspaceId },
+      });
+      if (!workspace) {
+        throw new NotFoundException('Workspace not found');
+      }
+
+      // Validate user
+      const user = await this.userRepository.findOne({
+        where: { id: createWorkspaceMemberDto.userId },
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Ensure the user to be added is not already a member
+      const existingMember = await this.workspaceMemberRepository.findOne({
+        where: {
+          workspace: { id: workspaceId },
+          user: { id: createWorkspaceMemberDto.userId },
+        },
+      });
+
+      if (existingMember) {
+        throw new BadRequestException(
+          'User is already a member of this workspace',
+        );
+      }
+
+      // Add the new member
+      const newMember = this.workspaceMemberRepository.create({
+        workspace,
+        user,
+      });
+
+      return await this.workspaceMemberRepository.save(newMember);
+    } catch (error) {
+      console.error(`Error adding workspace member`, error);
+      throw error;
     }
-
-    // Validate user
-    const user = await this.userRepository.findOne({
-      where: { id: createWorkspaceMemberDto.userId },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Ensure the user to be added is not already a member
-    const existingMember = await this.workspaceMemberRepository.findOne({
-      where: {
-        workspace: { id: workspaceId },
-        user: { id: createWorkspaceMemberDto.userId },
-      },
-    });
-
-    if (existingMember) {
-      throw new BadRequestException(
-        'User is already a member of this workspace',
-      );
-    }
-
-    // Add the new member
-    const newMember = this.workspaceMemberRepository.create({
-      workspace,
-      user,
-    });
-
-    return await this.workspaceMemberRepository.save(newMember);
   }
 }

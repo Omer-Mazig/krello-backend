@@ -119,9 +119,7 @@ export class BoardsService {
       // Rollback the transaction in case of error
       await queryRunner.rollbackTransaction();
       console.error('Error creating board:', error);
-      throw new InternalServerErrorException(
-        'Failed to create board. Please try again later.',
-      );
+      throw error;
     } finally {
       // Release the query runner
       await queryRunner.release();
@@ -141,14 +139,7 @@ export class BoardsService {
       return boards;
     } catch (error) {
       console.error('Error finding boards:', error);
-
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-
-      throw new InternalServerErrorException(
-        'Failed to find boards. Please try again later.',
-      );
+      throw error;
     }
   }
 
@@ -190,14 +181,7 @@ export class BoardsService {
       await this.boardRepository.remove(board);
     } catch (error) {
       console.error('Error removing board:', error);
-
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-
-      throw new InternalServerErrorException(
-        'Failed to remove the board. Please try again later.',
-      );
+      throw error;
     }
   }
 }

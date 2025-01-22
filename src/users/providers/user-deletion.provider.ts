@@ -28,9 +28,7 @@ export class UserDeletionProvider {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error('Error deleting user:', error);
-      throw new InternalServerErrorException(
-        'Failed to delete user. Please try again later.',
-      );
+      throw error;
     } finally {
       await queryRunner.release();
     }
