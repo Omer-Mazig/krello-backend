@@ -72,7 +72,15 @@ export class UserDeletionProvider {
   ): Promise<void> {
     const workspaceMembers = await queryRunner.manager
       .getRepository(WorkspaceMember)
-      .find({ where: { user }, relations: ['workspace'] });
+      .find({
+        where: { user: { id: user.id } },
+        relations: {
+          user: true,
+          workspace: true,
+        },
+      });
+
+    console.log('workspaceMembers', workspaceMembers);
 
     for (const member of workspaceMembers) {
       const { workspace } = member;
@@ -87,6 +95,9 @@ export class UserDeletionProvider {
         .getRepository(WorkspaceMember)
         .find({
           where: { workspace: { id: workspace.id } },
+          relations: {
+            user: true,
+          },
           order: { createdAt: 'ASC' },
         });
 
