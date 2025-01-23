@@ -1,5 +1,6 @@
 import { Board } from 'src/boards/entities/board.entity';
 import { User } from 'src/users/entities/user.entity';
+import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,7 +10,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { WorkspaceMember } from './workspace-member.entity';
 
 @Entity()
 export class Workspace {

@@ -33,6 +33,7 @@ import { WorkspaceMember } from './workspaces/entities/workspace-member.entity';
 import { BoardAdminGuard } from './auth/guards/boards/board-admin-guard';
 import { WorkspaceMemberGuard } from './auth/guards/workspaces/workspace-member-guard';
 import { WorkspaceAdminGuard } from './auth/guards/workspaces/workspace-admin-guard';
+import { WorkspaceMembersModule } from './workspace-members/workspace-members.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -93,6 +94,8 @@ const ENV = process.env.NODE_ENV;
     JwtModule.registerAsync(jwtConfig.asProvider()),
 
     WorkspacesModule,
+
+    WorkspaceMembersModule,
   ],
   controllers: [],
   providers: [

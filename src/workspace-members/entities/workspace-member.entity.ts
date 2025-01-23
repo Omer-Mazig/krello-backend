@@ -6,8 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Workspace } from './workspace.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Workspace } from 'src/workspaces/entities/workspace.entity';
 
 @Entity()
 export class WorkspaceMember {
