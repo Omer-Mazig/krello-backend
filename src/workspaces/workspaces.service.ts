@@ -3,12 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  DataSource,
-  FindManyOptions,
-  getRepository,
-  Repository,
-} from 'typeorm';
+import { DataSource, FindManyOptions, Repository } from 'typeorm';
 import { Workspace } from './entities/workspace.entity';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
