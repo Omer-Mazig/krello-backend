@@ -6,19 +6,18 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 import { DataSource, Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
+import { UsersService } from 'src/users/users.service';
+import { WorkspacesService } from 'src/workspaces/workspaces.service';
 
 @Injectable()
 export class WorkspaceMembersService {
   constructor(
     @InjectRepository(WorkspaceMember)
     private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly usersService: UsersService,
+    private readonly workspacesService: WorkspacesService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -26,20 +25,14 @@ export class WorkspaceMembersService {
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
     try {
-      const workspace = await this.workspaceRepository.findOne({
-        where: { id: createWorkspaceMemberDto.workspaceId },
-      });
-      if (!workspace) {
-        throw new NotFoundException('Workspace not found');
-      }
+      const workspace = await this.workspacesService.findOne(
+        createWorkspaceMemberDto.workspaceId,
+      );
+      const user = await this.usersService.findOneById(
+        createWorkspaceMemberDto.userId,
+      );
 
-      const user = await this.userRepository.findOne({
-        where: { id: createWorkspaceMemberDto.userId },
-      });
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
+      // TODO: Make service method
       const existingMember = await this.workspaceMemberRepository.findOne({
         where: {
           workspace: { id: createWorkspaceMemberDto.workspaceId },
