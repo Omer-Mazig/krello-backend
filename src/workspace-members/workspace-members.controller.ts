@@ -10,20 +10,18 @@ export class WorkspaceMembersController {
     private readonly workspaceMembersService: WorkspaceMembersService,
   ) {}
 
-  @Post('/members')
+  @Post()
   @Auth(AuthType.WorkspaceMember)
-  addWorkspaceMember(
-    @Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto,
-  ) {
-    return this.workspaceMembersService.addMember(createWorkspaceMemberDto);
+  create(@Body() createWorkspaceMemberDto: CreateWorkspaceMemberDto) {
+    return this.workspaceMembersService.create(createWorkspaceMemberDto);
   }
 
-  @Delete(':workspaceId/members/:memberId')
+  @Delete(':memberId/:workspaceId')
   @Auth(AuthType.WorkspaceAdmin)
-  removeWorkspaceMember(
-    @Param('workspaceId') workspaceId: string, // for guard
+  remove(
     @Param('memberId') memberId: string,
+    @Param('workspaceId') workspaceId: string, // for guard
   ) {
-    return this.workspaceMembersService.removeMember(memberId);
+    return this.workspaceMembersService.remove(memberId);
   }
 }

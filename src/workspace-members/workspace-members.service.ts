@@ -22,7 +22,7 @@ export class WorkspaceMembersService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async addMember(
+  async create(
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
     try {
@@ -65,7 +65,7 @@ export class WorkspaceMembersService {
     }
   }
 
-  async removeMember(memberId: string): Promise<void> {
+  async remove(memberId: string): Promise<void> {
     try {
       const member = await this.workspaceMemberRepository.findOne({
         where: { id: memberId },
