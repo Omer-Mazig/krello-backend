@@ -1,10 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
 import { Board } from 'src/boards/entities/board.entity';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
 import { BoardMember } from 'src/boards/entities/board-member.entity';
+import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 
 @Injectable()
 export class UserDeletionProvider {

@@ -1,8 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { BoardMember } from 'src/boards/entities/board-member.entity';
 import { Card } from 'src/cards/entities/card.entity';
-import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
-import { Workspace } from 'src/workspaces/entities/workspace.entity';
+import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
