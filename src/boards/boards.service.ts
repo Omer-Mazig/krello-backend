@@ -1,17 +1,10 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { DataSource, Repository } from 'typeorm';
 import { BoardMember } from './entities/board-member.entity';
-import { ActivityType } from 'src/activities/enums/activity-type.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { EVENT_BOARD_ADDED } from 'src/constants/event.constants';
-import { ActivityPayloadMap } from 'src/activities/types/activity-payload.type';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
 
 @Injectable()
