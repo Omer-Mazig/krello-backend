@@ -1,7 +1,6 @@
 import { Board } from 'src/boards/entities/board.entity';
 import { Label } from 'src/labels/entities/label.entity';
 import { List } from 'src/lists/entities/list.entity';
-import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -39,10 +38,6 @@ export class Card {
 
   @ManyToOne(() => Board, (board) => board.cards, { onDelete: 'CASCADE' })
   board: Board;
-
-  @ManyToMany(() => User, (user) => user.cards)
-  @JoinTable()
-  members: User[];
 
   @CreateDateColumn()
   createdAt: Date;

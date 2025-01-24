@@ -1,6 +1,5 @@
 import { Exclude } from 'class-transformer';
 import { BoardMember } from 'src/boards/entities/board-member.entity';
-import { Card } from 'src/cards/entities/card.entity';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import {
   Entity,
@@ -9,8 +8,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -33,10 +30,6 @@ export class User {
 
   @OneToMany(() => BoardMember, (boardMember) => boardMember.user)
   boardMemberships: BoardMember[];
-
-  @ManyToMany(() => Card, (card) => card.members)
-  @JoinTable()
-  cards: Card[];
 
   @CreateDateColumn()
   createdAt: Date;
