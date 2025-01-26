@@ -16,11 +16,11 @@ import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
     WorkspaceMembersService,
     WorkspacesService,
     UsersFinderProvider,
-    UsersDeleterProvider, // dont use it this module
+    // UsersDeleterProvider, // dont use it this module
   ],
   imports: [
     TypeOrmModule.forFeature([WorkspaceMember, User, Workspace]),
-    AuthModule, // dont use it this module
+    // AuthModule, // dont use it this module
   ],
 })
 export class WorkspaceMembersModule {}

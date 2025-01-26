@@ -11,6 +11,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { CookieProvider } from './providers/cookie.provider';
+import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 // TODO: LOOK AT APP MODULE CONFIG. WE MIGHT REMOE SOME CONFIG HERE
 
@@ -28,11 +31,13 @@ import { CookieProvider } from './providers/cookie.provider';
     GenerateTokensProvider,
     RefreshTokensProvider,
     CookieProvider,
+    UsersFinderProvider,
   ],
   imports: [
+    TypeOrmModule.forFeature([User]),
     // Use forwardRef to avoid circular dependency issues between
     // AuthModule and UsersModule.
-    forwardRef(() => UsersModule),
+    // forwardRef(() => UsersModule),
 
     // Register the JWT configuration, making it available via the ConfigService
     ConfigModule.forFeature(jwtConfig),
