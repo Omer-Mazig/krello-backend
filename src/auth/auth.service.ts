@@ -1,10 +1,10 @@
 import { Injectable, forwardRef, Inject } from '@nestjs/common';
-import { SignInDto } from '../dtos/signin.dto';
-import { SignInProvider } from './sign-in.provider';
-import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { RefreshTokensProvider } from './refresh-tokens.provider';
+import { SignInDto } from './dtos/signin.dto';
+import { SignInProvider } from './providers/sign-in.provider';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { Response } from 'express';
-import { CookieProvider } from './cookie.provider';
+import { CookieProvider } from './providers/cookie.provider';
 
 @Injectable()
 export class AuthService {

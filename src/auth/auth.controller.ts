@@ -12,7 +12,7 @@ import { SignInDto } from './dtos/signin.dto';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
 import { Response, Request } from 'express';
-import { AuthService } from './providers/auth.service';
+import { AuthService } from './auth.service';
 import { CookieProvider } from './providers/cookie.provider';
 
 @Controller('auth')
