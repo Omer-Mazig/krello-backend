@@ -1,16 +1,22 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { Board } from 'src/boards/entities/board.entity';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
 import { BoardMember } from 'src/boards/entities/board-member.entity';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
+import { UsersFinderProvider } from './users-finder.provider';
 
 @Injectable()
-export class UserDeletionProvider {
-  constructor(private readonly dataSource: DataSource) {}
+export class UsersDeleterProvider {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly usersFinderProvider: UsersFinderProvider,
+  ) {}
 
-  async deleteUser(user: User): Promise<void> {
+  async delete(userId: string): Promise<void> {
+    const user = await this.usersFinderProvider.findOneById(userId);
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     // TODO: include in try-catch ???

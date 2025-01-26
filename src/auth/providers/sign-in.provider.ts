@@ -8,18 +8,18 @@ import {
 import { SignInDto } from '../dtos/signin.dto';
 import { HashingProvider } from './hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';
-import { UsersService } from 'src/users/users.service';
+import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
 
 @Injectable()
 export class SignInProvider {
   constructor(
     private readonly hashingProvider: HashingProvider,
     private readonly generateTokensProvider: GenerateTokensProvider,
-    private readonly usersService: UsersService,
+    private readonly usersFinderProvider: UsersFinderProvider,
   ) {}
 
   public async signIn(signInDto: SignInDto) {
-    const userWithPassword = await this.usersService.findOneWithPassword(
+    const userWithPassword = await this.usersFinderProvider.findOneWithPassword(
       signInDto.email,
     );
 

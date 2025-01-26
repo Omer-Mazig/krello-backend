@@ -8,15 +8,15 @@ import { WorkspaceMember } from './entities/workspace-member.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
-import { UsersService } from 'src/users/users.service';
 import { WorkspacesService } from 'src/workspaces/workspaces.service';
+import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
 
 @Injectable()
 export class WorkspaceMembersService {
   constructor(
     @InjectRepository(WorkspaceMember)
     private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
-    private readonly usersService: UsersService,
+    private readonly usersFinderProvider: UsersFinderProvider,
     private readonly workspacesService: WorkspacesService,
     private readonly dataSource: DataSource,
   ) {}
@@ -28,7 +28,7 @@ export class WorkspaceMembersService {
       const workspace = await this.workspacesService.findOne(
         createWorkspaceMemberDto.workspaceId,
       );
-      const user = await this.usersService.findOneById(
+      const user = await this.usersFinderProvider.findOneById(
         createWorkspaceMemberDto.userId,
       );
 

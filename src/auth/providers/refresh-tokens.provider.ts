@@ -10,14 +10,14 @@ import { ConfigType } from '@nestjs/config';
 import jwtConfig from '../config/jwt.config';
 import { GenerateTokensProvider } from './generate-tokens.provider';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
-import { UsersService } from 'src/users/users.service';
+import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
 
 @Injectable()
 export class RefreshTokensProvider {
   constructor(
     private readonly jwtService: JwtService,
     private readonly generateTokensProvider: GenerateTokensProvider,
-    private readonly UsersService: UsersService,
+    private readonly usersFinderProvider: UsersFinderProvider,
     @Inject(jwtConfig.KEY)
     private readonly JwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
@@ -35,7 +35,7 @@ export class RefreshTokensProvider {
       });
 
       // Fetch user from database
-      const user = await this.UsersService.findOneById(sub);
+      const user = await this.usersFinderProvider.findOneById(sub);
 
       // Generate the tokens
       return await this.generateTokensProvider.generateTokens(user);

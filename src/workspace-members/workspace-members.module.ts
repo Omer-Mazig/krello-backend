@@ -3,20 +3,20 @@ import { WorkspaceMembersService } from './workspace-members.service';
 import { WorkspaceMembersController } from './workspace-members.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceMember } from './entities/workspace-member.entity';
-import { UsersService } from 'src/users/users.service';
 import { WorkspacesService } from 'src/workspaces/workspaces.service';
 import { User } from 'src/users/entities/user.entity';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
 import { AuthModule } from 'src/auth/auth.module';
-import { UserDeletionProvider } from 'src/users/providers/user-deletion.provider';
+import { UsersDeleterProvider } from 'src/users/providers/users-deleter.provider';
+import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
 
 @Module({
   controllers: [WorkspaceMembersController],
   providers: [
     WorkspaceMembersService,
-    UsersService,
     WorkspacesService,
-    UserDeletionProvider, // dont use it this module
+    UsersFinderProvider,
+    UsersDeleterProvider, // dont use it this module
   ],
   imports: [
     TypeOrmModule.forFeature([WorkspaceMember, User, Workspace]),
