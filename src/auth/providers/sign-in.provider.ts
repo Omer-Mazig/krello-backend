@@ -2,6 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
   RequestTimeoutException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -23,6 +24,10 @@ export class SignInProvider {
       signInDto.email,
     );
 
+    if (!userWithPassword) {
+      throw new UnauthorizedException('Incorrect email or password');
+    }
+
     let isEqual = false;
 
     try {
@@ -37,7 +42,7 @@ export class SignInProvider {
     }
 
     if (!isEqual) {
-      throw new UnauthorizedException('Incorrect Password');
+      throw new UnauthorizedException('Incorrect email or password');
     }
 
     return await this.generateTokensProvider.generateTokens(userWithPassword);

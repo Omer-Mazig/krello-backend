@@ -10,7 +10,7 @@ export class UsersFinderProvider {
     private userRepository: Repository<User>,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     try {
       const users = await this.userRepository.find();
       return users;
@@ -20,7 +20,7 @@ export class UsersFinderProvider {
     }
   }
 
-  async findOneById(id: string) {
+  async findOneById(id: string): Promise<User> {
     try {
       const user = await this.userRepository.findOne({ where: { id } });
       if (!user) {
@@ -33,7 +33,7 @@ export class UsersFinderProvider {
     }
   }
 
-  async findOneByEmail(email: string) {
+  async findOneByEmail(email: string): Promise<User> {
     try {
       const user = await this.userRepository.findOne({ where: { email } });
       if (!user) {
@@ -46,17 +46,13 @@ export class UsersFinderProvider {
     }
   }
 
-  async findOneWithPassword(email: string) {
+  async findOneWithPassword(email: string): Promise<User | null> {
     try {
       const userWithPassword = await this.userRepository
         .createQueryBuilder('user')
         .addSelect('user.password')
         .where('user.email = :email', { email })
         .getOne();
-
-      if (!userWithPassword) {
-        throw new NotFoundException('The user email does not exist');
-      }
 
       return userWithPassword;
     } catch (error) {
