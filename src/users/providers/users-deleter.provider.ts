@@ -19,11 +19,10 @@ export class UsersDeleterProvider {
 
     const queryRunner = this.dataSource.createQueryRunner();
 
-    // TODO: include in try-catch ???
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
       // Handle workspaces and boards
       await this.handleUserWorkspaces(queryRunner, user);
       await this.handleUserBoards(queryRunner, user);
