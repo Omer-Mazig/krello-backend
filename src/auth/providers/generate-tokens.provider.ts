@@ -19,7 +19,7 @@ export class GenerateTokensProvider {
       this._signToken<Partial<ActiveUserData>>(
         user.id,
         this.JwtConfiguration.accessTokenTtl,
-        'access', // Specify token type as 'access'
+        'access',
         {
           email: user.email,
         },
@@ -30,7 +30,7 @@ export class GenerateTokensProvider {
         user.id,
         this.JwtConfiguration.refreshTokenTtl,
         'refresh',
-      ), // Specify token type as 'refresh'
+      ),
     ]);
 
     return {
