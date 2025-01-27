@@ -3,7 +3,7 @@ import { CreateBoardMemberDto } from './dto/create-board-member.dto';
 import { BoardMember } from './entities/board-member.entity';
 import { BoardsService } from 'src/boards/boards.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
 export class BoardMembersService {
@@ -35,7 +35,11 @@ export class BoardMembersService {
 
       return await this.boardMembersRepository.save(newMember);
     } catch (error) {
-      console.error(`Error adding board member`, error);
+      if (error instanceof QueryFailedError) {
+        console.error(`Error adding workspace member`, error);
+        throw new BadRequestException('Invalid user or workspace ID');
+      }
+      console.error(`Error adding workspace member`, error);
       throw error;
     }
   }

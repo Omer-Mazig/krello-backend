@@ -1,11 +1,12 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceMember } from './entities/workspace-member.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
 
@@ -21,10 +22,13 @@ export class WorkspaceMembersService {
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
     try {
+      const { workspaceId, userId } = createWorkspaceMemberDto;
+
+      // Check if the user is already a member of the workspace
       const existingMember = await this.workspaceMembersRepository.findOne({
         where: {
-          workspace: { id: createWorkspaceMemberDto.workspaceId },
-          user: { id: createWorkspaceMemberDto.userId },
+          workspace: { id: workspaceId },
+          user: { id: userId },
         },
       });
 
@@ -34,13 +38,18 @@ export class WorkspaceMembersService {
         );
       }
 
+      // Create the new WorkspaceMember
       const newMember = this.workspaceMembersRepository.create({
-        workspace: { id: createWorkspaceMemberDto.workspaceId },
-        user: { id: createWorkspaceMemberDto.userId },
+        workspace: { id: workspaceId },
+        user: { id: userId },
       });
 
       return await this.workspaceMembersRepository.save(newMember);
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException('Invalid user or workspace ID');
+      }
+
       console.error(`Error adding workspace member`, error);
       throw error;
     }
