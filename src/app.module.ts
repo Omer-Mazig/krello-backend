@@ -36,6 +36,7 @@ import { WorkspaceMember } from './workspace-members/entities/workspace-member.e
 import { BoardMembersModule } from './board-members/board-members.module';
 import { BoardMember } from './board-members/entities/board-member.entity';
 import { BoardMemberGuard } from './auth/guards/boards/board-member-guard';
+import { MembershipManagementModule } from './membership-management/membership-management.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -97,6 +98,8 @@ const ENV = process.env.NODE_ENV;
     JwtModule.registerAsync(jwtConfig.asProvider()),
 
     BoardMembersModule,
+
+    MembershipManagementModule,
   ],
   controllers: [],
   providers: [

@@ -6,10 +6,16 @@ import { User } from './entities/user.entity';
 import { UsersDeleterProvider } from './providers/users-deleter.provider';
 import { UsersFinderProvider } from './providers/users-finder.provider';
 import { UserCreatorProvider } from './providers/users-creator.provider';
+import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersFinderProvider, UserCreatorProvider, UsersDeleterProvider],
+  providers: [
+    UsersFinderProvider,
+    UserCreatorProvider,
+    UsersDeleterProvider,
+    MembershipManagerProvider,
+  ],
   imports: [TypeOrmModule.forFeature([User]), AuthModule],
   exports: [UsersFinderProvider],
 })
