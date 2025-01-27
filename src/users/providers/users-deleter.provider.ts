@@ -7,6 +7,7 @@ import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member
 import { UsersFinderProvider } from './users-finder.provider';
 import { BoardMember } from 'src/board-members/entities/board-member.entity';
 
+// TODO: swap if and else to early return
 @Injectable()
 export class UsersDeleterProvider {
   constructor(
