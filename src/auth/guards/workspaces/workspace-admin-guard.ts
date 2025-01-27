@@ -3,8 +3,10 @@ import {
   ExecutionContext,
   Injectable,
   ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotFoundError } from 'rxjs';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import { Repository } from 'typeorm';
@@ -37,6 +39,10 @@ export class WorkspaceAdminGuard implements CanActivate {
         workspace: true,
       },
     });
+
+    if (!member) {
+      throw new NotFoundException('Member not found');
+    }
 
     if (member?.role !== 'admin') {
       throw new ForbiddenException(

@@ -23,14 +23,14 @@ export class UsersDeleterProvider {
       await queryRunner.startTransaction();
 
       // Handle workspace memberships
-      const workspaceMembers = await queryRunner.manager
+      const userWorkspaceMembership = await queryRunner.manager
         .getRepository(WorkspaceMember)
         .find({
           where: { user: { id: user.id } },
           relations: { workspace: true },
         });
 
-      for (const member of workspaceMembers) {
+      for (const member of userWorkspaceMembership) {
         await this.membershipManager.handleWorkspaceMembers(
           queryRunner,
           member.workspace,
@@ -39,11 +39,11 @@ export class UsersDeleterProvider {
       }
 
       // Handle board memberships
-      const boardMembers = await queryRunner.manager
+      const userBoardMembership = await queryRunner.manager
         .getRepository(BoardMember)
         .find({ where: { user: { id: user.id } }, relations: { board: true } });
 
-      for (const member of boardMembers) {
+      for (const member of userBoardMembership) {
         await this.membershipManager.handleBoardMembers(
           queryRunner,
           member.board,

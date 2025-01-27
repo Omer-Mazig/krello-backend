@@ -63,16 +63,16 @@ export class WorkspacesService {
     }
   }
 
-  // async findAllUserWorkspaces(userId: string): Promise<Workspace[]> {
-  //   const query: FindManyOptions<Workspace> = {
-  //     where: {
-  //       members: {
-  //         user: { id: userId },
-  //       },
-  //     },
-  //   };
-  //   return this.findAll(query);
-  // }
+  async findAllUserWorkspaces(userId: string): Promise<Workspace[]> {
+    const query: FindManyOptions<Workspace> = {
+      where: {
+        members: {
+          user: { id: userId },
+        },
+      },
+    };
+    return this.findAll(query);
+  }
 
   async findAll(query: FindManyOptions<Workspace>): Promise<Workspace[]> {
     try {

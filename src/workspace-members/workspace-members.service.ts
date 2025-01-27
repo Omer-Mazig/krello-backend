@@ -1,14 +1,19 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceMember } from './entities/workspace-member.entity';
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import {
+  DataSource,
+  FindOptionsRelations,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
+import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
 
 @Injectable()
 export class WorkspaceMembersService {
@@ -16,6 +21,7 @@ export class WorkspaceMembersService {
     @InjectRepository(WorkspaceMember)
     private readonly workspaceMembersRepository: Repository<WorkspaceMember>,
     private readonly dataSource: DataSource,
+    private readonly membershipManager: MembershipManagerProvider,
   ) {}
 
   async create(
@@ -55,80 +61,51 @@ export class WorkspaceMembersService {
     }
   }
 
-  async remove(memberId: string): Promise<void> {
+  async findOneWithRelations(
+    memberId: string,
+    relations: FindOptionsRelations<WorkspaceMember>,
+  ) {
     try {
       const member = await this.workspaceMembersRepository.findOne({
         where: { id: memberId },
-        relations: {
-          workspace: {
-            members: true,
-          },
-        },
+        relations,
       });
 
       if (!member) {
         throw new NotFoundException('Member not found');
       }
 
-      const otherMembers = member.workspace.members.filter((m) => {
-        return m.id !== member.id;
-      });
-
-      if (otherMembers.length === 0) {
-        const queryRunner = this.dataSource.createQueryRunner();
-        try {
-          await queryRunner.connect();
-          await queryRunner.startTransaction();
-
-          await queryRunner.manager
-            .getRepository(Workspace)
-            .delete({ id: member.workspace.id });
-
-          await queryRunner.manager
-            .getRepository(WorkspaceMember)
-            .delete({ id: member.id });
-
-          await queryRunner.commitTransaction();
-        } catch (error) {
-          await queryRunner.rollbackTransaction();
-          throw error;
-        } finally {
-          await queryRunner.release();
-        }
-      } else {
-        if (!otherMembers.some((m) => m.role === 'admin')) {
-          const queryRunner = this.dataSource.createQueryRunner();
-
-          try {
-            await queryRunner.connect();
-            await queryRunner.startTransaction();
-
-            // TODO: prompt the oldest
-            const { ...memberToMakeAdmin } = otherMembers[0];
-            memberToMakeAdmin.role = 'admin';
-
-            await queryRunner.manager
-              .getRepository(WorkspaceMember)
-              .update(memberToMakeAdmin.id, memberToMakeAdmin);
-
-            await queryRunner.manager
-              .getRepository(WorkspaceMember)
-              .delete({ id: member.id });
-
-            await queryRunner.commitTransaction();
-          } catch (error) {
-            await queryRunner.rollbackTransaction();
-            throw error;
-          } finally {
-            await queryRunner.release();
-          }
-        } else {
-          await this.workspaceMembersRepository.remove(member);
-        }
-      }
+      return member;
     } catch (error) {
-      console.error(`Error removing workspace member`, error);
+      console.error(`Error finding workspace member`, error);
       throw error;
+    }
+  }
+
+  async remove(memberId: string): Promise<void> {
+    const member = await this.findOneWithRelations(memberId, {
+      workspace: { members: true },
+      user: true,
+    });
+
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      this.membershipManager.handleWorkspaceMembers(
+        queryRunner,
+        member.workspace,
+        member.user.id,
+      );
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 }
