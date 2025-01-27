@@ -74,26 +74,32 @@ export class UsersDeleterProvider {
           order: { createdAt: 'ASC' },
         });
 
-      if (adminCount <= 1) {
-        if (members.length === 1) {
-          // If this user is the only member, delete the workspace
-          await queryRunner.manager
-            .getRepository(Board)
-            .delete({ workspace: { id: workspace.id } });
-          await queryRunner.manager
-            .getRepository(Workspace)
-            .delete({ id: workspace.id });
-        } else {
-          // Promote the oldest member (excluding the user being deleted) to admin
-          const newAdmin = members.find((m) => m.user.id !== user.id);
+      const isLastAdmin = adminCount <= 1;
 
-          if (newAdmin) {
-            newAdmin.role = 'admin';
-            await queryRunner.manager
-              .getRepository(WorkspaceMember)
-              .save(newAdmin);
-          }
+      if (!isLastAdmin) {
+        return;
+      }
+
+      const isLastMember = members.length === 1;
+
+      if (isLastMember) {
+        // If this user is the only member, delete the workspace
+        await queryRunner.manager
+          .getRepository(Board)
+          .delete({ workspace: { id: workspace.id } });
+        await queryRunner.manager
+          .getRepository(Workspace)
+          .delete({ id: workspace.id });
+      } else {
+        // Promote the oldest member (excluding the user being deleted) to admin
+        const newAdmin = members.find((m) => m.user.id !== user.id);
+
+        if (!newAdmin) {
+          return;
         }
+
+        newAdmin.role = 'admin';
+        await queryRunner.manager.getRepository(WorkspaceMember).save(newAdmin);
       }
     }
   }
