@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateBoardMemberDto } from './dto/create-board-member.dto';
 import { BoardMember } from './entities/board-member.entity';
-import { BoardsService } from 'src/boards/boards.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 
@@ -10,15 +9,17 @@ export class BoardMembersService {
   constructor(
     @InjectRepository(BoardMember)
     private readonly boardMembersRepository: Repository<BoardMember>,
-    private readonly boardsService: BoardsService,
   ) {}
 
-  async create(createBoardMemberDto: CreateBoardMemberDto) {
+  async create(
+    createBoardMemberDto: CreateBoardMemberDto,
+  ): Promise<BoardMember> {
     try {
+      const { boardId, userId } = createBoardMemberDto;
       const existingMember = await this.boardMembersRepository.findOne({
         where: {
-          board: { id: createBoardMemberDto.boardId },
-          user: { id: createBoardMemberDto.userId },
+          board: { id: boardId },
+          user: { id: userId },
         },
       });
 
@@ -29,8 +30,8 @@ export class BoardMembersService {
       }
 
       const newMember = this.boardMembersRepository.create({
-        board: { id: createBoardMemberDto.boardId },
-        user: { id: createBoardMemberDto.userId },
+        board: { id: boardId },
+        user: { id: userId },
       });
 
       return await this.boardMembersRepository.save(newMember);
