@@ -135,20 +135,27 @@ export class UsersDeleterProvider {
           order: { createdAt: 'ASC' },
         });
 
-      if (adminCount <= 1) {
-        if (members.length === 1) {
-          // Delete the board if this user is the only member
-          await queryRunner.manager
-            .getRepository(Board)
-            .delete({ id: board.id });
-        } else {
-          // Promote the oldest member to admin
-          const newAdmin = members.find((m) => m.user.id !== user.id);
-          if (newAdmin) {
-            newAdmin.role = 'admin';
-            await queryRunner.manager.getRepository(BoardMember).save(newAdmin);
-          }
+      const isLastAdmin = adminCount <= 1;
+
+      if (!isLastAdmin) {
+        return;
+      }
+
+      const isLastMember = members.length === 1;
+
+      if (isLastMember) {
+        // Delete the board if this user is the only member
+        await queryRunner.manager.getRepository(Board).delete({ id: board.id });
+      } else {
+        // Promote the oldest member to admin
+        const newAdmin = members.find((m) => m.user.id !== user.id);
+
+        if (!newAdmin) {
+          return;
         }
+
+        newAdmin.role = 'admin';
+        await queryRunner.manager.getRepository(BoardMember).save(newAdmin);
       }
     }
   }
