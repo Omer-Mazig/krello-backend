@@ -99,7 +99,7 @@ export class BoardsService {
       await queryRunner.commitTransaction();
 
       // Step 4: Fetch and return the board with its members
-      const boardToReturn = await this.findOneWithRelations(newBoard.id);
+      const boardToReturn = await this.findOneWithRelations(newBoard.id, 'all');
 
       // this.eventEmitter.emit(EVENT_BOARD_ADDED, {
       //   type: ActivityType.BOARD_ADDED,
@@ -144,7 +144,7 @@ export class BoardsService {
    */
   async findOneWithRelations(
     boardId: string,
-    relationKey: keyof typeof this.RELATION_MAP = 'all', // Default to 'all'
+    relationKey: keyof typeof this.RELATION_MAP, // Default to 'all'
   ): Promise<Board> {
     try {
       const relations = this.RELATION_MAP[relationKey];

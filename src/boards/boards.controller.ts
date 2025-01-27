@@ -25,7 +25,7 @@ export class BoardsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.boardsService.findOneWithRelations(id);
+    return this.boardsService.findOneWithRelations(id, 'all');
   }
 
   @Delete(':id')

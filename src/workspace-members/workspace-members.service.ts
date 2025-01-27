@@ -15,7 +15,7 @@ import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
 export class WorkspaceMembersService {
   constructor(
     @InjectRepository(WorkspaceMember)
-    private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
+    private readonly workspaceMembersRepository: Repository<WorkspaceMember>,
     private readonly usersFinderProvider: UsersFinderProvider,
     private readonly workspacesService: WorkspacesService,
     private readonly dataSource: DataSource,
@@ -32,7 +32,7 @@ export class WorkspaceMembersService {
         createWorkspaceMemberDto.userId,
       );
 
-      const existingMember = await this.workspaceMemberRepository.findOne({
+      const existingMember = await this.workspaceMembersRepository.findOne({
         where: {
           workspace: { id: createWorkspaceMemberDto.workspaceId },
           user: { id: createWorkspaceMemberDto.userId },
@@ -45,12 +45,12 @@ export class WorkspaceMembersService {
         );
       }
 
-      const newMember = this.workspaceMemberRepository.create({
+      const newMember = this.workspaceMembersRepository.create({
         workspace,
         user,
       });
 
-      return await this.workspaceMemberRepository.save(newMember);
+      return await this.workspaceMembersRepository.save(newMember);
     } catch (error) {
       console.error(`Error adding workspace member`, error);
       throw error;
@@ -59,7 +59,7 @@ export class WorkspaceMembersService {
 
   async remove(memberId: string): Promise<void> {
     try {
-      const member = await this.workspaceMemberRepository.findOne({
+      const member = await this.workspaceMembersRepository.findOne({
         where: { id: memberId },
         relations: {
           workspace: {
@@ -125,7 +125,7 @@ export class WorkspaceMembersService {
             await queryRunner.release();
           }
         } else {
-          await this.workspaceMemberRepository.remove(member);
+          await this.workspaceMembersRepository.remove(member);
         }
       }
     } catch (error) {
