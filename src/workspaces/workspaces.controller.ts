@@ -19,8 +19,8 @@ export class WorkspacesController {
   }
 
   @Get()
-  findAllActiveUserWorkspaces(@ActiveUser() user: ActiveUserData) {
-    return this.workspacesService.findAllUserWorkspaces(user.sub);
+  findAllWorkspaces(@ActiveUser() user: ActiveUserData) {
+    return this.workspacesService.findAll({});
   }
 
   @Delete(':workspaceId')

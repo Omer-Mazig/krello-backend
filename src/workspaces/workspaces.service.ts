@@ -63,20 +63,31 @@ export class WorkspacesService {
     }
   }
 
-  async findAllUserWorkspaces(userId: string): Promise<Workspace[]> {
-    const query: FindManyOptions<Workspace> = {
-      where: {
-        members: {
-          user: { id: userId },
-        },
-      },
-    };
-    return this.findAll(query);
-  }
+  // async findAllUserWorkspaces(userId: string): Promise<Workspace[]> {
+  //   const query: FindManyOptions<Workspace> = {
+  //     where: {
+  //       members: {
+  //         user: { id: userId },
+  //       },
+  //     },
+  //   };
+  //   return this.findAll(query);
+  // }
 
   async findAll(query: FindManyOptions<Workspace>): Promise<Workspace[]> {
     try {
-      const workspaces = await this.workspaceRepository.find(query);
+      const workspaces = await this.workspaceRepository.find({
+        relations: {
+          boards: {
+            members: {
+              user: true,
+            },
+          },
+          members: {
+            user: true,
+          },
+        },
+      });
       return workspaces;
     } catch (error) {
       console.error(`Error finding workspaces`, error);
