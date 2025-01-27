@@ -32,7 +32,6 @@ export class WorkspaceMembersService {
         createWorkspaceMemberDto.userId,
       );
 
-      // TODO: Make service method
       const existingMember = await this.workspaceMemberRepository.findOne({
         where: {
           workspace: { id: createWorkspaceMemberDto.workspaceId },
