@@ -1,6 +1,5 @@
 import { Card } from 'src/cards/entities/card.entity';
 import { List } from 'src/lists/entities/list.entity';
-import { BoardMember } from './board-member.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -12,6 +11,7 @@ import {
 } from 'typeorm';
 import { Label } from 'src/labels/entities/label.entity';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
+import { BoardMember } from 'src/board-members/entities/board-member.entity';
 
 @Entity()
 export class Board {

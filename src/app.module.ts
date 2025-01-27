@@ -23,7 +23,6 @@ import { Board } from './boards/entities/board.entity';
 import { List } from './lists/entities/list.entity';
 import { Card } from './cards/entities/card.entity';
 import { ActivitiesModule } from './activities/activities.module';
-import { BoardMember } from './boards/entities/board-member.entity';
 import { LabelsModule } from './labels/labels.module';
 import { Label } from './labels/entities/label.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -35,6 +34,7 @@ import { WorkspaceAdminGuard } from './auth/guards/workspaces/workspace-admin-gu
 import { WorkspaceMembersModule } from './workspace-members/workspace-members.module';
 import { WorkspaceMember } from './workspace-members/entities/workspace-member.entity';
 import { BoardMembersModule } from './board-members/board-members.module';
+import { BoardMember } from './board-members/entities/board-member.entity';
 
 const ENV = process.env.NODE_ENV;
 

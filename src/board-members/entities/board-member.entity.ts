@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Board } from './board.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Board } from 'src/boards/entities/board.entity';
 
 @Entity()
 export class BoardMember {

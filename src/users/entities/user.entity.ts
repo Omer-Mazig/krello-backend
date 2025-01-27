@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { BoardMember } from 'src/boards/entities/board-member.entity';
+import { BoardMember } from 'src/board-members/entities/board-member.entity';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import {
   Entity,
