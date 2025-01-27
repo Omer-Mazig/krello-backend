@@ -34,6 +34,7 @@ import { WorkspaceMemberGuard } from './auth/guards/workspaces/workspace-member-
 import { WorkspaceAdminGuard } from './auth/guards/workspaces/workspace-admin-guard';
 import { WorkspaceMembersModule } from './workspace-members/workspace-members.module';
 import { WorkspaceMember } from './workspace-members/entities/workspace-member.entity';
+import { BoardMembersModule } from './board-members/board-members.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -93,6 +94,8 @@ const ENV = process.env.NODE_ENV;
     // by the jwtConfig. This allows us to configure JWT options like secret
     // and expiration based on environment variables.
     JwtModule.registerAsync(jwtConfig.asProvider()),
+
+    BoardMembersModule,
   ],
   controllers: [],
   providers: [

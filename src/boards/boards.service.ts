@@ -3,9 +3,9 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { DataSource, Repository } from 'typeorm';
-import { BoardMember } from './entities/board-member.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
+import { BoardMember } from 'src/board-members/entities/board-member.entity';
 
 @Injectable()
 export class BoardsService {

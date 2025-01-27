@@ -3,9 +3,9 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { Board } from 'src/boards/entities/board.entity';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
-import { BoardMember } from 'src/boards/entities/board-member.entity';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import { UsersFinderProvider } from './users-finder.provider';
+import { BoardMember } from 'src/board-members/entities/board-member.entity';
 
 @Injectable()
 export class UsersDeleterProvider {
