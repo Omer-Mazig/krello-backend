@@ -33,15 +33,10 @@ export class BoardsService {
     labels: ['labels'],
 
     // Fetch everything related to cards (including members and labels)
-    cardsWithDetails: ['cards', 'cards.members', 'cards.labels'],
+    cardsWithDetails: ['cards', 'cards.labels'],
 
     // Fetch everything related to lists, including nested cards and their details
-    listsWithCardsAndDetails: [
-      'lists',
-      'lists.cards',
-      'lists.cards.members',
-      'lists.cards.labels',
-    ],
+    listsWithCardsAndDetails: ['lists', 'lists.cards', 'lists.cards.labels'],
 
     // Fetch everything related to the board
     all: [
@@ -50,7 +45,7 @@ export class BoardsService {
       'members.user',
       'lists',
       'lists.cards',
-      'lists.cards.members',
+
       'lists.cards.labels',
       'cards',
       'labels',

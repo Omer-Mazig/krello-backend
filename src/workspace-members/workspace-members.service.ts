@@ -8,16 +8,12 @@ import { WorkspaceMember } from './entities/workspace-member.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
-import { WorkspacesService } from 'src/workspaces/workspaces.service';
-import { UsersFinderProvider } from 'src/users/providers/users-finder.provider';
 
 @Injectable()
 export class WorkspaceMembersService {
   constructor(
     @InjectRepository(WorkspaceMember)
     private readonly workspaceMembersRepository: Repository<WorkspaceMember>,
-    private readonly usersFinderProvider: UsersFinderProvider,
-    private readonly workspacesService: WorkspacesService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -25,13 +21,6 @@ export class WorkspaceMembersService {
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
     try {
-      const workspace = await this.workspacesService.findOne(
-        createWorkspaceMemberDto.workspaceId,
-      );
-      const user = await this.usersFinderProvider.findOneById(
-        createWorkspaceMemberDto.userId,
-      );
-
       const existingMember = await this.workspaceMembersRepository.findOne({
         where: {
           workspace: { id: createWorkspaceMemberDto.workspaceId },
@@ -46,8 +35,8 @@ export class WorkspaceMembersService {
       }
 
       const newMember = this.workspaceMembersRepository.create({
-        workspace,
-        user,
+        workspace: { id: createWorkspaceMemberDto.workspaceId },
+        user: { id: createWorkspaceMemberDto.userId },
       });
 
       return await this.workspaceMembersRepository.save(newMember);
