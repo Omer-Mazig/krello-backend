@@ -35,6 +35,7 @@ import { WorkspaceMembersModule } from './workspace-members/workspace-members.mo
 import { WorkspaceMember } from './workspace-members/entities/workspace-member.entity';
 import { BoardMembersModule } from './board-members/board-members.module';
 import { BoardMember } from './board-members/entities/board-member.entity';
+import { BoardMemberGuard } from './auth/guards/boards/board-member-guard';
 
 const ENV = process.env.NODE_ENV;
 
@@ -107,6 +108,7 @@ const ENV = process.env.NODE_ENV;
     WorkspaceAdminGuard,
     WorkspaceMemberGuard,
     BoardAdminGuard,
+    BoardMemberGuard,
   ],
 })
 export class AppModule {}
