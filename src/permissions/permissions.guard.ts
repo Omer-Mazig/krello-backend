@@ -30,8 +30,7 @@ export class PermissionsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const boardId = request.params.boardId;
-    const workspaceId = request.params.workspaceId;
+    const { workspaceId, boardId } = request.params;
     const action = this.reflector.get<string>('action', context.getHandler());
 
     if (!action) {
@@ -41,7 +40,7 @@ export class PermissionsGuard implements CanActivate {
     if (workspaceId) {
       const workspaceMember = await this.workspaceMembersRepository.findOne({
         where: { workspace: { id: workspaceId }, user: { id: user.sub } },
-        relations: ['workspace'],
+        relations: { user: true },
       });
       if (!workspaceMember)
         throw new ForbiddenException('You are not a member of this workspace.');
@@ -56,7 +55,7 @@ export class PermissionsGuard implements CanActivate {
     if (boardId) {
       const boardMember = await this.boardMembersRepository.findOne({
         where: { board: { id: boardId }, user: { id: user.sub } },
-        relations: ['board', 'board.workspace'],
+        relations: { board: true, user: true },
       });
       if (!boardMember)
         throw new ForbiddenException('You are not a member of this board.');
@@ -82,7 +81,6 @@ export class PermissionsGuard implements CanActivate {
     if (allowedRoles.includes(member.role)) {
       return true;
     }
-
     // Allow users to remove themselves from the workspace
     if (action === 'removeWorkspaceMember' && member.user.id === userId) {
       return true; // User is allowed to leave the workspace
