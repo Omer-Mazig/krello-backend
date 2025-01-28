@@ -85,8 +85,7 @@ export class WorkspaceMembersService {
 
   async remove(memberId: string): Promise<void> {
     const member = await this.findOneWithRelations(memberId, {
-      workspace: { members: true },
-      user: true,
+      workspace: true,
     });
 
     const queryRunner = this.dataSource.createQueryRunner();
