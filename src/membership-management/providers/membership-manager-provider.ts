@@ -14,7 +14,6 @@ export class MembershipManagerProvider {
     const [members, adminCount] = await Promise.all([
       queryRunner.manager.getRepository(WorkspaceMember).find({
         where: { workspace: { id: memberToDelete.workspace.id } },
-        relations: { user: true },
         order: { createdAt: 'ASC' },
       }),
       queryRunner.manager.getRepository(WorkspaceMember).count({
@@ -55,7 +54,6 @@ export class MembershipManagerProvider {
     const [members, adminCount] = await Promise.all([
       queryRunner.manager.getRepository(BoardMember).find({
         where: { board: { id: memberToDelete.board.id } },
-        relations: { user: true },
         order: { createdAt: 'ASC' },
       }),
       queryRunner.manager.getRepository(BoardMember).count({
