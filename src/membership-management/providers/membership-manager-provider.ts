@@ -12,19 +12,16 @@ export class MembershipManagerProvider {
     workspace: Workspace,
     memberToDeleteId: string,
   ): Promise<void> {
-    const members = await queryRunner.manager
-      .getRepository(WorkspaceMember)
-      .find({
+    const [members, adminCount] = await Promise.all([
+      queryRunner.manager.getRepository(WorkspaceMember).find({
         where: { workspace: { id: workspace.id } },
         relations: { user: true },
         order: { createdAt: 'ASC' },
-      });
-
-    const adminCount = await queryRunner.manager
-      .getRepository(WorkspaceMember)
-      .count({
+      }),
+      queryRunner.manager.getRepository(WorkspaceMember).count({
         where: { workspace: { id: workspace.id }, role: 'admin' },
-      });
+      }),
+    ]);
 
     const isLastAdmin = adminCount <= 1;
     const isLastMember = members.length === 1;
@@ -54,17 +51,16 @@ export class MembershipManagerProvider {
     board: Board,
     memberToDeleteId: string,
   ): Promise<void> {
-    const members = await queryRunner.manager.getRepository(BoardMember).find({
-      where: { board: { id: board.id } },
-      relations: { user: true },
-      order: { createdAt: 'ASC' },
-    });
-
-    const adminCount = await queryRunner.manager
-      .getRepository(BoardMember)
-      .count({
+    const [members, adminCount] = await Promise.all([
+      queryRunner.manager.getRepository(BoardMember).find({
+        where: { board: { id: board.id } },
+        relations: { user: true },
+        order: { createdAt: 'ASC' },
+      }),
+      queryRunner.manager.getRepository(BoardMember).count({
         where: { board: { id: board.id }, role: 'admin' },
-      });
+      }),
+    ]);
 
     const isLastAdmin = adminCount <= 1;
     const isLastMember = members.length === 1;
