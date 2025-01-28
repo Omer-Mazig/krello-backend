@@ -95,11 +95,7 @@ export class WorkspaceMembersService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      await this.membershipManager.handleWorkspaceMembers(
-        queryRunner,
-        member.workspace,
-        member.id,
-      );
+      await this.membershipManager.handleWorkspaceMembers(queryRunner, member);
 
       await queryRunner.manager.getRepository(WorkspaceMember).remove(member);
 

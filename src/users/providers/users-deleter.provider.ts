@@ -27,30 +27,23 @@ export class UsersDeleterProvider {
           where: { user: { id: userId } },
           relations: { workspace: true },
         }),
-        queryRunner.manager
-          .getRepository(BoardMember)
-          .find({
-            where: { user: { id: userId } },
-            relations: { board: true },
-          }),
+        queryRunner.manager.getRepository(BoardMember).find({
+          where: { user: { id: userId } },
+          relations: { board: true },
+        }),
       ]);
 
       // Handle workspace memberships
       for (const member of userWorkspaceMembership) {
         await this.membershipManager.handleWorkspaceMembers(
           queryRunner,
-          member.workspace,
-          member.id,
+          member,
         );
       }
 
       // Handle board memberships
       for (const member of userBoardMembership) {
-        await this.membershipManager.handleBoardMembers(
-          queryRunner,
-          member.board,
-          member.id,
-        );
+        await this.membershipManager.handleBoardMembers(queryRunner, member);
       }
 
       // Delete the user

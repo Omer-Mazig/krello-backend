@@ -9,17 +9,19 @@ import { BoardMember } from 'src/board-members/entities/board-member.entity';
 export class MembershipManagerProvider {
   async handleWorkspaceMembers(
     queryRunner: QueryRunner,
-    workspace: Workspace,
-    memberToDeleteId: string,
+    memberToDelete: WorkspaceMember,
   ): Promise<void> {
     const [members, adminCount] = await Promise.all([
       queryRunner.manager.getRepository(WorkspaceMember).find({
-        where: { workspace: { id: workspace.id } },
+        where: { workspace: { id: memberToDelete.workspace.id } },
         relations: { user: true },
         order: { createdAt: 'ASC' },
       }),
       queryRunner.manager.getRepository(WorkspaceMember).count({
-        where: { workspace: { id: workspace.id }, role: 'admin' },
+        where: {
+          workspace: { id: memberToDelete.workspace.id },
+          role: 'admin',
+        },
       }),
     ]);
 
@@ -29,16 +31,16 @@ export class MembershipManagerProvider {
     if (isLastMember) {
       // Delete workspace and related boards
       await queryRunner.manager.getRepository(Board).delete({
-        workspace: { id: workspace.id },
+        workspace: { id: memberToDelete.workspace.id },
       });
       await queryRunner.manager.getRepository(Workspace).delete({
-        id: workspace.id,
+        id: memberToDelete.workspace.id,
       });
       return;
     }
 
     if (isLastAdmin) {
-      const newAdmin = members.find((m) => m.id !== memberToDeleteId);
+      const newAdmin = members.find((m) => m.id !== memberToDelete.id);
       if (newAdmin) {
         newAdmin.role = 'admin';
         await queryRunner.manager.getRepository(WorkspaceMember).save(newAdmin);
@@ -48,17 +50,16 @@ export class MembershipManagerProvider {
 
   async handleBoardMembers(
     queryRunner: QueryRunner,
-    board: Board,
-    memberToDeleteId: string,
+    memberToDelete: BoardMember,
   ): Promise<void> {
     const [members, adminCount] = await Promise.all([
       queryRunner.manager.getRepository(BoardMember).find({
-        where: { board: { id: board.id } },
+        where: { board: { id: memberToDelete.board.id } },
         relations: { user: true },
         order: { createdAt: 'ASC' },
       }),
       queryRunner.manager.getRepository(BoardMember).count({
-        where: { board: { id: board.id }, role: 'admin' },
+        where: { board: { id: memberToDelete.board.id }, role: 'admin' },
       }),
     ]);
 
@@ -68,13 +69,13 @@ export class MembershipManagerProvider {
     if (isLastMember) {
       // Delete the board
       await queryRunner.manager.getRepository(Board).delete({
-        id: board.id,
+        id: memberToDelete.board.id,
       });
       return;
     }
 
     if (isLastAdmin) {
-      const newAdmin = members.find((m) => m.id !== memberToDeleteId);
+      const newAdmin = members.find((m) => m.id !== memberToDelete.id);
       if (newAdmin) {
         newAdmin.role = 'admin';
         await queryRunner.manager.getRepository(BoardMember).save(newAdmin);
