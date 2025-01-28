@@ -7,6 +7,7 @@ export const WORKSPACE_PERMISSION_MATRIX = {
 };
 
 export const BOARD_PERMISSION_MATRIX = {
+  removeBoard: ['admin'],
   createBoardMember: ['member', 'admin'], // Board members and admins
   removeBoardMember: ['admin'], // Admins can remove members
   changeBoardMemberRole: ['admin'], // Only admins can change roles

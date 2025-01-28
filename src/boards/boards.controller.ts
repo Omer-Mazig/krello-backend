@@ -1,16 +1,28 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
+import { PermissionsGuard } from 'src/permissions/permissions.guard';
+import { RequiresPermission } from 'src/permissions/decorators/requires-permission.decorator';
 
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Post()
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('createBoard')
   create(
     @Body() createBoardDto: CreateBoardDto,
     @ActiveUser() user: ActiveUserData,
@@ -24,18 +36,22 @@ export class BoardsController {
   }
 
   @Get(':workspaceId')
-  @Auth(AuthType.WorkspaceMember)
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('viewBoard')
   findBoardsByWorkspaceId(@Param('workspaceId') workspaceId: string) {
     return this.boardsService.findBoardsByWorkspaceId(workspaceId);
   }
 
   @Get(':boardId')
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('viewBoard')
   findOne(@Param('boardId') boardId: string) {
     return this.boardsService.findOneWithRelations(boardId, 'all');
   }
 
   @Delete(':boardId')
-  @Auth(AuthType.BoardAdmin)
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('removeBoard')
   async remove(@Param('boardId') boardId: string) {
     return this.boardsService.remove(boardId);
   }
