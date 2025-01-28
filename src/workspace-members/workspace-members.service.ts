@@ -23,6 +23,16 @@ export class WorkspaceMembersService {
     private readonly dataSource: DataSource,
   ) {}
 
+  async findOneByWorkspaceAndUser(
+    workspaceId: string,
+    userId: string,
+  ): Promise<WorkspaceMember | null> {
+    return this.workspaceMembersRepository.findOne({
+      where: { workspace: { id: workspaceId }, user: { id: userId } },
+      relations: ['workspace'],
+    });
+  }
+
   async create(
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {

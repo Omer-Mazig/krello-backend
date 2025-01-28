@@ -23,6 +23,16 @@ export class BoardMembersService {
     private readonly dataSource: DataSource,
   ) {}
 
+  async findOneByBoardAndUser(
+    boardId: string,
+    userId: string,
+  ): Promise<BoardMember | null> {
+    return this.boardMembersRepository.findOne({
+      where: { board: { id: boardId }, user: { id: userId } },
+      relations: ['board', 'board.workspace'],
+    });
+  }
+
   async create(
     createBoardMemberDto: CreateBoardMemberDto,
   ): Promise<BoardMember> {
