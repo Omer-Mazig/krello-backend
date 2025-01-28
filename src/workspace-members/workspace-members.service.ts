@@ -51,11 +51,12 @@ export class WorkspaceMembersService {
 
       return await this.workspaceMembersRepository.save(newMember);
     } catch (error) {
+      console.error(`Error adding workspace member`, error);
+
       if (error instanceof QueryFailedError) {
         throw new BadRequestException('Invalid user or workspace ID');
       }
 
-      console.error(`Error adding workspace member`, error);
       throw error;
     }
   }

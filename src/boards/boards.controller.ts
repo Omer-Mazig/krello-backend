@@ -23,6 +23,11 @@ export class BoardsController {
     return this.boardsService.findAll();
   }
 
+  @Get(':workspaceId')
+  findBoardsByWorkspaceId(@Param('workspaceId') workspaceId: string) {
+    return this.boardsService.findBoardsByWorkspaceId(workspaceId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.boardsService.findOneWithRelations(id, 'all');

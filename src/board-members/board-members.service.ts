@@ -46,11 +46,10 @@ export class BoardMembersService {
 
       return await this.boardMembersRepository.save(newMember);
     } catch (error) {
+      console.error(`Error adding board member`, error);
       if (error instanceof QueryFailedError) {
-        console.error(`Error adding board member`, error);
         throw new BadRequestException('Invalid user or board ID');
       }
-      console.error(`Error adding board member`, error);
       throw error;
     }
   }

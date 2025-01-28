@@ -10,7 +10,6 @@ export class WorkspacesService {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-
     private readonly dataSource: DataSource,
   ) {}
 
@@ -20,19 +19,16 @@ export class WorkspacesService {
   ): Promise<Workspace> {
     const queryRunner = this.dataSource.createQueryRunner();
 
-    // Connect the query runner to a transaction
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      // Step 1: Create the workspace
       const newWorkspace = queryRunner.manager
         .getRepository(Workspace)
-        .create({ name }); // Set the createdBy field
+        .create({ name });
 
       await queryRunner.manager.getRepository(Workspace).save(newWorkspace);
 
-      // Step 2: Create the workspace member
       const workspaceMember = queryRunner.manager
         .getRepository(WorkspaceMember)
         .create({
@@ -45,20 +41,16 @@ export class WorkspacesService {
         .getRepository(WorkspaceMember)
         .save(workspaceMember);
 
-      // Commit the transaction
       await queryRunner.commitTransaction();
 
-      // Step 3: Fetch and return the workspace with its members
       const workspaceToReturn = await this.findOne(newWorkspace.id);
 
       return workspaceToReturn;
     } catch (error) {
-      // Rollback the transaction in case of error
       await queryRunner.rollbackTransaction();
       console.error('Error creating workspace:', error);
       throw error;
     } finally {
-      // Release the query runner
       await queryRunner.release();
     }
   }

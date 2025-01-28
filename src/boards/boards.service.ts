@@ -131,6 +131,19 @@ export class BoardsService {
     }
   }
 
+  async findBoardsByWorkspaceId(workspaceId: string) {
+    try {
+      const boards = await this.boardRepository.find({
+        where: { workspace: { id: workspaceId } },
+      });
+
+      return boards;
+    } catch (error) {
+      console.error('Error finding boards be workspace ID', error);
+      throw error;
+    }
+  }
+
   /**
    * Fetch a board with specific relations.
    * @param boardId - The ID of the board to fetch.
