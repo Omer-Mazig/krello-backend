@@ -24,18 +24,19 @@ export class BoardsController {
   }
 
   @Get(':workspaceId')
+  @Auth(AuthType.WorkspaceMember)
   findBoardsByWorkspaceId(@Param('workspaceId') workspaceId: string) {
     return this.boardsService.findBoardsByWorkspaceId(workspaceId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardsService.findOneWithRelations(id, 'all');
+  @Get(':boardId')
+  findOne(@Param('boardId') boardId: string) {
+    return this.boardsService.findOneWithRelations(boardId, 'all');
   }
 
-  @Delete(':id')
+  @Delete(':boardId')
   @Auth(AuthType.BoardAdmin)
-  async remove(@Param('id') id: string) {
-    return this.boardsService.remove(id);
+  async remove(@Param('boardId') boardId: string) {
+    return this.boardsService.remove(boardId);
   }
 }
