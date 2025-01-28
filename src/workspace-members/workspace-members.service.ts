@@ -65,8 +65,6 @@ export class WorkspaceMembersService {
     relations: FindOptionsRelations<WorkspaceMember>,
   ) {
     try {
-      console.log(memberId);
-
       const member = await this.workspaceMembersRepository.findOne({
         where: { id: memberId },
         relations,

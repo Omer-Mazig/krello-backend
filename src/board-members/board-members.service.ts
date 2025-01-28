@@ -1,14 +1,26 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBoardMemberDto } from './dto/create-board-member.dto';
 import { BoardMember } from './entities/board-member.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import {
+  DataSource,
+  FindOptionsRelations,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
+import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
 
 @Injectable()
 export class BoardMembersService {
   constructor(
     @InjectRepository(BoardMember)
     private readonly boardMembersRepository: Repository<BoardMember>,
+    private readonly membershipManager: MembershipManagerProvider,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(
@@ -24,9 +36,7 @@ export class BoardMembersService {
       });
 
       if (existingMember) {
-        throw new BadRequestException(
-          'User is already a member of this workspace',
-        );
+        throw new BadRequestException('User is already a member of this board');
       }
 
       const newMember = this.boardMembersRepository.create({
@@ -37,11 +47,56 @@ export class BoardMembersService {
       return await this.boardMembersRepository.save(newMember);
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        console.error(`Error adding workspace member`, error);
-        throw new BadRequestException('Invalid user or workspace ID');
+        console.error(`Error adding board member`, error);
+        throw new BadRequestException('Invalid user or board ID');
       }
-      console.error(`Error adding workspace member`, error);
+      console.error(`Error adding board member`, error);
       throw error;
+    }
+  }
+
+  async findOneWithRelations(
+    memberId: string,
+    relations: FindOptionsRelations<BoardMember>,
+  ) {
+    try {
+      const member = await this.boardMembersRepository.findOne({
+        where: { id: memberId },
+        relations,
+      });
+
+      if (!member) {
+        throw new NotFoundException('Member not found');
+      }
+
+      return member;
+    } catch (error) {
+      console.error(`Error finding board member`, error);
+      throw error;
+    }
+  }
+
+  async remove(memberId: string): Promise<void> {
+    const member = await this.findOneWithRelations(memberId, {
+      board: true,
+    });
+
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      await this.membershipManager.handleBoardMembers(queryRunner, member);
+
+      await queryRunner.manager.getRepository(BoardMember).remove(member);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 }
