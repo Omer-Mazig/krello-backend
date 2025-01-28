@@ -83,7 +83,7 @@ export class PermissionsGuard implements CanActivate {
     }
 
     // Allow users to remove themselves from the workspace
-    if (action === 'removeMember' && member.user.id === userId) {
+    if (action === 'removeWorkspaceMember' && member.user.id === userId) {
       return true; // User is allowed to leave the workspace
     }
 
@@ -104,7 +104,7 @@ export class PermissionsGuard implements CanActivate {
       allowedRoles = allowedRoles[visibility];
     }
 
-    if (action === 'edit' || action === 'view') {
+    if (action === 'editBoard' || action === 'viewBoard') {
       const visibilityRoles = BOARD_PERMISSION_MATRIX[action][visibility] || [];
       if (
         visibilityRoles.includes(member.role) ||
@@ -116,7 +116,7 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
-    if (action === 'removeMember' && member.user.id === userId) {
+    if (action === 'removeBoardMember' && member.user.id === userId) {
       return true; // User is allowed to leave the board
     }
 

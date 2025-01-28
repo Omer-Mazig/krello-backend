@@ -1,46 +1,22 @@
-// export const PERMISSION_MATRIX = {
-//   workspace: {
-//     createMember: ['member', 'admin'], // Workspace members and admins
-//     createAdmin: ['admin'], // Only admins can promote members to admins
-//     removeMember: ['admin'], // Admins can remove others
-//     changeMemberRole: ['admin'], // Only admins can change roles
-//     createBoard: ['member', 'admin'], // Workspace members and admins
-//   },
-//   board: {
-//     createMember: ['member', 'admin'], // Board members and admins
-//     removeMember: ['admin'], // Admins can remove members
-//     changeMemberRole: ['admin'], // Only admins can change roles
-//     edit: {
-//       private: ['member', 'admin'], // Only board members
-//       workspace: ['member', 'admin'], // Workspace members
-//       public: ['anyone'], // Public
-//     },
-//     view: {
-//       private: ['member', 'admin'], // Only board members
-//       workspace: ['member', 'admin'], // Workspace members
-//       public: ['anyone'], // Public
-//     },
-//   },
-// };
-
 export const WORKSPACE_PERMISSION_MATRIX = {
-  createMember: ['member', 'admin'], // Workspace members and admins
-  createAdmin: ['admin'], // Only admins can promote members to admins
-  removeMember: ['admin'], // Admins can remove others
-  changeMemberRole: ['admin'], // Only admins can change roles
+  removeWorkspace: ['admin'],
+  createWorkspaceMember: ['member', 'admin'], // Workspace members and admins
+  createWorkspaceAdmin: ['admin'], // Only admins can promote members to admins
+  removeWorkspaceMember: ['admin'], // Admins can remove others
+  changeWorkspaceMemberRole: ['admin'], // Only admins can change roles
   createBoard: ['member', 'admin'], // Workspace members and admins
 };
 
 export const BOARD_PERMISSION_MATRIX = {
-  createMember: ['member', 'admin'], // Board members and admins
-  removeMember: ['admin'], // Admins can remove members
-  changeMemberRole: ['admin'], // Only admins can change roles
-  edit: {
+  createBoardMember: ['member', 'admin'], // Board members and admins
+  removeBoardMember: ['admin'], // Admins can remove members
+  changeBoardMemberRole: ['admin'], // Only admins can change roles
+  editBoard: {
     private: ['member', 'admin'], // Only board members
     workspace: ['member', 'admin'], // Workspace members
     public: ['anyone'], // Public
   },
-  view: {
+  viewBoard: {
     private: ['member', 'admin'], // Only board members
     workspace: ['member', 'admin'], // Workspace members
     public: ['anyone'], // Public

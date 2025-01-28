@@ -1,10 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
+import { PermissionsGuard } from 'src/permissions/permissions.guard';
+import { RequiresPermission } from 'src/permissions/decorators/requires-permission.decorator';
 
 @Controller('workspaces')
 export class WorkspacesController {
@@ -24,7 +34,8 @@ export class WorkspacesController {
   }
 
   @Delete(':workspaceId')
-  @Auth(AuthType.WorkspaceAdmin)
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('removeWorkspace')
   delete(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.delete(workspaceId);
   }
