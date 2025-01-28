@@ -15,7 +15,7 @@ export class UsersDeleterProvider {
   ) {}
 
   async delete(userId: string): Promise<void> {
-    // const user = await this.usersFinderProvider.findOneById(userId);
+    const user = await this.usersFinderProvider.findOneById(userId);
 
     const queryRunner = this.dataSource.createQueryRunner();
     try {
@@ -52,7 +52,7 @@ export class UsersDeleterProvider {
       }
 
       // Delete the user
-      await queryRunner.manager.getRepository(User).delete({ id: userId });
+      await queryRunner.manager.getRepository(User).remove(user);
 
       await queryRunner.commitTransaction();
     } catch (error) {
