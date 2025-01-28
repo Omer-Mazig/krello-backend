@@ -17,7 +17,7 @@ export class WorkspaceMembersController {
   }
 
   @Delete(':memberId/:workspaceId')
-  @Auth(AuthType.WorkspaceAdmin)
+  @Auth(AuthType.WorkspaceMember)
   remove(
     @Param('memberId') memberId: string,
     @Param('workspaceId') workspaceId: string, // for guard

@@ -40,11 +40,7 @@ export class WorkspaceAdminGuard implements CanActivate {
       },
     });
 
-    if (!member) {
-      throw new NotFoundException('Member not found');
-    }
-
-    if (member?.role !== 'admin') {
+    if (!member || member.role !== 'admin') {
       throw new ForbiddenException(
         'You must be a workspace admin to perform this action',
       );
