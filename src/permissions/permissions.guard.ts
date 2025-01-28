@@ -5,14 +5,14 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { BoardMembersService } from 'src/board-members/board-members.service';
 import { BoardMember } from 'src/board-members/entities/board-member.entity';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
-import { WorkspaceMembersService } from 'src/workspace-members/workspace-members.service';
 import {
   BOARD_PERMISSION_MATRIX,
   WORKSPACE_PERMISSION_MATRIX,
 } from './permissions-matrix';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 type WorkspaceAction = keyof typeof WORKSPACE_PERMISSION_MATRIX;
 type BoardAction = keyof typeof BOARD_PERMISSION_MATRIX;
@@ -21,8 +21,10 @@ type BoardAction = keyof typeof BOARD_PERMISSION_MATRIX;
 export class PermissionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private boardMembersService: BoardMembersService,
-    private workspaceMembersService: WorkspaceMembersService,
+    @InjectRepository(WorkspaceMember)
+    private readonly workspaceMembersRepository: Repository<WorkspaceMember>,
+    @InjectRepository(BoardMember)
+    private readonly boardMembersRepository: Repository<BoardMember>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -37,11 +39,10 @@ export class PermissionsGuard implements CanActivate {
     }
 
     if (workspaceId) {
-      const workspaceMember =
-        await this.workspaceMembersService.findOneByWorkspaceAndUser(
-          workspaceId,
-          user.sub,
-        );
+      const workspaceMember = await this.workspaceMembersRepository.findOne({
+        where: { workspace: { id: workspaceId }, user: { id: user.sub } },
+        relations: ['workspace'],
+      });
       if (!workspaceMember)
         throw new ForbiddenException('You are not a member of this workspace.');
 
@@ -53,10 +54,10 @@ export class PermissionsGuard implements CanActivate {
     }
 
     if (boardId) {
-      const boardMember = await this.boardMembersService.findOneByBoardAndUser(
-        boardId,
-        user.sub,
-      );
+      const boardMember = await this.boardMembersRepository.findOne({
+        where: { board: { id: boardId }, user: { id: user.sub } },
+        relations: ['board', 'board.workspace'],
+      });
       if (!boardMember)
         throw new ForbiddenException('You are not a member of this board.');
 

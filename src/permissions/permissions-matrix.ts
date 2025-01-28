@@ -1,7 +1,6 @@
 export const WORKSPACE_PERMISSION_MATRIX = {
   removeWorkspace: ['admin'],
   createWorkspaceMember: ['member', 'admin'], // Workspace members and admins
-  createWorkspaceAdmin: ['admin'], // Only admins can promote members to admins
   removeWorkspaceMember: ['admin'], // Admins can remove others
   changeWorkspaceMemberRole: ['admin'], // Only admins can change roles
   createBoard: ['member', 'admin'], // Workspace members and admins
