@@ -15,7 +15,7 @@ export class UsersDeleterProvider {
   ) {}
 
   async delete(userId: string): Promise<void> {
-    const user = await this.usersFinderProvider.findOneById(userId);
+    // const user = await this.usersFinderProvider.findOneById(userId);
 
     const queryRunner = this.dataSource.createQueryRunner();
     try {
@@ -26,7 +26,7 @@ export class UsersDeleterProvider {
       const userWorkspaceMembership = await queryRunner.manager
         .getRepository(WorkspaceMember)
         .find({
-          where: { user: { id: user.id } },
+          where: { user: { id: userId } },
           relations: { workspace: true },
         });
 
@@ -34,25 +34,25 @@ export class UsersDeleterProvider {
         await this.membershipManager.handleWorkspaceMembers(
           queryRunner,
           member.workspace,
-          user.id,
+          member.id,
         );
       }
 
       // Handle board memberships
       const userBoardMembership = await queryRunner.manager
         .getRepository(BoardMember)
-        .find({ where: { user: { id: user.id } }, relations: { board: true } });
+        .find({ where: { user: { id: userId } }, relations: { board: true } });
 
       for (const member of userBoardMembership) {
         await this.membershipManager.handleBoardMembers(
           queryRunner,
           member.board,
-          user.id,
+          member.id,
         );
       }
 
       // Delete the user
-      await queryRunner.manager.getRepository(User).remove(user);
+      await queryRunner.manager.getRepository(User).delete({ id: userId });
 
       await queryRunner.commitTransaction();
     } catch (error) {

@@ -12,7 +12,6 @@ import {
   Repository,
 } from 'typeorm';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
-import { Workspace } from 'src/workspaces/entities/workspace.entity';
 import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
 
 @Injectable()
@@ -99,6 +98,10 @@ export class WorkspaceMembersService {
         member.workspace,
         member.user.id,
       );
+
+      await queryRunner.manager
+        .getRepository(WorkspaceMember)
+        .delete({ id: memberId });
 
       await queryRunner.commitTransaction();
     } catch (error) {

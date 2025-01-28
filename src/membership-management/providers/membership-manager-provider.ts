@@ -10,7 +10,7 @@ export class MembershipManagerProvider {
   async handleWorkspaceMembers(
     queryRunner: QueryRunner,
     workspace: Workspace,
-    userId: string,
+    memberToDeleteId: string,
   ): Promise<void> {
     const members = await queryRunner.manager
       .getRepository(WorkspaceMember)
@@ -41,7 +41,7 @@ export class MembershipManagerProvider {
     }
 
     if (isLastAdmin) {
-      const newAdmin = members.find((m) => m.user.id !== userId);
+      const newAdmin = members.find((m) => m.id !== memberToDeleteId);
       if (newAdmin) {
         newAdmin.role = 'admin';
         await queryRunner.manager.getRepository(WorkspaceMember).save(newAdmin);
@@ -52,7 +52,7 @@ export class MembershipManagerProvider {
   async handleBoardMembers(
     queryRunner: QueryRunner,
     board: Board,
-    userId: string,
+    memberToDeleteId: string,
   ): Promise<void> {
     const members = await queryRunner.manager.getRepository(BoardMember).find({
       where: { board: { id: board.id } },
@@ -78,7 +78,7 @@ export class MembershipManagerProvider {
     }
 
     if (isLastAdmin) {
-      const newAdmin = members.find((m) => m.user.id !== userId);
+      const newAdmin = members.find((m) => m.id !== memberToDeleteId);
       if (newAdmin) {
         newAdmin.role = 'admin';
         await queryRunner.manager.getRepository(BoardMember).save(newAdmin);
