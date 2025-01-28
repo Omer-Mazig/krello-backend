@@ -19,7 +19,6 @@ export class WorkspaceMemberGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request[REQUEST_USER_KEY];
-    // TODO: do i really need workspaceId?
     const workspaceId =
       request.params?.workspaceId || request.body?.workspaceId;
 
@@ -31,10 +30,6 @@ export class WorkspaceMemberGuard implements CanActivate {
       where: {
         workspace: { id: workspaceId },
         user: { id: user.sub },
-      },
-      relations: {
-        user: true,
-        workspace: true,
       },
     });
 

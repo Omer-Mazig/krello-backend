@@ -3,10 +3,8 @@ import {
   ExecutionContext,
   Injectable,
   ForbiddenException,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NotFoundError } from 'rxjs';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import { Repository } from 'typeorm';
@@ -21,7 +19,6 @@ export class WorkspaceAdminGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request[REQUEST_USER_KEY];
-    // TODO: do i really need workspaceId?
     const workspaceId =
       request.params?.workspaceId || request.body?.workspaceId;
 
@@ -33,10 +30,6 @@ export class WorkspaceAdminGuard implements CanActivate {
       where: {
         workspace: { id: workspaceId },
         user: { id: user.sub },
-      },
-      relations: {
-        user: true,
-        workspace: true,
       },
     });
 
