@@ -19,8 +19,8 @@ export class WorkspaceMembersService {
   constructor(
     @InjectRepository(WorkspaceMember)
     private readonly workspaceMembersRepository: Repository<WorkspaceMember>,
-    private readonly dataSource: DataSource,
     private readonly membershipManager: MembershipManagerProvider,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(
