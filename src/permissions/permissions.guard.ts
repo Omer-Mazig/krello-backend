@@ -13,7 +13,6 @@ import {
 } from './permissions-matrix';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { plainToInstance } from 'class-transformer';
 
 type WorkspaceAction = keyof typeof WORKSPACE_PERMISSION_MATRIX;
 type BoardAction = keyof typeof BOARD_PERMISSION_MATRIX;

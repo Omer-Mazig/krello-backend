@@ -11,8 +11,6 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
-import { Auth } from 'src/auth/decorators/auth.decorator';
-import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { PermissionsGuard } from 'src/permissions/permissions.guard';
 import { RequiresPermission } from 'src/permissions/decorators/requires-permission.decorator';
 
