@@ -35,7 +35,6 @@ export class BoardsController {
 
   @Get(':workspaceId')
   @UseGuards(PermissionsGuard)
-  @RequiresPermission('viewBoard')
   findBoardsByWorkspaceId(@Param('workspaceId') workspaceId: string) {
     return this.boardsService.findBoardsByWorkspaceId(workspaceId);
   }

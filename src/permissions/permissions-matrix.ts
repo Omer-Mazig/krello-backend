@@ -1,5 +1,5 @@
 export const WORKSPACE_PERMISSION_MATRIX = {
-  removeWorkspace: ['admin'],
+  removeWorkspace: ['admin'], // Admins can remove workspaces
   createWorkspaceMember: ['member', 'admin'], // Workspace members and admins
   removeWorkspaceMember: ['admin'], // Admins can remove others
   changeWorkspaceMemberRole: ['admin'], // Only admins can change roles
