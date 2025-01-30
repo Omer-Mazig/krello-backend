@@ -31,8 +31,8 @@ export class PermissionsGuard implements CanActivate {
       BoardAction | WorkspaceAction
     >('requires-permission', context.getHandler());
 
-    // If no permission is required, allow access
     if (!requiredPermission) {
+      console.log('no permission required');
       return true;
     }
 
@@ -56,11 +56,17 @@ export class PermissionsGuard implements CanActivate {
           user: { id: userId },
           workspace: { id: workspaceId },
         },
+        relations: ['workspace'],
       });
 
       if (!workspaceMember) return false;
 
-      // Check if user's role has the required permission
+      // For removeWorkspace action, ensure the user is an admin of this specific workspace
+      if (requiredPermission === 'removeWorkspace') {
+        return workspaceMember.role === 'admin';
+      }
+
+      // For other workspace actions, check against the permission matrix
       return WORKSPACE_PERMISSION_MATRIX[
         requiredPermission as WorkspaceAction
       ].includes(workspaceMember.role);

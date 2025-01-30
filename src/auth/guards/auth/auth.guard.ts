@@ -61,31 +61,20 @@ export class AuthGuard implements CanActivate {
     // Map `AuthType` to the corresponding guards.
     const guards = authTypes.map((type) => this.authTypeGuardMap[type]).flat();
 
-    let lastError: Error | null = null;
-
-    // Evaluate each guard in sequence.
+    // Evaluate each guard in sequence
     for (const instance of guards) {
-      try {
-        const canActivate = await Promise.resolve(
-          instance.canActivate(context),
-        );
-        if (!canActivate) {
-          throw new UnauthorizedException(
-            'One of the guards failed to authorize the request.',
-          );
-        }
-      } catch (err) {
-        lastError = err; // Capture the last error encountered.
-        break;
+      const canActivate = await Promise.resolve(
+        instance.canActivate(context),
+      ).catch((error) => {
+        // Re-throw any caught errors
+        throw error;
+      });
+
+      if (!canActivate) {
+        throw new UnauthorizedException('Guard rejected the request');
       }
     }
 
-    // If any guard failed, throw the captured error.
-    if (lastError) {
-      throw lastError;
-    }
-
-    // All guards passed.
     return true;
   }
 }

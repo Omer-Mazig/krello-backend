@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
@@ -16,7 +16,7 @@ import { MembershipManagerProvider } from 'src/membership-management/providers/m
     UsersDeleterProvider,
     MembershipManagerProvider,
   ],
-  imports: [TypeOrmModule.forFeature([User]), AuthModule],
+  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule)],
   exports: [UsersFinderProvider],
 })
 export class UsersModule {}

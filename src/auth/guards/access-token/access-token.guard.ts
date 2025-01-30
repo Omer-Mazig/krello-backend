@@ -10,6 +10,9 @@ import { JwtService } from '@nestjs/jwt';
 import jwtConfig from 'src/auth/config/jwt.config';
 import { Request } from 'express';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
+import { User } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -17,18 +20,23 @@ export class AccessTokenGuard implements CanActivate {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly jwtService: JwtService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    console.log('AccessTokenGuard: Checking token...');
 
     const token = this._extractTokenFromHeader(request);
     if (!token) {
+      console.log('AccessTokenGuard: No token found');
       throw new UnauthorizedException(
         'Authorization header is missing or invalid',
       );
     }
 
+    console.log('AccessTokenGuard: Token found, verifying...');
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.jwtConfiguration.secret,
@@ -36,8 +44,18 @@ export class AccessTokenGuard implements CanActivate {
         issuer: this.jwtConfiguration.issuer,
       });
 
-      if (!payload) {
+      console.log('AccessTokenGuard: Verification result:', payload);
+
+      if (!payload || !payload.sub) {
         throw new UnauthorizedException('Invalid token payload');
+      }
+
+      const user = await this.userRepository.findOne({
+        where: { id: payload.sub },
+      });
+      if (!user) {
+        console.log('AccessTokenGuard: User not found in database');
+        throw new UnauthorizedException('User not found');
       }
 
       if (payload.type !== 'access') {
@@ -49,11 +67,6 @@ export class AccessTokenGuard implements CanActivate {
       request[REQUEST_USER_KEY] = payload;
       return true;
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
-
-      // Log the actual error for debugging (optional)
       console.error('Token validation error:', error);
 
       throw new UnauthorizedException(

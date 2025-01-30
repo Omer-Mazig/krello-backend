@@ -8,4 +8,4 @@ export type WorkspaceAction = keyof typeof WORKSPACE_PERMISSION_MATRIX;
 export type BoardAction = keyof typeof BOARD_PERMISSION_MATRIX;
 
 export const RequiresPermission = (action: WorkspaceAction | BoardAction) =>
-  SetMetadata('action', action);
+  SetMetadata('requires-permission', action);
