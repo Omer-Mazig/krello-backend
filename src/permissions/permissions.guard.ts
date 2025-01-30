@@ -60,6 +60,8 @@ export class PermissionsGuard implements CanActivate {
     if (WORKSPACE_PERMISSION_MATRIX[requiredPermission as WorkspaceAction]) {
       const workspaceId =
         request.params.workspaceId || request.body.workspaceId;
+      const targetMemberId = request.params.memberId;
+
       if (!workspaceId) {
         this.permissionsLogger.logPermissionCheck(
           userId,
@@ -75,7 +77,7 @@ export class PermissionsGuard implements CanActivate {
           user: { id: userId },
           workspace: { id: workspaceId },
         },
-        relations: ['workspace'],
+        relations: ['workspace', 'user'],
       });
 
       if (!workspaceMember) {
@@ -88,12 +90,19 @@ export class PermissionsGuard implements CanActivate {
         return false;
       }
 
-      const isGranted =
-        requiredPermission === 'removeWorkspace'
-          ? workspaceMember.role === 'admin'
-          : WORKSPACE_PERMISSION_MATRIX[
-              requiredPermission as WorkspaceAction
-            ].includes(workspaceMember.role);
+      let isGranted = WORKSPACE_PERMISSION_MATRIX[
+        requiredPermission as WorkspaceAction
+      ].includes(workspaceMember.role);
+
+      // Special case: Allow members to remove themselves
+      if (
+        requiredPermission === 'removeWorkspaceMember' &&
+        targetMemberId &&
+        workspaceMember.user.id === userId &&
+        targetMemberId === workspaceMember.id
+      ) {
+        isGranted = true;
+      }
 
       this.permissionsLogger.logPermissionCheck(
         userId,
@@ -108,6 +117,8 @@ export class PermissionsGuard implements CanActivate {
     // BOARD PERMISSIONS CHECK
     if (BOARD_PERMISSION_MATRIX[requiredPermission as BoardAction]) {
       const boardId = request.params.boardId || request.body.boardId;
+      const targetMemberId = request.params.memberId;
+
       if (!boardId) {
         this.permissionsLogger.logPermissionCheck(
           userId,
@@ -134,20 +145,28 @@ export class PermissionsGuard implements CanActivate {
       }
 
       // Get both board and workspace membership for the user
-      const [boardMember, workspaceMember] = await Promise.all([
-        this.boardMemberRepository.findOne({
-          where: {
-            user: { id: userId },
-            board: { id: boardId },
-          },
-        }),
-        this.workspaceMemberRepository.findOne({
-          where: {
-            user: { id: userId },
-            workspace: { id: board.workspace.id },
-          },
-        }),
-      ]);
+      const [boardMember, workspaceMember, targetBoardMember] =
+        await Promise.all([
+          this.boardMemberRepository.findOne({
+            where: {
+              user: { id: userId },
+              board: { id: boardId },
+            },
+            relations: ['user'],
+          }),
+          this.workspaceMemberRepository.findOne({
+            where: {
+              user: { id: userId },
+              workspace: { id: board.workspace.id },
+            },
+          }),
+          targetMemberId
+            ? this.boardMemberRepository.findOne({
+                where: { id: targetMemberId },
+                relations: ['user'],
+              })
+            : null,
+        ]);
 
       const permission =
         BOARD_PERMISSION_MATRIX[requiredPermission as BoardAction];
@@ -190,6 +209,17 @@ export class PermissionsGuard implements CanActivate {
           if (boardRoles.includes(boardMember.role)) {
             isGranted = true;
           }
+        }
+
+        // Special case: Allow board members to remove themselves
+        if (
+          requiredPermission === 'removeBoardMember' &&
+          targetBoardMember &&
+          boardMember &&
+          targetBoardMember.user.id === userId &&
+          targetBoardMember.id === targetMemberId
+        ) {
+          isGranted = true;
         }
       } else {
         isGranted = Boolean(
