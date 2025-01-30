@@ -15,6 +15,7 @@ import {
 import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
 import { Board } from 'src/boards/entities/board.entity';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
+import { UpdateBoardMemberDto } from './dto/update-board-member.dto';
 
 @Injectable()
 export class BoardMembersService {
@@ -115,6 +116,20 @@ export class BoardMembersService {
       console.error(`Error finding board member`, error);
       throw error;
     }
+  }
+
+  async update(memberId: string, updateBoardMemberDto: UpdateBoardMemberDto) {
+    const member = await this.findOneWithRelations(memberId, {
+      board: true,
+    });
+
+    const { role } = updateBoardMemberDto;
+
+    if (role) {
+      member.role = role;
+    }
+
+    return await this.boardMembersRepository.save(member);
   }
 
   async remove(memberId: string): Promise<void> {
