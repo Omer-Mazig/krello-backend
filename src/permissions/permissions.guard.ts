@@ -161,21 +161,22 @@ export class PermissionsGuard implements CanActivate {
             : false)
         ) {
           isGranted = true;
-        } else if (
-          board.visibility === 'workspace' &&
-          workspaceMember &&
-          ('workspace' in permission
-            ? permission.workspace.includes(workspaceMember.role)
-            : false)
-        ) {
-          isGranted = true;
-        } else {
-          isGranted = Boolean(
-            boardMember &&
-              ('private' in permission
-                ? permission.private.includes(boardMember.role)
-                : false),
+        } else if (board.visibility === 'workspace' && workspaceMember) {
+          const workspaceRoles = permission.workspace.map((role) =>
+            role.startsWith('workspace:')
+              ? role.replace('workspace:', '')
+              : role,
           );
+          if (workspaceRoles.includes(workspaceMember.role)) {
+            isGranted = true;
+          }
+        } else if (boardMember) {
+          const boardRoles = permission.private.filter(
+            (role) => !role.startsWith('workspace:'),
+          );
+          if (boardRoles.includes(boardMember.role)) {
+            isGranted = true;
+          }
         }
       } else {
         isGranted = Boolean(

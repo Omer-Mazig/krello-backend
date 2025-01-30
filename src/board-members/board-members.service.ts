@@ -13,12 +13,18 @@ import {
   Repository,
 } from 'typeorm';
 import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
+import { Board } from 'src/boards/entities/board.entity';
+import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 
 @Injectable()
 export class BoardMembersService {
   constructor(
     @InjectRepository(BoardMember)
     private readonly boardMembersRepository: Repository<BoardMember>,
+    @InjectRepository(Board)
+    private readonly boardRepository: Repository<Board>,
+    @InjectRepository(WorkspaceMember)
+    private readonly workspaceMembersRepository: Repository<WorkspaceMember>,
     private readonly membershipManager: MembershipManagerProvider,
     private readonly dataSource: DataSource,
   ) {}
@@ -38,15 +44,41 @@ export class BoardMembersService {
   ): Promise<BoardMember> {
     try {
       const { boardId, userId } = createBoardMemberDto;
+
+      // Check if user is already a board member
       const existingMember = await this.boardMembersRepository.findOne({
         where: {
           board: { id: boardId },
           user: { id: userId },
         },
+        relations: { board: { workspace: true } },
       });
 
       if (existingMember) {
         throw new BadRequestException('User is already a member of this board');
+      }
+
+      const board = await this.boardRepository.findOne({
+        where: { id: boardId },
+        relations: { workspace: true },
+      });
+
+      if (!board) {
+        throw new NotFoundException('Board not found');
+      }
+
+      // Check if user is a workspace member
+      const workspaceMember = await this.workspaceMembersRepository.findOne({
+        where: {
+          workspace: { id: board.workspace.id },
+          user: { id: userId },
+        },
+      });
+
+      if (!workspaceMember) {
+        throw new BadRequestException(
+          'User must be a member of the workspace to join this board',
+        );
       }
 
       const newMember = this.boardMembersRepository.create({
