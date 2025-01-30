@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
+import { UpdateWorkspaceMemberDto } from './dto/update-workspace-member.dto';
 
 @Injectable()
 export class WorkspaceMembersService {
@@ -31,19 +32,6 @@ export class WorkspaceMembersService {
       where: { workspace: { id: workspaceId }, user: { id: userId } },
       relations: ['workspace'],
     });
-  }
-
-  async changeRole(
-    memberId: string,
-    role: 'admin' | 'member',
-  ): Promise<WorkspaceMember> {
-    const member = await this.findOneWithRelations(memberId, {
-      workspace: true,
-    });
-
-    member.role = role;
-
-    return await this.workspaceMembersRepository.save(member);
   }
 
   async create(
@@ -127,5 +115,17 @@ export class WorkspaceMembersService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async update(
+    memberId: string,
+    updateWorkspaceMemberDto: UpdateWorkspaceMemberDto,
+  ): Promise<WorkspaceMember> {
+    const member = await this.findOneWithRelations(memberId, {});
+
+    // Apply updates from DTO
+    Object.assign(member, updateWorkspaceMemberDto);
+
+    return await this.workspaceMembersRepository.save(member);
   }
 }

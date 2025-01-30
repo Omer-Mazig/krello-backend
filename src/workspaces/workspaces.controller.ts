@@ -31,6 +31,18 @@ export class WorkspacesController {
     return this.workspacesService.findAll({});
   }
 
+  @Get('user')
+  findWorkspacesByUser(@ActiveUser() user: ActiveUserData) {
+    return this.workspacesService.findWorkspacesByUser(user.sub);
+  }
+
+  @Get(':workspaceId')
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('viewWorkspace')
+  findOne(@Param('workspaceId') workspaceId: string) {
+    return this.workspacesService.findOne(workspaceId);
+  }
+
   @Delete(':workspaceId')
   @UseGuards(PermissionsGuard)
   @RequiresPermission('removeWorkspace')

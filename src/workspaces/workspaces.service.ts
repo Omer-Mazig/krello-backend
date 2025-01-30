@@ -115,4 +115,19 @@ export class WorkspacesService {
       throw error;
     }
   }
+
+  async findWorkspacesByUser(userId: string) {
+    return this.workspaceRepository.find({
+      where: {
+        members: {
+          user: { id: userId },
+        },
+      },
+      relations: {
+        members: {
+          user: true,
+        },
+      },
+    });
+  }
 }
