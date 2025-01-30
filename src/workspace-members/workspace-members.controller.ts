@@ -30,4 +30,14 @@ export class WorkspaceMembersController {
   remove(@Param('memberId') memberId: string) {
     return this.workspaceMembersService.remove(memberId);
   }
+
+  @Post(':workspaceId/:memberId/role')
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('changeWorkspaceMemberRole')
+  changeRole(
+    @Param('memberId') memberId: string,
+    @Body('role') role: 'admin' | 'member',
+  ) {
+    return this.workspaceMembersService.changeRole(memberId, role);
+  }
 }

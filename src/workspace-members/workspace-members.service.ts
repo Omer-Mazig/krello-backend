@@ -33,6 +33,19 @@ export class WorkspaceMembersService {
     });
   }
 
+  async changeRole(
+    memberId: string,
+    role: 'admin' | 'member',
+  ): Promise<WorkspaceMember> {
+    const member = await this.findOneWithRelations(memberId, {
+      workspace: true,
+    });
+
+    member.role = role;
+
+    return await this.workspaceMembersRepository.save(member);
+  }
+
   async create(
     createWorkspaceMemberDto: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember> {
