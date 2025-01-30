@@ -28,14 +28,10 @@ import { Label } from './labels/entities/label.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { Workspace } from './workspaces/entities/workspace.entity';
-import { BoardAdminGuard } from './auth/guards/boards/board-admin-guard';
-import { WorkspaceMemberGuard } from './auth/guards/workspaces/workspace-member-guard';
-import { WorkspaceAdminGuard } from './auth/guards/workspaces/workspace-admin-guard';
 import { WorkspaceMembersModule } from './workspace-members/workspace-members.module';
 import { WorkspaceMember } from './workspace-members/entities/workspace-member.entity';
 import { BoardMembersModule } from './board-members/board-members.module';
 import { BoardMember } from './board-members/entities/board-member.entity';
-import { BoardMemberGuard } from './auth/guards/boards/board-member-guard';
 import { MembershipManagementModule } from './membership-management/membership-management.module';
 
 const ENV = process.env.NODE_ENV;
@@ -108,10 +104,6 @@ const ENV = process.env.NODE_ENV;
       useClass: AuthGuard,
     },
     AccessTokenGuard,
-    WorkspaceAdminGuard,
-    WorkspaceMemberGuard,
-    BoardAdminGuard,
-    BoardMemberGuard,
   ],
 })
 export class AppModule {}
