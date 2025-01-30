@@ -110,88 +110,199 @@ describe('PermissionsGuard', () => {
   });
 
   describe('Workspace Permissions', () => {
-    it('should grant access for workspace admin', async () => {
-      jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspace');
-      const workspaceMember = {
-        id: 'member-1',
-        role: 'admin',
-        user: { id: 'user-123' },
-        workspace: { id: 'workspace-1' },
-      };
+    describe('removeWorkspace', () => {
+      it('should allow workspace admin to remove workspace', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspace');
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
 
-      jest
-        .spyOn(workspaceMemberRepo, 'findOne')
-        .mockResolvedValue(workspaceMember as WorkspaceMember);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
 
-      const context = mockExecutionContext('user-123', 'removeWorkspace', {
-        workspaceId: 'workspace-1',
+        const context = mockExecutionContext('user-123', 'removeWorkspace', {
+          workspaceId: 'workspace-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(true);
       });
 
-      const result = await guard.canActivate(context);
+      it('should deny workspace member from removing workspace', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspace');
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'member',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
 
-      expect(result).toBe(true);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'removeWorkspace', {
+          workspaceId: 'workspace-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(false);
+      });
+
+      it('should deny non-member from removing workspace', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspace');
+        jest.spyOn(workspaceMemberRepo, 'findOne').mockResolvedValue(null);
+
+        const context = mockExecutionContext('user-123', 'removeWorkspace', {
+          workspaceId: 'workspace-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(false);
+      });
     });
 
-    it('should deny access for workspace member without required role', async () => {
-      jest.spyOn(reflector, 'get').mockReturnValue('manageWorkspace');
-      const workspaceMember = {
-        id: 'member-1',
-        role: 'member',
-        user: { id: 'user-123' },
-        workspace: { id: 'workspace-1' },
-      };
+    describe('createWorkspaceMember', () => {
+      it('should allow workspace admin to create workspace member', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('createWorkspaceMember');
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
 
-      jest
-        .spyOn(workspaceMemberRepo, 'findOne')
-        .mockResolvedValue(workspaceMember as WorkspaceMember);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
 
-      const context = mockExecutionContext('user-123', 'manageWorkspace', {
-        workspaceId: 'workspace-1',
+        const context = mockExecutionContext(
+          'user-123',
+          'createWorkspaceMember',
+          {
+            workspaceId: 'workspace-1',
+          },
+        );
+
+        expect(await guard.canActivate(context)).toBe(true);
       });
 
-      const result = await guard.canActivate(context);
+      it('should allow workspace member to create workspace member', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('createWorkspaceMember');
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'member',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
 
-      expect(result).toBe(false);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext(
+          'user-123',
+          'createWorkspaceMember',
+          {
+            workspaceId: 'workspace-1',
+          },
+        );
+
+        expect(await guard.canActivate(context)).toBe(true);
+      });
+
+      it('should deny non-member from creating workspace member', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('createWorkspaceMember');
+        jest.spyOn(workspaceMemberRepo, 'findOne').mockResolvedValue(null);
+
+        const context = mockExecutionContext(
+          'user-123',
+          'createWorkspaceMember',
+          {
+            workspaceId: 'workspace-1',
+          },
+        );
+
+        expect(await guard.canActivate(context)).toBe(false);
+      });
     });
 
-    it('should allow admin to remove workspace', async () => {
-      jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspace');
-      const workspaceMember = {
-        id: 'member-1',
-        role: 'admin',
-        user: { id: 'user-123' },
-        workspace: { id: 'workspace-1' },
-      };
+    describe('removeWorkspaceMember', () => {
+      it('should allow workspace admin to remove workspace member', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspaceMember');
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
 
-      jest
-        .spyOn(workspaceMemberRepo, 'findOne')
-        .mockResolvedValue(workspaceMember as WorkspaceMember);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
 
-      const context = mockExecutionContext('user-123', 'removeWorkspace', {
-        workspaceId: 'workspace-1',
+        const context = mockExecutionContext(
+          'user-123',
+          'removeWorkspaceMember',
+          {
+            workspaceId: 'workspace-1',
+            memberId: 'other-member',
+          },
+        );
+
+        expect(await guard.canActivate(context)).toBe(true);
       });
 
-      expect(await guard.canActivate(context)).toBe(true);
-    });
+      it('should deny workspace member from removing other members', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspaceMember');
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'member',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
 
-    it('should deny member from removing workspace', async () => {
-      jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspace');
-      const workspaceMember = {
-        id: 'member-1',
-        role: 'member',
-        user: { id: 'user-123' },
-        workspace: { id: 'workspace-1' },
-      };
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
 
-      jest
-        .spyOn(workspaceMemberRepo, 'findOne')
-        .mockResolvedValue(workspaceMember as WorkspaceMember);
+        const context = mockExecutionContext(
+          'user-123',
+          'removeWorkspaceMember',
+          {
+            workspaceId: 'workspace-1',
+            memberId: 'other-member',
+          },
+        );
 
-      const context = mockExecutionContext('user-123', 'removeWorkspace', {
-        workspaceId: 'workspace-1',
+        expect(await guard.canActivate(context)).toBe(false);
       });
 
-      expect(await guard.canActivate(context)).toBe(false);
+      it('should allow member to remove themselves', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeWorkspaceMember');
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'member',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext(
+          'user-123',
+          'removeWorkspaceMember',
+          {
+            workspaceId: 'workspace-1',
+            memberId: 'member-1',
+          },
+        );
+
+        expect(await guard.canActivate(context)).toBe(true);
+      });
     });
 
     it('should allow member to create workspace member', async () => {
@@ -334,7 +445,7 @@ describe('PermissionsGuard', () => {
     });
 
     describe('Private Board', () => {
-      it('should deny non-member from viewing private board', async () => {
+      it('should deny user with no memberships from viewing private board', async () => {
         jest.spyOn(reflector, 'get').mockReturnValue('viewBoard');
         const board = {
           id: 'board-1',
@@ -345,6 +456,34 @@ describe('PermissionsGuard', () => {
         jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
         jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null);
         jest.spyOn(workspaceMemberRepo, 'findOne').mockResolvedValue(null);
+
+        const context = mockExecutionContext('user-123', 'viewBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(false);
+      });
+
+      it('should deny workspace member from viewing private board', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('viewBoard');
+        const board = {
+          id: 'board-1',
+          visibility: 'private',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'member',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
 
         const context = mockExecutionContext('user-123', 'viewBoard', {
           boardId: 'board-1',
@@ -379,6 +518,62 @@ describe('PermissionsGuard', () => {
         });
 
         expect(await guard.canActivate(context)).toBe(true);
+      });
+
+      it('should deny workspace member from editing private board', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('editBoard');
+        const board = {
+          id: 'board-1',
+          visibility: 'private',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'member',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'editBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(false);
+      });
+
+      it('should deny workspace admin from editing private board without board membership', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('editBoard');
+        const board = {
+          id: 'board-1',
+          visibility: 'private',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null);
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'editBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(false);
       });
     });
 
@@ -577,6 +772,151 @@ describe('PermissionsGuard', () => {
 
         expect(await guard.canActivate(context)).toBe(false);
       });
+
+      it('should allow workspace admin to remove board in their workspace without board membership', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeBoard');
+
+        const board = {
+          id: 'board-1',
+          visibility: 'workspace',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null); // Not a board member
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'removeBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(true);
+      });
+
+      it('should allow workspace admin to remove private board in their workspace without board membership', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeBoard');
+
+        const board = {
+          id: 'board-1',
+          visibility: 'private',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null); // Not a board member
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'removeBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(true);
+      });
+
+      it('should deny workspace member from removing board in their workspace without board membership', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeBoard');
+
+        const board = {
+          id: 'board-1',
+          visibility: 'workspace',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'member', // Regular workspace member
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null); // Not a board member
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'removeBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(false);
+      });
+
+      it('should allow workspace admin to remove workspace-visible board without board membership', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeBoard');
+
+        const board = {
+          id: 'board-1',
+          visibility: 'workspace',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null); // Not a board member
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'removeBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(true);
+      });
+
+      it('should allow workspace admin to remove private board without board membership', async () => {
+        jest.spyOn(reflector, 'get').mockReturnValue('removeBoard');
+
+        const board = {
+          id: 'board-1',
+          visibility: 'private',
+          workspace: { id: 'workspace-1' },
+        };
+
+        const workspaceMember = {
+          id: 'member-1',
+          role: 'admin',
+          user: { id: 'user-123' },
+          workspace: { id: 'workspace-1' },
+        };
+
+        jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+        jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null); // Not a board member
+        jest
+          .spyOn(workspaceMemberRepo, 'findOne')
+          .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+        const context = mockExecutionContext('user-123', 'removeBoard', {
+          boardId: 'board-1',
+        });
+
+        expect(await guard.canActivate(context)).toBe(true);
+      });
     });
 
     describe('Board Visibility Transitions', () => {
@@ -637,6 +977,165 @@ describe('PermissionsGuard', () => {
 
         expect(await guard.canActivate(context)).toBe(true);
       });
+    });
+  });
+
+  describe('Board Creation Cases', () => {
+    it('should allow workspace member to create board in their workspace', async () => {
+      jest.spyOn(reflector, 'get').mockReturnValue('createBoard');
+      const workspaceMember = {
+        id: 'member-1',
+        role: 'member',
+        user: { id: 'user-123' },
+        workspace: { id: 'workspace-1' },
+      };
+
+      jest
+        .spyOn(workspaceMemberRepo, 'findOne')
+        .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+      const context = mockExecutionContext('user-123', 'createBoard', {
+        workspaceId: 'workspace-1',
+      });
+
+      expect(await guard.canActivate(context)).toBe(true);
+    });
+
+    it('should deny workspace member from creating board in another workspace', async () => {
+      jest.spyOn(reflector, 'get').mockReturnValue('createBoard');
+      const workspaceMember = {
+        id: 'member-1',
+        role: 'member',
+        user: { id: 'user-123' },
+        workspace: { id: 'workspace-1' },
+      };
+
+      // Mock that user is member of workspace-1 but trying to create in workspace-2
+      jest
+        .spyOn(workspaceMemberRepo, 'findOne')
+        .mockImplementation(async (options: any) => {
+          if (options.where.workspace.id === 'workspace-1') {
+            return workspaceMember as WorkspaceMember;
+          }
+          return null;
+        });
+
+      const context = mockExecutionContext('user-123', 'createBoard', {
+        workspaceId: 'workspace-2', // Different workspace
+      });
+
+      expect(await guard.canActivate(context)).toBe(false);
+    });
+
+    it('should deny non-workspace-member from creating board', async () => {
+      jest.spyOn(reflector, 'get').mockReturnValue('createBoard');
+      jest.spyOn(workspaceMemberRepo, 'findOne').mockResolvedValue(null);
+
+      const context = mockExecutionContext('user-123', 'createBoard', {
+        workspaceId: 'workspace-1',
+      });
+
+      expect(await guard.canActivate(context)).toBe(false);
+    });
+
+    it('should deny workspace member from creating board when workspaceId is missing', async () => {
+      jest.spyOn(reflector, 'get').mockReturnValue('createBoard');
+      const workspaceMember = {
+        id: 'member-1',
+        role: 'member',
+        user: { id: 'user-123' },
+        workspace: { id: 'workspace-1' },
+      };
+
+      jest
+        .spyOn(workspaceMemberRepo, 'findOne')
+        .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+      const context = mockExecutionContext('user-123', 'createBoard', {
+        // workspaceId missing
+      });
+
+      expect(await guard.canActivate(context)).toBe(false);
+    });
+
+    it('should allow workspace admin to create board in their workspace', async () => {
+      jest.spyOn(reflector, 'get').mockReturnValue('createBoard');
+      const workspaceMember = {
+        id: 'member-1',
+        role: 'admin',
+        user: { id: 'user-123' },
+        workspace: { id: 'workspace-1' },
+      };
+
+      jest
+        .spyOn(workspaceMemberRepo, 'findOne')
+        .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+      const context = mockExecutionContext('user-123', 'createBoard', {
+        workspaceId: 'workspace-1',
+      });
+
+      expect(await guard.canActivate(context)).toBe(true);
+    });
+  });
+
+  describe('New Tests', () => {
+    it('should deny workspace admin from removing workspace-visible board without board membership', async () => {
+      jest.spyOn(reflector, 'get').mockReturnValue('removeBoard');
+
+      const board = {
+        id: 'board-1',
+        visibility: 'workspace',
+        workspace: { id: 'workspace-1' },
+      };
+
+      const workspaceMember = {
+        id: 'member-1',
+        role: 'admin',
+        user: { id: 'user-123' },
+        workspace: { id: 'workspace-1' },
+      };
+
+      jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+      jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null); // Not a board member
+      jest
+        .spyOn(workspaceMemberRepo, 'findOne')
+        .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+      const context = mockExecutionContext('user-123', 'removeBoard', {
+        boardId: 'board-1',
+      });
+
+      expect(await guard.canActivate(context)).toBe(true);
+    });
+
+    it('should deny workspace admin from removing private board without board membership', async () => {
+      jest.spyOn(reflector, 'get').mockReturnValue('removeBoard');
+
+      const board = {
+        id: 'board-1',
+        visibility: 'private',
+        workspace: { id: 'workspace-1' },
+      };
+
+      const workspaceMember = {
+        id: 'member-1',
+        role: 'admin',
+        user: { id: 'user-123' },
+        workspace: { id: 'workspace-1' },
+      };
+
+      jest.spyOn(boardRepo, 'findOne').mockResolvedValue(board as Board);
+      jest.spyOn(boardMemberRepo, 'findOne').mockResolvedValue(null); // Not a board member
+      jest
+        .spyOn(workspaceMemberRepo, 'findOne')
+        .mockResolvedValue(workspaceMember as WorkspaceMember);
+
+      const context = mockExecutionContext('user-123', 'removeBoard', {
+        boardId: 'board-1',
+      });
+
+      expect(await guard.canActivate(context)).toBe(true);
     });
   });
 });
