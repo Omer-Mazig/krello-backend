@@ -14,9 +14,9 @@ export const BOARD_PERMISSION_MATRIX = {
     public: ['workspace:admin', 'admin'], // Workspace and board admins
   },
   createBoardMember: {
-    private: ['admin', 'member'], // Board admins and members
-    workspace: ['admin', 'member'], // Board admins and members
-    public: ['admin', 'member'], // Board admins and members
+    private: ['admin', 'member'], // Only board admins and members
+    workspace: ['admin', 'member'], // Only board admins and members
+    public: ['admin', 'member'], // Only board admins and members
   },
   removeBoardMember: {
     private: ['workspace:admin', 'admin'], // Workspace and board admins

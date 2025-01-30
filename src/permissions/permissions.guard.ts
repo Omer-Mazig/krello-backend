@@ -154,14 +154,24 @@ export class PermissionsGuard implements CanActivate {
       let isGranted = false;
 
       if (typeof permission === 'object') {
+        // For board member-specific actions, always require board membership
+        const requiresBoardMembership = ['createBoardMember'].includes(
+          requiredPermission as string,
+        );
+
         if (
           board.visibility === 'public' &&
           ('public' in permission
             ? permission.public.includes('anyone')
-            : false)
+            : false) &&
+          !requiresBoardMembership
         ) {
           isGranted = true;
-        } else if (board.visibility === 'workspace' && workspaceMember) {
+        } else if (
+          board.visibility === 'workspace' &&
+          workspaceMember &&
+          !requiresBoardMembership
+        ) {
           const workspaceRoles = permission.workspace.map((role) =>
             role.startsWith('workspace:')
               ? role.replace('workspace:', '')
@@ -170,8 +180,11 @@ export class PermissionsGuard implements CanActivate {
           if (workspaceRoles.includes(workspaceMember.role)) {
             isGranted = true;
           }
-        } else if (boardMember) {
-          const boardRoles = permission.private.filter(
+        }
+
+        // Check board membership for actions that require it
+        if (boardMember) {
+          const boardRoles = permission[board.visibility].filter(
             (role) => !role.startsWith('workspace:'),
           );
           if (boardRoles.includes(boardMember.role)) {

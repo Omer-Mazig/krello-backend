@@ -1,8 +1,13 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { BoardMembersService } from './board-members.service';
 import { CreateBoardMemberDto } from './dto/create-board-member.dto';
-import { Auth } from 'src/auth/decorators/auth.decorator';
-import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { PermissionsGuard } from 'src/permissions/permissions.guard';
 import { RequiresPermission } from 'src/permissions/decorators/requires-permission.decorator';
 
@@ -15,5 +20,12 @@ export class BoardMembersController {
   @RequiresPermission('createBoardMember')
   create(@Body() createBoardMemberDto: CreateBoardMemberDto) {
     return this.boardMembersService.create(createBoardMemberDto);
+  }
+
+  @Delete(':boardId/:memberId')
+  @UseGuards(PermissionsGuard)
+  @RequiresPermission('removeBoardMember')
+  remove(@Param('memberId') memberId: string) {
+    return this.boardMembersService.remove(memberId);
   }
 }
