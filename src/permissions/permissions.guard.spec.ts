@@ -8,6 +8,7 @@ import { Board } from '../boards/entities/board.entity';
 import { PermissionsLogger } from './permissions.logger';
 import { ExecutionContext } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { List } from 'src/lists/entities/list.entity';
 
 describe('PermissionsGuard', () => {
   let guard: PermissionsGuard;
@@ -15,6 +16,7 @@ describe('PermissionsGuard', () => {
   let workspaceMemberRepo: Repository<WorkspaceMember>;
   let boardMemberRepo: Repository<BoardMember>;
   let boardRepo: Repository<Board>;
+  let listRepo: Repository<List>;
   let permissionsLogger: PermissionsLogger;
 
   const mockExecutionContext = (
@@ -58,6 +60,12 @@ describe('PermissionsGuard', () => {
         },
         {
           provide: getRepositoryToken(Board),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(List),
           useValue: {
             findOne: jest.fn(),
           },
