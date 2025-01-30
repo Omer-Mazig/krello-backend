@@ -26,25 +26,20 @@ export class AccessTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    console.log('AccessTokenGuard: Checking token...');
 
     const token = this._extractTokenFromHeader(request);
     if (!token) {
-      console.log('AccessTokenGuard: No token found');
       throw new UnauthorizedException(
         'Authorization header is missing or invalid',
       );
     }
 
-    console.log('AccessTokenGuard: Token found, verifying...');
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.jwtConfiguration.secret,
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
       });
-
-      console.log('AccessTokenGuard: Verification result:', payload);
 
       if (!payload || !payload.sub) {
         throw new UnauthorizedException('Invalid token payload');
@@ -54,7 +49,6 @@ export class AccessTokenGuard implements CanActivate {
         where: { id: payload.sub },
       });
       if (!user) {
-        console.log('AccessTokenGuard: User not found in database');
         throw new UnauthorizedException('User not found');
       }
 
@@ -67,8 +61,6 @@ export class AccessTokenGuard implements CanActivate {
       request[REQUEST_USER_KEY] = payload;
       return true;
     } catch (error) {
-      console.error('Token validation error:', error);
-
       throw new UnauthorizedException(
         error.name === 'JsonWebTokenError'
           ? 'Invalid token'
