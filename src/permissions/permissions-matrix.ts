@@ -34,8 +34,8 @@ export const BOARD_PERMISSION_MATRIX = {
     public: ['workspace:member', 'workspace:admin', 'member', 'admin'], // Workspace members and admins
   },
   viewBoard: {
-    private: ['workspace:admin', 'member', 'admin'], // Workspace and board admins
-    workspace: ['workspace:member', 'workspace:admin', 'member', 'admin'], // Workspace members and admins
-    public: ['workspace:member', 'workspace:admin', 'member', 'admin'], // Workspace members and admins
+    private: ['admin', 'member', 'workspace:admin'],
+    workspace: ['member', 'admin', 'workspace:member', 'workspace:admin'],
+    public: ['anyone'],
   },
 };

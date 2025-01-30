@@ -244,23 +244,19 @@ export class PermissionsGuard implements CanActivate {
       // Check public board access
       if (
         board.visibility === 'public' &&
-        ('public' in permission
-          ? permission.public.includes('anyone')
-          : false) &&
+        permission.public.includes('anyone') &&
         !requiresBoardMembership
       ) {
         isGranted = true;
       }
 
-      // Check workspace-level access
-      else if (
-        board.visibility === 'workspace' &&
-        workspaceMember &&
-        !requiresBoardMembership
-      ) {
-        const workspaceRoles = permission.workspace.map((role) =>
-          role.startsWith('workspace:') ? role.replace('workspace:', '') : role,
-        );
+      // Check workspace-level access for all board visibilities
+      if (workspaceMember) {
+        const workspacePrefix = 'workspace:';
+        const workspaceRoles = permission[board.visibility]
+          .filter((role) => role.startsWith(workspacePrefix))
+          .map((role) => role.substring(workspacePrefix.length));
+
         if (workspaceRoles.includes(workspaceMember.role)) {
           isGranted = true;
         }
@@ -276,23 +272,15 @@ export class PermissionsGuard implements CanActivate {
         }
       }
 
-      // Allow board members to remove themselves
+      // Special case for self-removal
       if (
         requiredPermission === 'removeBoardMember' &&
         targetBoardMember &&
-        boardMember &&
         targetBoardMember.user.id === userId &&
         targetBoardMember.id === targetMemberId
       ) {
         isGranted = true;
       }
-    } else {
-      isGranted = Boolean(
-        boardMember &&
-          (Array.isArray(permission)
-            ? (permission as string[]).includes(boardMember.role)
-            : false),
-      );
     }
 
     return isGranted;
