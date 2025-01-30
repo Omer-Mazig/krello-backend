@@ -1,126 +1,146 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { BoardMember } from 'src/board-members/entities/board-member.entity';
-import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
 import {
   BOARD_PERMISSION_MATRIX,
   WORKSPACE_PERMISSION_MATRIX,
 } from './permissions-matrix';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-type WorkspaceAction = keyof typeof WORKSPACE_PERMISSION_MATRIX;
-type BoardAction = keyof typeof BOARD_PERMISSION_MATRIX;
+import { WorkspaceMember } from '../workspace-members/entities/workspace-member.entity';
+import { BoardMember } from '../board-members/entities/board-member.entity';
+import { Board } from '../boards/entities/board.entity';
+import {
+  BoardAction,
+  WorkspaceAction,
+} from './decorators/requires-permission.decorator';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     @InjectRepository(WorkspaceMember)
-    private readonly workspaceMembersRepository: Repository<WorkspaceMember>,
+    private workspaceMemberRepository: Repository<WorkspaceMember>,
     @InjectRepository(BoardMember)
-    private readonly boardMembersRepository: Repository<BoardMember>,
+    private boardMemberRepository: Repository<BoardMember>,
+    @InjectRepository(Board)
+    private boardRepository: Repository<Board>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const requiredPermission = this.reflector.get<
+      BoardAction | WorkspaceAction
+    >('requires-permission', context.getHandler());
+
+    // If no permission is required, allow access
+    if (!requiredPermission) {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    const { workspaceId, boardId } = request.params;
-    const action = this.reflector.get<string>('action', context.getHandler());
+    const userId = request.user?.sub;
 
-    if (!action) {
-      throw new ForbiddenException('Invalid request.');
+    if (!userId) {
+      return false;
     }
 
-    if (workspaceId) {
-      const workspaceMember = await this.workspaceMembersRepository.findOne({
-        where: { workspace: { id: workspaceId }, user: { id: user.sub } },
-        relations: { user: true },
+    // WORKSPACE PERMISSIONS CHECK
+    if (WORKSPACE_PERMISSION_MATRIX[requiredPermission as WorkspaceAction]) {
+      // Get workspace ID from request params or body
+      const workspaceId =
+        request.params.workspaceId || request.body.workspaceId;
+      if (!workspaceId) return false;
+
+      // Find the user's membership in the workspace
+      const workspaceMember = await this.workspaceMemberRepository.findOne({
+        where: {
+          user: { id: userId },
+          workspace: { id: workspaceId },
+        },
       });
-      if (!workspaceMember)
-        throw new ForbiddenException('You are not a member of this workspace.');
 
-      return this.validateWorkspacePermission(
-        workspaceMember,
-        action as WorkspaceAction,
-        user.sub,
-      );
+      if (!workspaceMember) return false;
+
+      // Check if user's role has the required permission
+      return WORKSPACE_PERMISSION_MATRIX[
+        requiredPermission as WorkspaceAction
+      ].includes(workspaceMember.role);
     }
 
-    if (boardId) {
-      const boardMember = await this.boardMembersRepository.findOne({
-        where: { board: { id: boardId }, user: { id: user.sub } },
-        relations: { board: true, user: true },
+    // BOARD PERMISSIONS CHECK
+    if (BOARD_PERMISSION_MATRIX[requiredPermission as BoardAction]) {
+      // Get board ID from request params or body
+      const boardId = request.params.boardId || request.body.boardId;
+      if (!boardId) return false;
+
+      // Find the board and its associated workspace
+      const board = await this.boardRepository.findOne({
+        where: { id: boardId },
+        relations: ['workspace'],
       });
-      if (!boardMember)
-        throw new ForbiddenException('You are not a member of this board.');
 
-      return this.validateBoardPermission(
-        boardMember,
-        action as BoardAction,
-        user.sub,
-      );
-    }
+      if (!board) return false;
 
-    throw new ForbiddenException('Invalid request context.');
-  }
+      // Get both board and workspace membership for the user
+      const [boardMember, workspaceMember] = await Promise.all([
+        this.boardMemberRepository.findOne({
+          where: {
+            user: { id: userId },
+            board: { id: boardId },
+          },
+        }),
+        this.workspaceMemberRepository.findOne({
+          where: {
+            user: { id: userId },
+            workspace: { id: board.workspace.id },
+          },
+        }),
+      ]);
 
-  private validateWorkspacePermission(
-    member: WorkspaceMember,
-    action: WorkspaceAction,
-    userId: string,
-  ): boolean {
-    const allowedRoles = WORKSPACE_PERMISSION_MATRIX[action] || [];
+      const permission =
+        BOARD_PERMISSION_MATRIX[requiredPermission as BoardAction];
 
-    // Check if the member's role is allowed for the action
-    if (allowedRoles.includes(member.role)) {
-      return true;
-    }
-    // Allow users to remove themselves from the workspace
-    if (action === 'removeWorkspaceMember' && member.user.id === userId) {
-      return true; // User is allowed to leave the workspace
-    }
+      // Handle visibility-based permissions (public/workspace/private)
+      if (typeof permission === 'object') {
+        // Check public board access
+        if (
+          board.visibility === 'public' &&
+          ('public' in permission
+            ? permission.public.includes('anyone')
+            : false)
+        ) {
+          return true;
+        }
 
-    throw new ForbiddenException(
-      'You do not have permission for this workspace action.',
-    );
-  }
+        // Check workspace-level access for workspace-visible boards
+        if (
+          board.visibility === 'workspace' &&
+          workspaceMember &&
+          ('workspace' in permission
+            ? permission.workspace.includes(workspaceMember.role)
+            : false)
+        ) {
+          return true;
+        }
 
-  private validateBoardPermission(
-    member: BoardMember,
-    action: BoardAction,
-    userId: string,
-  ): boolean {
-    const visibility = member.board.visibility; // `private`, `workspace`, or `public`
-
-    let allowedRoles = BOARD_PERMISSION_MATRIX[action];
-    if (!Array.isArray(allowedRoles)) {
-      allowedRoles = allowedRoles[visibility];
-    }
-
-    if (action === 'editBoard' || action === 'viewBoard') {
-      const visibilityRoles = BOARD_PERMISSION_MATRIX[action][visibility] || [];
-      if (
-        visibilityRoles.includes(member.role) ||
-        (visibility === 'public' && visibilityRoles.includes('anyone'))
-      ) {
-        return true;
+        // Check private board access
+        return Boolean(
+          boardMember &&
+            ('private' in permission
+              ? permission.private.includes(boardMember.role)
+              : false),
+        );
       }
-    } else if (allowedRoles.includes(member.role)) {
-      return true;
+
+      // Handle regular board permissions (non-visibility based)
+      return Boolean(
+        boardMember &&
+          (Array.isArray(permission)
+            ? (permission as string[]).includes(boardMember.role)
+            : false),
+      );
     }
 
-    if (action === 'removeBoardMember' && member.user.id === userId) {
-      return true; // User is allowed to leave the board
-    }
-
-    throw new ForbiddenException(
-      'You do not have permission for this board action.',
-    );
+    // If no permission rules match, deny access
+    return false;
   }
 }
