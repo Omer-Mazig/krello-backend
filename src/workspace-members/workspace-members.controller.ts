@@ -24,7 +24,7 @@ export class WorkspaceMembersController {
     return this.workspaceMembersService.create(createWorkspaceMemberDto);
   }
 
-  @Delete(':memberId/:workspaceId')
+  @Delete(':workspaceId/:memberId')
   @UseGuards(PermissionsGuard)
   @RequiresPermission('removeWorkspaceMember')
   remove(@Param('memberId') memberId: string) {

@@ -4,10 +4,11 @@ import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member
 import { BoardMember } from 'src/board-members/entities/board-member.entity';
 import { Board } from 'src/boards/entities/board.entity';
 import { PermissionsGuard } from './permissions.guard';
+import { PermissionsLogger } from './permissions.logger';
 
 @Module({
   imports: [TypeOrmModule.forFeature([WorkspaceMember, BoardMember, Board])],
-  providers: [PermissionsGuard],
-  exports: [PermissionsGuard],
+  providers: [PermissionsGuard, PermissionsLogger],
+  exports: [PermissionsGuard, PermissionsLogger],
 })
 export class PermissionsModule {}

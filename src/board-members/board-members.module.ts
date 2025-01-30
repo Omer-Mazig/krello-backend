@@ -7,10 +7,14 @@ import { BoardsService } from 'src/boards/boards.service';
 import { Board } from 'src/boards/entities/board.entity';
 import { MembershipManagerProvider } from 'src/membership-management/providers/membership-manager-provider';
 import { WorkspaceMember } from 'src/workspace-members/entities/workspace-member.entity';
+import { PermissionsModule } from 'src/permissions/permissions.module';
 
 @Module({
   controllers: [BoardMembersController],
   providers: [BoardMembersService, BoardsService, MembershipManagerProvider],
-  imports: [TypeOrmModule.forFeature([BoardMember, Board, WorkspaceMember])],
+  imports: [
+    TypeOrmModule.forFeature([BoardMember, Board, WorkspaceMember]),
+    PermissionsModule,
+  ],
 })
 export class BoardMembersModule {}
