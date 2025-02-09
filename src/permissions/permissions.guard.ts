@@ -99,9 +99,9 @@ export class PermissionsGuard implements CanActivate {
       return false;
     }
 
-    let isGranted = (
-      WORKSPACE_PERMISSION_MATRIX[requiredPermission] as string[]
-    ).includes(workspaceMember.role);
+    let isGranted = WORKSPACE_PERMISSION_MATRIX[requiredPermission].includes(
+      workspaceMember.role,
+    );
 
     // Allow members to remove themselves from workspace
     if (

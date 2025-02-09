@@ -1,2 +1,0 @@
-acrchive should be falged (is archive). archive card are still exist on thr original list. when removing the list the cards are gone
-no need for card memnber since when a board member is removed from the board, it also, removed from any cards that is a member of
