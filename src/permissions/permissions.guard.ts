@@ -209,7 +209,7 @@ export class PermissionsGuard implements CanActivate {
     return Promise.all([
       this.boardMemberRepository.findOne({
         where: { user: { id: userId }, board: { id: boardId } },
-        relations: ['user'],
+        relations: { user: true },
       }),
       this.workspaceMemberRepository.findOne({
         where: { user: { id: userId }, workspace: { id: workspaceId } },
@@ -217,7 +217,7 @@ export class PermissionsGuard implements CanActivate {
       targetMemberId
         ? this.boardMemberRepository.findOne({
             where: { id: targetMemberId },
-            relations: ['user'],
+            relations: { user: true },
           })
         : null,
     ]);
